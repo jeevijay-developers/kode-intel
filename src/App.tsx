@@ -15,6 +15,7 @@ import Landing from "./pages/Landing";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourse from "./pages/student/StudentCourse";
+import StudentProfile from "./pages/student/StudentProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ function App() {
           {/* Student routes */}
           <Route path="/student/login" element={<StudentLogin />} />
           <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student/profile" element={<StudentProfile />} />
           <Route path="/student/courses/:id" element={<StudentCourse />} />
           
           {/* Admin routes */}

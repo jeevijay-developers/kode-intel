@@ -53,6 +53,46 @@ export function useStudentAuth() {
     return { error: null };
   };
 
+  const signInWithMobile = async (mobileNumber: string, password: string) => {
+    const { data, error } = await supabase
+      .from("students")
+      .select("*")
+      .eq("mobile_number", mobileNumber)
+      .eq("temp_password", password)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error) {
+      return { error: { message: error.message } };
+    }
+
+    if (!data) {
+      return { error: { message: "Invalid mobile number or password" } };
+    }
+
+    // Store student session
+    localStorage.setItem("student_session", JSON.stringify(data));
+    setStudent(data);
+    return { error: null };
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    if (!student) {
+      return { error: { message: "Not logged in" } };
+    }
+
+    const { error } = await supabase
+      .from("students")
+      .update({ temp_password: newPassword })
+      .eq("id", student.id);
+
+    if (error) {
+      return { error: { message: error.message } };
+    }
+
+    return { error: null };
+  };
+
   const signOut = () => {
     localStorage.removeItem("student_session");
     setStudent(null);
@@ -62,6 +102,8 @@ export function useStudentAuth() {
     student,
     loading,
     signIn,
+    signInWithMobile,
+    updatePassword,
     signOut,
   };
 }
