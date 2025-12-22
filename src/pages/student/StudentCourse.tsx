@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,9 +16,8 @@ import {
   FileText,
   HelpCircle,
   CheckCircle,
-  GraduationCap,
-  LogOut,
-  ExternalLink,
+  Brain,
+  User,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useCourse, useChapters } from "@/hooks/useCourses";
@@ -31,7 +30,7 @@ export default function StudentCourse() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { student, loading, signOut } = useStudentAuth();
+  const { student, loading } = useStudentAuth();
   const { data: course, isLoading: courseLoading } = useCourse(id);
   const { chapters } = useChapters(id);
 
@@ -69,7 +68,7 @@ export default function StudentCourse() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course-progress"] });
-      toast({ title: "Course started!" });
+      toast({ title: "Course started! 🎉" });
     },
   });
 
@@ -80,15 +79,10 @@ export default function StudentCourse() {
     }
   }, [student, id, courseProgress, courseLoading]);
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/student/login");
-  };
-
   if (loading || !student) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse">Loading...</div>
+        <div className="animate-pulse text-xl">Loading... 🚀</div>
       </div>
     );
   }
@@ -110,6 +104,7 @@ export default function StudentCourse() {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 text-center">
+          <div className="text-6xl mb-4">🔍</div>
           <h2 className="text-xl font-semibold text-foreground">Course not found</h2>
           <Button onClick={() => navigate("/student")} className="mt-4">
             Back to Dashboard
@@ -118,6 +113,8 @@ export default function StudentCourse() {
       </div>
     );
   }
+
+  const publishedChapters = chapters.filter((c) => c.is_published);
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,72 +126,79 @@ export default function StudentCourse() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2">
-              <GraduationCap className="h-6 w-6 text-primary" />
+              <Brain className="h-6 w-6 text-primary" />
               <span className="font-semibold text-foreground hidden sm:block">
-                Student Portal
+                My Course
               </span>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate("/student/profile")}
+          >
+            <User className="h-5 w-5" />
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Course Header */}
-        <div className="mb-8">
-          <div className="flex items-start gap-6 flex-col md:flex-row">
-            <div className="w-full md:w-64 h-40 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
+      <main className="container mx-auto px-4 py-6">
+        {/* Course Header - Child Friendly */}
+        <Card className="mb-6 overflow-hidden">
+          <div className="flex flex-col md:flex-row">
+            <div className="w-full md:w-48 h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
               {course.thumbnail_url ? (
                 <img
                   src={course.thumbnail_url}
                   alt={course.title}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <BookOpen className="h-16 w-16 text-primary/50" />
               )}
             </div>
-            <div className="flex-1">
+            <div className="p-6 flex-1">
               <h1 className="text-2xl font-bold text-foreground mb-2">{course.title}</h1>
               <p className="text-muted-foreground mb-4">{course.description}</p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">{chapters.length} Chapters</Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="text-base py-1 px-3">
+                  📚 {publishedChapters.length} Chapters
+                </Badge>
                 {courseProgress?.completed_at && (
-                  <Badge variant="default" className="gap-1">
-                    <CheckCircle className="h-3 w-3" />
-                    Completed
+                  <Badge className="bg-primary/20 text-primary text-base py-1 px-3">
+                    ✅ Completed
                   </Badge>
                 )}
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
-        {/* Chapters */}
+        {/* Chapters - Child Friendly Design */}
         <Card>
           <CardHeader>
-            <CardTitle>Course Content</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              📖 Course Content
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {chapters.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
-                No content available yet
-              </p>
+            {publishedChapters.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">📭</div>
+                <p className="text-muted-foreground text-lg">
+                  No content available yet. Check back soon!
+                </p>
+              </div>
             ) : (
-              <Accordion type="multiple" className="space-y-2">
-                {chapters
-                  .filter((c) => c.is_published)
-                  .map((chapter, index) => (
-                    <ChapterAccordion
-                      key={chapter.id}
-                      chapter={chapter}
-                      index={index}
-                      studentId={student.id}
-                    />
-                  ))}
+              <Accordion type="multiple" className="space-y-3">
+                {publishedChapters.map((chapter, index) => (
+                  <ChapterAccordion
+                    key={chapter.id}
+                    chapter={chapter}
+                    index={index}
+                    studentId={student.id}
+                  />
+                ))}
               </Accordion>
             )}
           </CardContent>
@@ -292,7 +296,7 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["video-progress"] });
-      toast({ title: "Video marked as complete" });
+      toast({ title: "Great job! Video completed! 🎉" });
     },
   });
 
@@ -304,14 +308,31 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
   };
 
   const totalContent = videos.length + ebooks.length + quizzes.length;
+  const completedVideos = videoProgress.filter((p: any) => p.is_completed).length;
+  const allVideosCompleted = videos.length > 0 && completedVideos === videos.length;
+
+  // Chapter icon based on index
+  const chapterEmojis = ["🌟", "🚀", "💡", "🎯", "🔥", "⚡", "🎨", "🎮", "🏆", "🌈"];
+  const chapterEmoji = chapterEmojis[index % chapterEmojis.length];
 
   return (
-    <AccordionItem value={chapter.id} className="border rounded-lg px-4">
-      <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-center gap-3">
-          <Badge variant="outline">{index + 1}</Badge>
-          <span className="font-medium">{chapter.title}</span>
-          <span className="text-sm text-muted-foreground">({totalContent} items)</span>
+    <AccordionItem value={chapter.id} className="border-2 rounded-xl px-4 overflow-hidden">
+      <AccordionTrigger className="hover:no-underline py-4">
+        <div className="flex items-center gap-3 text-left">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl shrink-0">
+            {allVideosCompleted ? "✅" : chapterEmoji}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-lg">Chapter {index + 1}</span>
+              {totalContent > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {totalContent} items
+                </Badge>
+              )}
+            </div>
+            <span className="text-muted-foreground">{chapter.title}</span>
+          </div>
         </div>
       </AccordionTrigger>
       <AccordionContent className="pb-4 space-y-3">
@@ -320,43 +341,55 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
           const isCompleted = videoProgress.some(
             (p: any) => p.video_id === video.id && p.is_completed
           );
+          const youtubeId = extractYouTubeId(video.youtube_url);
+          
           return (
             <div
               key={video.id}
-              className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+              className="flex items-center gap-4 p-4 bg-muted rounded-xl"
             >
-              <div className="w-20 h-12 bg-secondary rounded overflow-hidden flex-shrink-0">
-                {extractYouTubeId(video.youtube_url) && (
+              <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
+                {youtubeId && (
                   <img
-                    src={`https://img.youtube.com/vi/${extractYouTubeId(video.youtube_url)}/mqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
                     alt={video.title}
                     className="w-full h-full object-cover"
                   />
                 )}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                    <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
+                  </div>
+                </div>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <Play className="h-4 w-4 text-primary" />
                   <p className="font-medium truncate">{video.title}</p>
-                  {isCompleted && <CheckCircle className="h-4 w-4 text-primary" />}
+                  {isCompleted && (
+                    <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                  )}
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {video.duration_minutes ? `${video.duration_minutes} min` : "Video"}
+                </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 shrink-0">
                 <Button
-                  variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={() => window.open(video.youtube_url, "_blank")}
+                  className="h-12 px-6"
                 >
-                  <ExternalLink className="h-4 w-4 mr-1" />
+                  <Play className="h-5 w-5 mr-2" />
                   Watch
                 </Button>
                 {!isCompleted && (
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    variant="outline"
+                    size="lg"
                     onClick={() => markVideoComplete.mutate(video.id)}
+                    className="h-12"
                   >
-                    <CheckCircle className="h-4 w-4" />
+                    <CheckCircle className="h-5 w-5" />
                   </Button>
                 )}
               </div>
@@ -368,19 +401,23 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
         {ebooks.map((ebook: any) => (
           <div
             key={ebook.id}
-            className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+            className="flex items-center gap-4 p-4 bg-muted rounded-xl"
           >
-            <FileText className="h-8 w-8 text-primary flex-shrink-0" />
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <FileText className="h-7 w-7 text-primary" />
+            </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{ebook.title}</p>
+              <p className="text-sm text-muted-foreground">Digital Book</p>
             </div>
             <Button
+              size="lg"
               variant="outline"
-              size="sm"
               onClick={() => window.open(ebook.file_url, "_blank")}
+              className="h-12 px-6"
             >
-              <ExternalLink className="h-4 w-4 mr-1" />
-              View
+              <BookOpen className="h-5 w-5 mr-2" />
+              Read
             </Button>
           </div>
         ))}
@@ -389,25 +426,30 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
         {quizzes.map((quiz: any) => (
           <div
             key={quiz.id}
-            className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+            className="flex items-center gap-4 p-4 bg-muted rounded-xl"
           >
-            <HelpCircle className="h-8 w-8 text-primary flex-shrink-0" />
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <HelpCircle className="h-7 w-7 text-primary" />
+            </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{quiz.title}</p>
               <p className="text-sm text-muted-foreground">
-                Passing score: {quiz.passing_score}%
+                Pass with {quiz.passing_score}%
               </p>
             </div>
-            <Button variant="default" size="sm">
-              Take Quiz
+            <Button size="lg" className="h-12 px-6">
+              🎯 Take Quiz
             </Button>
           </div>
         ))}
 
         {totalContent === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            No content in this chapter yet
-          </p>
+          <div className="text-center py-8">
+            <div className="text-4xl mb-2">📭</div>
+            <p className="text-muted-foreground">
+              Content coming soon!
+            </p>
+          </div>
         )}
       </AccordionContent>
     </AccordionItem>

@@ -29,7 +29,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && !loading) {
-      navigate("/");
+      navigate("/admin");
     }
   }, [user, loading, navigate]);
 
@@ -58,7 +58,7 @@ export default function Auth() {
       }
     } else {
       toast({ title: "Welcome back!" });
-      navigate("/");
+      navigate("/admin");
     }
   };
 
@@ -112,7 +112,7 @@ export default function Auth() {
               <Shield className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Super Admin Portal</CardTitle>
+          <CardTitle className="text-2xl">Admin Portal</CardTitle>
           <CardDescription>Sign in to manage schools and students</CardDescription>
         </CardHeader>
         <CardContent>
