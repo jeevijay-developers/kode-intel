@@ -34,6 +34,7 @@ export default function PublicCourses() {
   const courses = [
     {
       id: "1",
+      slug: "introduction-to-ai-for-kids",
       title: "Introduction to AI for Kids",
       description: "Learn the basics of Artificial Intelligence through fun activities and games. Understand what AI is and how it's used in everyday life.",
       level: "Classes 3-4",
@@ -47,6 +48,7 @@ export default function PublicCourses() {
     },
     {
       id: "2",
+      slug: "computational-thinking-basics",
       title: "Computational Thinking Basics",
       description: "Develop problem-solving skills through computational thinking. Learn to break down complex problems into simple steps.",
       level: "Classes 3-4",
@@ -60,6 +62,7 @@ export default function PublicCourses() {
     },
     {
       id: "3",
+      slug: "pattern-recognition-logic",
       title: "Pattern Recognition & Logic",
       description: "Master pattern recognition and logical reasoning. Build a strong foundation for advanced programming concepts.",
       level: "Classes 5-6",
@@ -73,6 +76,7 @@ export default function PublicCourses() {
     },
     {
       id: "4",
+      slug: "introduction-to-algorithms",
       title: "Introduction to Algorithms",
       description: "Discover how algorithms work and create your own step-by-step solutions. Learn sorting, searching, and more!",
       level: "Classes 5-6",
@@ -86,6 +90,7 @@ export default function PublicCourses() {
     },
     {
       id: "5",
+      slug: "data-structures-for-young-coders",
       title: "Data Structures for Young Coders",
       description: "Learn about arrays, lists, and trees through interactive examples. Build projects that use real data structures.",
       level: "Classes 7-8",
@@ -99,6 +104,7 @@ export default function PublicCourses() {
     },
     {
       id: "6",
+      slug: "machine-learning-fundamentals",
       title: "Machine Learning Fundamentals",
       description: "Understand how machines learn from data. Create simple ML models and see AI in action!",
       level: "Classes 7-8",
@@ -112,6 +118,7 @@ export default function PublicCourses() {
     },
     {
       id: "7",
+      slug: "ai-in-the-real-world",
       title: "AI in the Real World",
       description: "Explore how AI is used in healthcare, transportation, entertainment, and more. Analyze real case studies.",
       level: "Classes 9-10",
@@ -125,6 +132,7 @@ export default function PublicCourses() {
     },
     {
       id: "8",
+      slug: "building-ai-projects",
       title: "Building AI Projects",
       description: "Apply everything you've learned to build real AI projects. Create chatbots, image classifiers, and more!",
       level: "Classes 9-10",
@@ -271,6 +279,7 @@ export default function PublicCourses() {
               <Card 
                 key={course.id} 
                 className="overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group"
+                onClick={() => navigate(`/course/${course.slug}`)}
               >
                 <div className={`h-32 bg-gradient-to-br ${course.color} flex items-center justify-center text-6xl`}>
                   {course.thumbnail}
