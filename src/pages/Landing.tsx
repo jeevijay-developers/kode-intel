@@ -40,8 +40,9 @@ export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
+    { href: "/about", label: "About" },
+    { href: "/courses", label: "Courses" },
     { href: "#features", label: "Features" },
-    { href: "#courses", label: "Courses" },
     { href: "#faq", label: "FAQ" },
   ];
 
@@ -183,7 +184,11 @@ export default function Landing() {
 
   const handleNavClick = (href: string) => {
     setMobileMenuOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    if (href.startsWith('#')) {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate(href);
+    }
   };
 
   return (
@@ -198,13 +203,13 @@ export default function Landing() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a 
+              <button 
                 key={link.href}
-                href={link.href} 
+                onClick={() => handleNavClick(link.href)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.label}
-              </a>
+              </button>
             ))}
           </nav>
 
