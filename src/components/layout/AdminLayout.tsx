@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
   Building2,
@@ -9,6 +10,7 @@ import {
   Upload,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 interface NavItem {
@@ -30,7 +32,13 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,14 +57,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-screen w-64 bg-card border-r border-border transition-transform lg:translate-x-0",
+          "fixed top-0 left-0 z-40 h-screen w-64 bg-card border-r border-border transition-transform lg:translate-x-0 flex flex-col",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-16 items-center border-b border-border px-6">
           <h1 className="text-lg font-semibold text-foreground">LMS Super Admin</h1>
         </div>
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 flex-1">
           {navItems.map((item) => (
             <NavLink
               key={item.href}
@@ -76,6 +84,22 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </NavLink>
           ))}
         </nav>
+        
+        {/* User info and logout */}
+        <div className="p-4 border-t border-border">
+          <div className="mb-3 px-3">
+            <p className="text-sm font-medium text-foreground truncate">{user?.email}</p>
+            <p className="text-xs text-muted-foreground">Super Admin</p>
+          </div>
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-5 w-5" />
+            Sign Out
+          </Button>
+        </div>
       </aside>
 
       {/* Overlay */}

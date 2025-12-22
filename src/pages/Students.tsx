@@ -29,10 +29,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Search, MoreHorizontal, RefreshCw, UserX, UserCheck, Download } from "lucide-react";
+import { Search, MoreHorizontal, RefreshCw, UserX, UserCheck, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { generateTempPassword, exportCredentialsToCSV, downloadCSV } from "@/lib/credentials";
 
 const CLASS_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "10"];
+const PAGE_SIZE = 10;
 
 export default function Students() {
   const { data: schools } = useSchools();
@@ -41,13 +42,21 @@ export default function Students() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: students, isLoading } = useStudents({
-    schoolId: schoolFilter || undefined,
-    class: classFilter || undefined,
-    isActive: statusFilter === "" ? undefined : statusFilter === "active",
-    search: searchQuery || undefined,
-  });
+  const { data: studentsResult, isLoading } = useStudents(
+    {
+      schoolId: schoolFilter || undefined,
+      class: classFilter || undefined,
+      isActive: statusFilter === "" ? undefined : statusFilter === "active",
+      search: searchQuery || undefined,
+    },
+    { page: currentPage, pageSize: PAGE_SIZE }
+  );
+
+  const students = studentsResult?.data || [];
+  const totalPages = studentsResult?.totalPages || 1;
+  const totalCount = studentsResult?.totalCount || 0;
 
   const updateStudent = useUpdateStudent();
   const bulkUpdate = useBulkUpdateStudents();
@@ -96,7 +105,12 @@ export default function Students() {
     downloadCSV(csv, `students_export_${new Date().toISOString().split("T")[0]}.csv`);
   };
 
-  const isAllSelected = students && students.length > 0 && selectedIds.size === students.length;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSelectedIds(new Set());
+  };
+
+  const isAllSelected = students.length > 0 && selectedIds.size === students.length;
   const isSomeSelected = selectedIds.size > 0;
 
   return (
@@ -105,7 +119,7 @@ export default function Students() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Students</h1>
-            <p className="text-muted-foreground">Manage all students across schools</p>
+            <p className="text-muted-foreground">Manage all students across schools ({totalCount} total)</p>
           </div>
         </div>
 
@@ -116,11 +130,14 @@ export default function Students() {
             <Input
               placeholder="Search by name or username..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="pl-9"
             />
           </div>
-          <Select value={schoolFilter || "all"} onValueChange={(v) => setSchoolFilter(v === "all" ? "" : v)}>
+          <Select value={schoolFilter || "all"} onValueChange={(v) => { setSchoolFilter(v === "all" ? "" : v); setCurrentPage(1); }}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Schools" />
             </SelectTrigger>
@@ -133,7 +150,7 @@ export default function Students() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={classFilter || "all"} onValueChange={(v) => setClassFilter(v === "all" ? "" : v)}>
+          <Select value={classFilter || "all"} onValueChange={(v) => { setClassFilter(v === "all" ? "" : v); setCurrentPage(1); }}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="All Classes" />
             </SelectTrigger>
@@ -146,7 +163,7 @@ export default function Students() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={statusFilter || "all"} onValueChange={(v) => setStatusFilter(v === "all" ? "" : v)}>
+          <Select value={statusFilter || "all"} onValueChange={(v) => { setStatusFilter(v === "all" ? "" : v); setCurrentPage(1); }}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
@@ -199,7 +216,7 @@ export default function Students() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                [...Array(5)].map((_, i) => (
+                [...Array(PAGE_SIZE)].map((_, i) => (
                   <TableRow key={i}>
                     {[...Array(8)].map((_, j) => (
                       <TableCell key={j}>
@@ -208,14 +225,14 @@ export default function Students() {
                     ))}
                   </TableRow>
                 ))
-              ) : students?.length === 0 ? (
+              ) : students.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     No students found
                   </TableCell>
                 </TableRow>
               ) : (
-                students?.map((student) => (
+                students.map((student) => (
                   <TableRow key={student.id}>
                     <TableCell>
                       <Checkbox
@@ -280,6 +297,60 @@ export default function Students() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-2">
+            <p className="text-sm text-muted-foreground">
+              Showing {((currentPage - 1) * PAGE_SIZE) + 1} to {Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount} students
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <div className="flex items-center gap-1">
+                {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  let pageNum: number;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(pageNum)}
+                      className="w-8"
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

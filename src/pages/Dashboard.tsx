@@ -8,16 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const { data: schools, isLoading: schoolsLoading } = useSchools();
-  const { data: students, isLoading: studentsLoading } = useStudents();
+  const { data: studentsResult, isLoading: studentsLoading } = useStudents(undefined, { page: 1, pageSize: 100 });
 
   const totalSchools = schools?.length || 0;
   const activeSchools = schools?.filter((s) => s.is_active).length || 0;
-  const totalStudents = students?.length || 0;
-  const activeStudents = students?.filter((s) => s.is_active).length || 0;
+  const totalStudents = studentsResult?.totalCount || 0;
+  const activeStudents = studentsResult?.data.filter((s) => s.is_active).length || 0;
   const inactiveStudents = totalStudents - activeStudents;
 
   const recentSchools = schools?.slice(0, 5) || [];
-  const recentStudents = students?.slice(0, 5) || [];
+  const recentStudents = studentsResult?.data.slice(0, 5) || [];
 
   return (
     <AdminLayout>

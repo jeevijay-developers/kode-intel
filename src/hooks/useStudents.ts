@@ -20,14 +20,58 @@ export interface StudentFilters {
   search?: string;
 }
 
-export function useStudents(filters?: StudentFilters) {
+export interface PaginationParams {
+  page: number;
+  pageSize: number;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+export function useStudents(filters?: StudentFilters, pagination?: PaginationParams) {
+  const page = pagination?.page ?? 1;
+  const pageSize = pagination?.pageSize ?? 10;
+
   return useQuery({
-    queryKey: ["students", filters],
-    queryFn: async () => {
+    queryKey: ["students", filters, page, pageSize],
+    queryFn: async (): Promise<PaginatedResult<Student>> => {
+      // First get total count
+      let countQuery = supabase
+        .from("students")
+        .select("*", { count: "exact", head: true });
+
+      if (filters?.schoolId) {
+        countQuery = countQuery.eq("school_id", filters.schoolId);
+      }
+      if (filters?.class) {
+        countQuery = countQuery.eq("class", filters.class);
+      }
+      if (filters?.isActive !== undefined) {
+        countQuery = countQuery.eq("is_active", filters.isActive);
+      }
+      if (filters?.search) {
+        countQuery = countQuery.or(`student_name.ilike.%${filters.search}%,username.ilike.%${filters.search}%`);
+      }
+
+      const { count, error: countError } = await countQuery;
+      if (countError) throw countError;
+
+      const totalCount = count ?? 0;
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      // Then get paginated data
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
       let query = supabase
         .from("students")
         .select("*, schools(name, school_code)")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (filters?.schoolId) {
         query = query.eq("school_id", filters.schoolId);
@@ -45,7 +89,13 @@ export function useStudents(filters?: StudentFilters) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as Student[];
+      
+      return {
+        data: data as Student[],
+        totalCount,
+        totalPages,
+        currentPage: page,
+      };
     },
   });
 }
