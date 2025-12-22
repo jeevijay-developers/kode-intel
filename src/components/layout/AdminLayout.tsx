@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   LogOut,
+  BookOpen,
 } from "lucide-react";
 
 interface NavItem {
@@ -20,8 +21,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { title: "Dashboard", href: "/", icon: LayoutDashboard },
+  { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { title: "Schools", href: "/schools", icon: Building2 },
+  { title: "Courses", href: "/courses", icon: BookOpen },
   { title: "Bulk Upload", href: "/bulk-upload", icon: Upload },
   { title: "Students", href: "/students", icon: Users },
 ];
