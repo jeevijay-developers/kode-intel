@@ -2,6 +2,16 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   GraduationCap,
   Users,
@@ -15,15 +25,64 @@ import {
   ArrowLeft,
   Linkedin,
   Mail,
-  ChevronRight,
+  Send,
+  Phone,
+  MapPin,
 } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import kodeIntelLogo from "@/assets/kode-intel-logo.png";
 import brainIllustration from "@/assets/brain-illustration.png";
 
 export default function About() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    schoolName: "",
+    contactPerson: "",
+    email: "",
+    phone: "",
+    city: "",
+    state: "",
+    studentCount: "",
+    message: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, studentCount: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Inquiry Submitted! 🎉",
+      description: "Thank you for your interest. Our team will contact you within 24-48 hours.",
+    });
+    
+    setFormData({
+      schoolName: "",
+      contactPerson: "",
+      email: "",
+      phone: "",
+      city: "",
+      state: "",
+      studentCount: "",
+      message: "",
+    });
+    setIsSubmitting(false);
+  };
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -327,34 +386,204 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-primary to-primary/80">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold text-primary-foreground mb-4">
-            Partner With Us 🤝
-          </h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Are you a school looking to bring AI education to your students? 
-            Get in touch with us to learn about our partnership programs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={() => navigate("/auth")}
-              className="gap-2 rounded-full px-8"
-            >
-              <Building2 className="h-5 w-5" />
-              School Login
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="gap-2 rounded-full px-8 bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-            >
-              <Mail className="h-5 w-5" />
-              Contact Us
-            </Button>
+      {/* Contact Form Section */}
+      <section id="contact-form" className="py-16 px-4">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Form */}
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-4">Partner With Us 🤝</h2>
+              <p className="text-muted-foreground mb-8">
+                Interested in bringing AI education to your school? Fill out the form below and our 
+                team will get in touch to discuss partnership opportunities.
+              </p>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="schoolName">School Name *</Label>
+                    <Input
+                      id="schoolName"
+                      name="schoolName"
+                      placeholder="Enter school name"
+                      value={formData.schoolName}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="contactPerson">Contact Person *</Label>
+                    <Input
+                      id="contactPerson"
+                      name="contactPerson"
+                      placeholder="Your name"
+                      value={formData.contactPerson}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="email@school.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City *</Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      placeholder="City"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State *</Label>
+                    <Input
+                      id="state"
+                      name="state"
+                      placeholder="State"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="studentCount">Estimated Number of Students</Label>
+                  <Select value={formData.studentCount} onValueChange={handleSelectChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select student count" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="less-than-100">Less than 100</SelectItem>
+                      <SelectItem value="100-500">100 - 500</SelectItem>
+                      <SelectItem value="500-1000">500 - 1,000</SelectItem>
+                      <SelectItem value="1000-5000">1,000 - 5,000</SelectItem>
+                      <SelectItem value="more-than-5000">More than 5,000</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Additional Message</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    placeholder="Tell us about your school and what you're looking for..."
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full gap-2 rounded-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    "Submitting..."
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Submit Inquiry
+                    </>
+                  )}
+                </Button>
+              </form>
+            </div>
+
+            {/* Contact Info */}
+            <div className="lg:pl-8">
+              <Card className="mb-6">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground mb-4">Contact Information</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Mail className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Email</p>
+                        <p className="text-sm text-muted-foreground">partnerships@kodeintel.com</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Phone className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Phone</p>
+                        <p className="text-sm text-muted-foreground">+91 98765 43210</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Office</p>
+                        <p className="text-sm text-muted-foreground">
+                          123 Tech Park, Sector 62<br />
+                          Noida, Uttar Pradesh 201309
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-primary text-primary-foreground">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Why Partner With Kode Intel?</h3>
+                  <ul className="space-y-2 text-sm text-primary-foreground/80">
+                    <li className="flex items-start gap-2">
+                      <span className="text-lg">✓</span>
+                      Comprehensive AI curriculum for Classes 3-10
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-lg">✓</span>
+                      Trained facilitators and teaching support
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-lg">✓</span>
+                      Interactive learning platform with progress tracking
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-lg">✓</span>
+                      Regular assessments and certifications
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-lg">✓</span>
+                      Flexible implementation options
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>

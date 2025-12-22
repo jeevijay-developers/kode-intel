@@ -10,6 +10,7 @@ import BulkUpload from "./pages/BulkUpload";
 import Students from "./pages/Students";
 import Courses from "./pages/Courses";
 import CourseEditor from "./pages/CourseEditor";
+import CourseDetail from "./pages/CourseDetail";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import PublicCourses from "./pages/PublicCourses";
@@ -33,6 +34,7 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/courses" element={<PublicCourses />} />
+          <Route path="/course/:slug" element={<CourseDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           
