@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   BookOpen,
   GraduationCap,
@@ -21,6 +23,8 @@ import {
   Cpu,
   Monitor,
   Smartphone,
+  Menu,
+  X,
 } from "lucide-react";
 import {
   Accordion,
@@ -28,9 +32,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import kodeIntelLogo from "@/assets/kode-intel-logo.png";
+import brainIllustration from "@/assets/brain-illustration.png";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "#features", label: "Features" },
+    { href: "#courses", label: "Courses" },
+    { href: "#faq", label: "FAQ" },
+  ];
 
   const steps = [
     {
@@ -168,35 +181,102 @@ export default function Landing() {
     },
   ];
 
+  const handleNavClick = (href: string) => {
+    setMobileMenuOpen(false);
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Brain className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">LearnAI</span>
+            <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
           </div>
+          
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-            <a href="#courses" className="text-muted-foreground hover:text-foreground transition-colors">Courses</a>
-            <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+            {navLinks.map((link) => (
+              <a 
+                key={link.href}
+                href={link.href} 
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
-          <Button 
-            onClick={() => navigate("/student/login")}
-            className="gap-2 rounded-full px-6"
-          >
-            <GraduationCap className="h-4 w-4" />
-            Student Login
-          </Button>
+
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={() => navigate("/student/login")}
+              className="gap-2 rounded-full px-6 hidden sm:flex"
+            >
+              <GraduationCap className="h-4 w-4" />
+              Student Login
+            </Button>
+
+            {/* Mobile Menu */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col gap-4 mt-8">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.href}
+                      onClick={() => handleNavClick(link.href)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left py-2"
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                  <Button 
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/student/login");
+                    }}
+                    className="gap-2 rounded-full mt-4"
+                  >
+                    <GraduationCap className="h-4 w-4" />
+                    Student Login
+                  </Button>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 overflow-hidden">
-        <div className="container mx-auto">
+      <section className="pt-32 pb-20 px-4 overflow-hidden relative">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute top-40 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl" />
+          {/* Decorative dots pattern */}
+          <svg className="absolute top-32 right-20 w-32 h-32 text-primary/10" viewBox="0 0 100 100">
+            {[...Array(5)].map((_, row) => 
+              [...Array(5)].map((_, col) => (
+                <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r="3" fill="currentColor" />
+              ))
+            )}
+          </svg>
+          <svg className="absolute bottom-40 left-20 w-24 h-24 text-blue-500/10" viewBox="0 0 100 100">
+            {[...Array(4)].map((_, row) => 
+              [...Array(4)].map((_, col) => (
+                <circle key={`${row}-${col}`} cx={12.5 + col * 25} cy={12.5 + row * 25} r="4" fill="currentColor" />
+              ))
+            )}
+          </svg>
+        </div>
+
+        <div className="container mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6">
@@ -246,33 +326,36 @@ export default function Landing() {
                 </div>
               </div>
             </div>
-            <div className="relative hidden lg:block">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl p-6 h-48 flex items-center justify-center">
-                    <Brain className="h-20 w-20 text-primary" />
-                  </div>
-                  <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 rounded-3xl p-6 h-32 flex items-center justify-center">
-                    <Code className="h-12 w-12 text-blue-500" />
+            <div className="relative hidden lg:flex justify-center items-center">
+              {/* Brain illustration as centerpiece */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-500/10 to-amber-500/20 rounded-full blur-3xl scale-110" />
+                <img 
+                  src={brainIllustration} 
+                  alt="AI Brain" 
+                  className="relative z-10 w-80 h-auto drop-shadow-2xl"
+                />
+                {/* Floating cards around the illustration */}
+                <div className="absolute -top-4 -right-8 bg-card rounded-2xl shadow-lg p-4 border border-border animate-fade-in z-20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <CheckCircle2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Quiz Completed!</p>
+                      <p className="text-xs text-muted-foreground">Score: 95%</p>
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-4 pt-8">
-                  <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 rounded-3xl p-6 h-32 flex items-center justify-center">
-                    <Lightbulb className="h-12 w-12 text-purple-500" />
-                  </div>
-                  <div className="bg-gradient-to-br from-amber-500/20 to-amber-500/5 rounded-3xl p-6 h-48 flex items-center justify-center">
-                    <Rocket className="h-20 w-20 text-amber-500" />
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -top-4 -right-4 bg-card rounded-2xl shadow-lg p-4 border border-border animate-fade-in">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">Quiz Completed!</p>
-                    <p className="text-xs text-muted-foreground">Score: 95%</p>
+                <div className="absolute -bottom-4 -left-8 bg-card rounded-2xl shadow-lg p-4 border border-border animate-fade-in z-20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                      <Award className="h-5 w-5 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">New Badge!</p>
+                      <p className="text-xs text-muted-foreground">AI Explorer</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -531,10 +614,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                  <Brain className="h-6 w-6 text-primary-foreground" />
-                </div>
-                <span className="text-xl font-bold">LearnAI</span>
+                <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 brightness-0 invert" />
               </div>
               <p className="text-background/70 max-w-sm">
                 Empowering young minds with AI and Computational Thinking skills for the future.
@@ -558,7 +638,7 @@ export default function Landing() {
           </div>
           <div className="border-t border-background/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-background/70 text-sm">
-              © {new Date().getFullYear()} AI & Computational Thinking Curriculum. All rights reserved.
+              © {new Date().getFullYear()} Kode Intel. All rights reserved.
             </p>
           </div>
         </div>
