@@ -120,12 +120,12 @@ export default function Students() {
               className="pl-9"
             />
           </div>
-          <Select value={schoolFilter} onValueChange={setSchoolFilter}>
+          <Select value={schoolFilter || "all"} onValueChange={(v) => setSchoolFilter(v === "all" ? "" : v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Schools" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Schools</SelectItem>
+              <SelectItem value="all">All Schools</SelectItem>
               {schools?.map((school) => (
                 <SelectItem key={school.id} value={school.id}>
                   {school.name}
@@ -133,12 +133,12 @@ export default function Students() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={classFilter} onValueChange={setClassFilter}>
+          <Select value={classFilter || "all"} onValueChange={(v) => setClassFilter(v === "all" ? "" : v)}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="All Classes" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Classes</SelectItem>
+              <SelectItem value="all">All Classes</SelectItem>
               {CLASS_OPTIONS.map((cls) => (
                 <SelectItem key={cls} value={cls}>
                   Class {cls}
@@ -146,12 +146,12 @@ export default function Students() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter || "all"} onValueChange={(v) => setStatusFilter(v === "all" ? "" : v)}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
