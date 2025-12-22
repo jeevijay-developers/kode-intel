@@ -8,7 +8,13 @@ import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
 import Students from "./pages/Students";
+import Courses from "./pages/Courses";
+import CourseEditor from "./pages/CourseEditor";
 import Auth from "./pages/Auth";
+import Landing from "./pages/Landing";
+import StudentLogin from "./pages/student/StudentLogin";
+import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentCourse from "./pages/student/StudentCourse";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,39 +26,23 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/schools"
-            element={
-              <ProtectedRoute>
-                <Schools />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/bulk-upload"
-            element={
-              <ProtectedRoute>
-                <BulkUpload />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/students"
-            element={
-              <ProtectedRoute>
-                <Students />
-              </ProtectedRoute>
-            }
-          />
+          
+          {/* Student routes */}
+          <Route path="/student/login" element={<StudentLogin />} />
+          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student/courses/:id" element={<StudentCourse />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/schools" element={<ProtectedRoute><Schools /></ProtectedRoute>} />
+          <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
+          <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
+          <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+          <Route path="/courses/:id" element={<ProtectedRoute><CourseEditor /></ProtectedRoute>} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
