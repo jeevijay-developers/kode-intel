@@ -12,6 +12,8 @@ import Courses from "./pages/Courses";
 import CourseEditor from "./pages/CourseEditor";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
+import PublicCourses from "./pages/PublicCourses";
+import About from "./pages/About";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourse from "./pages/student/StudentCourse";
@@ -30,6 +32,8 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/courses" element={<PublicCourses />} />
+          <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           
           {/* Student routes */}
