@@ -150,14 +150,14 @@ export default function QuizManagement() {
                 <div>
                   <Label htmlFor="course">Associated Course (Optional)</Label>
                   <Select
-                    value={newQuiz.course_id}
-                    onValueChange={(value) => setNewQuiz({ ...newQuiz, course_id: value })}
+                    value={newQuiz.course_id || "none"}
+                    onValueChange={(value) => setNewQuiz({ ...newQuiz, course_id: value === "none" ? "" : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a course" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No Course</SelectItem>
+                      <SelectItem value="none">No Course</SelectItem>
                       {courses.map((course) => (
                         <SelectItem key={course.id} value={course.id}>
                           {course.title}
@@ -318,16 +318,16 @@ export default function QuizManagement() {
               <div>
                 <Label htmlFor="editCourse">Associated Course</Label>
                 <Select
-                  value={editingQuiz.course_id || ""}
+                  value={editingQuiz.course_id || "none"}
                   onValueChange={(value) =>
-                    setEditingQuiz({ ...editingQuiz, course_id: value || null })
+                    setEditingQuiz({ ...editingQuiz, course_id: value === "none" ? null : value })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No Course</SelectItem>
+                    <SelectItem value="none">No Course</SelectItem>
                     {courses.map((course) => (
                       <SelectItem key={course.id} value={course.id}>
                         {course.title}
