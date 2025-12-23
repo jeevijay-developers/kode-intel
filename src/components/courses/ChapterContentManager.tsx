@@ -325,9 +325,9 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
                     </SelectTrigger>
                     <SelectContent>
                       {availableQuizzes.length === 0 ? (
-                        <SelectItem value="" disabled>
+                        <p className="py-2 px-3 text-sm text-muted-foreground">
                           No available quizzes
-                        </SelectItem>
+                        </p>
                       ) : (
                         availableQuizzes.map((quiz) => (
                           <SelectItem key={quiz.id} value={quiz.id}>
