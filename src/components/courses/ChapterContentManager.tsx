@@ -39,9 +39,9 @@ interface ChapterContentManagerProps {
 
 export function ChapterContentManager({ chapterId, isPublished, onTogglePublish, onDelete }: ChapterContentManagerProps) {
   const { toast } = useToast();
-  const { videos, createVideo, deleteVideo } = useChapterVideos(chapterId);
-  const { ebooks, createEbook, deleteEbook } = useChapterEbooks(chapterId);
-  const { quizzes, deleteQuiz } = useChapterQuizzes(chapterId);
+  const { videos, createVideo, updateVideo, deleteVideo } = useChapterVideos(chapterId);
+  const { ebooks, createEbook, updateEbook, deleteEbook } = useChapterEbooks(chapterId);
+  const { quizzes, updateQuiz, deleteQuiz } = useChapterQuizzes(chapterId);
   const { quizzes: allQuizzes, assignToChapter, unassignFromChapter } = useAllQuizzes();
 
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
@@ -212,6 +212,11 @@ export function ChapterContentManager({ chapterId, isPublished, onTogglePublish,
                 <p className="font-medium truncate">{video.title}</p>
                 <p className="text-sm text-muted-foreground truncate">{video.description}</p>
               </div>
+              <Switch
+                checked={video.is_published}
+                onCheckedChange={(checked) => updateVideo.mutate({ id: video.id, is_published: checked })}
+                title={video.is_published ? "Published" : "Unpublished"}
+              />
               <a
                 href={video.youtube_url}
                 target="_blank"
@@ -286,6 +291,11 @@ export function ChapterContentManager({ chapterId, isPublished, onTogglePublish,
                 <p className="font-medium truncate">{ebook.title}</p>
                 <p className="text-sm text-muted-foreground truncate">{ebook.description}</p>
               </div>
+              <Switch
+                checked={ebook.is_published}
+                onCheckedChange={(checked) => updateEbook.mutate({ id: ebook.id, is_published: checked })}
+                title={ebook.is_published ? "Published" : "Unpublished"}
+              />
               <a
                 href={ebook.file_url}
                 target="_blank"
@@ -368,6 +378,14 @@ export function ChapterContentManager({ chapterId, isPublished, onTogglePublish,
                     Passing score: {quiz.passing_score}%
                   </p>
                 </div>
+                <Switch
+                  checked={quiz.is_published}
+                  onCheckedChange={(checked) => {
+                    updateQuiz.mutate({ id: quiz.id, is_published: checked });
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  title={quiz.is_published ? "Published" : "Unpublished"}
+                />
                 <Button
                   variant="ghost"
                   size="icon"
