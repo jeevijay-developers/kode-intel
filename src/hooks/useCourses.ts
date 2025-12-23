@@ -260,7 +260,7 @@ export function useChapterVideos(chapterId: string | undefined) {
     mutationFn: async (video: Partial<ChapterVideo>) => {
       const { data, error } = await supabase
         .from("chapter_videos")
-        .insert([video as any])
+        .insert([{ ...video, is_published: true } as any])
         .select()
         .single();
       if (error) throw error;
@@ -335,7 +335,7 @@ export function useChapterEbooks(chapterId: string | undefined) {
     mutationFn: async (ebook: Partial<ChapterEbook>) => {
       const { data, error } = await supabase
         .from("chapter_ebooks")
-        .insert([ebook as any])
+        .insert([{ ...ebook, is_published: true } as any])
         .select()
         .single();
       if (error) throw error;
@@ -347,6 +347,26 @@ export function useChapterEbooks(chapterId: string | undefined) {
     },
     onError: (error: Error) => {
       toast({ title: "Error adding ebook", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateEbook = useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<ChapterEbook> & { id: string }) => {
+      const { data, error } = await supabase
+        .from("chapter_ebooks")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chapter-ebooks", chapterId] });
+      toast({ title: "Ebook updated successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error updating ebook", description: error.message, variant: "destructive" });
     },
   });
 
@@ -364,7 +384,7 @@ export function useChapterEbooks(chapterId: string | undefined) {
     },
   });
 
-  return { ebooks, isLoading, createEbook, deleteEbook };
+  return { ebooks, isLoading, createEbook, updateEbook, deleteEbook };
 }
 
 export function useChapterQuizzes(chapterId: string | undefined) {
@@ -390,7 +410,7 @@ export function useChapterQuizzes(chapterId: string | undefined) {
     mutationFn: async (quiz: Partial<ChapterQuiz>) => {
       const { data, error } = await supabase
         .from("chapter_quizzes")
-        .insert([quiz as any])
+        .insert([{ ...quiz, is_published: true } as any])
         .select()
         .single();
       if (error) throw error;
@@ -402,6 +422,26 @@ export function useChapterQuizzes(chapterId: string | undefined) {
     },
     onError: (error: Error) => {
       toast({ title: "Error creating quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateQuiz = useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<ChapterQuiz> & { id: string }) => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chapter-quizzes", chapterId] });
+      toast({ title: "Quiz updated successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error updating quiz", description: error.message, variant: "destructive" });
     },
   });
 
@@ -419,7 +459,7 @@ export function useChapterQuizzes(chapterId: string | undefined) {
     },
   });
 
-  return { quizzes, isLoading, createQuiz, deleteQuiz };
+  return { quizzes, isLoading, createQuiz, updateQuiz, deleteQuiz };
 }
 
 export function useQuizQuestions(quizId: string | undefined) {
