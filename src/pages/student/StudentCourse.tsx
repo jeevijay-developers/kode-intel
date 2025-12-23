@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
   BookOpen,
@@ -18,6 +19,7 @@ import {
   CheckCircle,
   Brain,
   User,
+  Video,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useCourse, useChapters } from "@/hooks/useCourses";
@@ -336,126 +338,158 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
           </div>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="pb-4 space-y-3">
-        {/* Videos */}
-        {videos.map((video: any) => {
-          const isCompleted = videoProgress.some(
-            (p: any) => p.video_id === video.id && p.is_completed
-          );
-          const youtubeId = extractYouTubeId(video.youtube_url);
-          
-          return (
-            <div
-              key={video.id}
-              className="flex items-center gap-4 p-4 bg-muted rounded-xl"
-            >
-              <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
-                {youtubeId && (
-                  <img
-                    src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                    <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
-                  </div>
-                </div>
+      <AccordionContent className="pb-4">
+        <Tabs defaultValue="videos" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="videos" className="flex items-center gap-2">
+              <Video className="h-4 w-4" />
+              Videos ({videos.length})
+            </TabsTrigger>
+            <TabsTrigger value="ebooks" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Ebooks ({ebooks.length})
+            </TabsTrigger>
+            <TabsTrigger value="quizzes" className="flex items-center gap-2">
+              <HelpCircle className="h-4 w-4" />
+              Quizzes ({quizzes.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="videos" className="space-y-3 mt-0">
+            {videos.length === 0 ? (
+              <div className="text-center py-8 bg-muted/50 rounded-xl">
+                <Video className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground">No videos in this chapter</p>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-medium truncate">{video.title}</p>
-                  {isCompleted && (
-                    <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {video.duration_minutes ? `${video.duration_minutes} min` : "Video"}
-                </p>
-              </div>
-              <div className="flex gap-2 shrink-0">
-                <Button
-                  size="lg"
-                  onClick={() => navigate(`/student/video/${video.id}`)}
-                  className="h-12 px-6"
-                >
-                  <Play className="h-5 w-5 mr-2" />
-                  Watch
-                </Button>
-                {!isCompleted && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => markVideoComplete.mutate(video.id)}
-                    className="h-12"
+            ) : (
+              videos.map((video: any) => {
+                const isCompleted = videoProgress.some(
+                  (p: any) => p.video_id === video.id && p.is_completed
+                );
+                const youtubeId = extractYouTubeId(video.youtube_url);
+                
+                return (
+                  <div
+                    key={video.id}
+                    className="flex items-center gap-4 p-4 bg-muted rounded-xl"
                   >
-                    <CheckCircle className="h-5 w-5" />
-                  </Button>
-                )}
+                    <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
+                      {youtubeId && (
+                        <img
+                          src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                          <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium truncate">{video.title}</p>
+                        {isCompleted && (
+                          <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {video.duration_minutes ? `${video.duration_minutes} min` : "Video"}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <Button
+                        size="lg"
+                        onClick={() => navigate(`/student/video/${video.id}`)}
+                        className="h-12 px-6"
+                      >
+                        <Play className="h-5 w-5 mr-2" />
+                        Watch
+                      </Button>
+                      {!isCompleted && (
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          onClick={() => markVideoComplete.mutate(video.id)}
+                          className="h-12"
+                        >
+                          <CheckCircle className="h-5 w-5" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </TabsContent>
+
+          <TabsContent value="ebooks" className="space-y-3 mt-0">
+            {ebooks.length === 0 ? (
+              <div className="text-center py-8 bg-muted/50 rounded-xl">
+                <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground">No ebooks in this chapter</p>
               </div>
-            </div>
-          );
-        })}
+            ) : (
+              ebooks.map((ebook: any) => (
+                <div
+                  key={ebook.id}
+                  className="flex items-center gap-4 p-4 bg-muted rounded-xl"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileText className="h-7 w-7 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{ebook.title}</p>
+                    <p className="text-sm text-muted-foreground">Digital Book</p>
+                  </div>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate(`/student/ebook/${ebook.id}`)}
+                    className="h-12 px-6"
+                  >
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Read
+                  </Button>
+                </div>
+              ))
+            )}
+          </TabsContent>
 
-        {/* Ebooks */}
-        {ebooks.map((ebook: any) => (
-          <div
-            key={ebook.id}
-            className="flex items-center gap-4 p-4 bg-muted rounded-xl"
-          >
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <FileText className="h-7 w-7 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{ebook.title}</p>
-              <p className="text-sm text-muted-foreground">Digital Book</p>
-            </div>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate(`/student/ebook/${ebook.id}`)}
-              className="h-12 px-6"
-            >
-              <BookOpen className="h-5 w-5 mr-2" />
-              Read
-            </Button>
-          </div>
-        ))}
-
-        {/* Quizzes */}
-        {quizzes.map((quiz: any) => (
-          <div
-            key={quiz.id}
-            className="flex items-center gap-4 p-4 bg-muted rounded-xl"
-          >
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <HelpCircle className="h-7 w-7 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{quiz.title}</p>
-              <p className="text-sm text-muted-foreground">
-                Pass with {quiz.passing_score}%
-              </p>
-            </div>
-            <Button 
-              size="lg" 
-              className="h-12 px-6"
-              onClick={() => navigate(`/student/quiz/${quiz.id}`)}
-            >
-              🎯 Take Quiz
-            </Button>
-          </div>
-        ))}
-
-        {totalContent === 0 && (
-          <div className="text-center py-8">
-            <div className="text-4xl mb-2">📭</div>
-            <p className="text-muted-foreground">
-              Content coming soon!
-            </p>
-          </div>
-        )}
+          <TabsContent value="quizzes" className="space-y-3 mt-0">
+            {quizzes.length === 0 ? (
+              <div className="text-center py-8 bg-muted/50 rounded-xl">
+                <HelpCircle className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground">No quizzes in this chapter</p>
+              </div>
+            ) : (
+              quizzes.map((quiz: any) => (
+                <div
+                  key={quiz.id}
+                  className="flex items-center gap-4 p-4 bg-muted rounded-xl"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <HelpCircle className="h-7 w-7 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{quiz.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Pass with {quiz.passing_score}%
+                    </p>
+                  </div>
+                  <Button 
+                    size="lg" 
+                    className="h-12 px-6"
+                    onClick={() => navigate(`/student/quiz/${quiz.id}`)}
+                  >
+                    🎯 Take Quiz
+                  </Button>
+                </div>
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
       </AccordionContent>
     </AccordionItem>
   );
