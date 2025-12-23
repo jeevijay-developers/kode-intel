@@ -17,6 +17,7 @@ import {
   HelpCircle,
   CheckCircle,
   Target,
+  Code,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -214,15 +215,26 @@ export default function StudentDashboard() {
             <Brain className="h-8 w-8 text-primary" />
             <span className="text-lg font-bold text-foreground hidden sm:block">AI & CT Learning</span>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate("/student/profile")}
-            className="gap-2"
-          >
-            <User className="h-5 w-5" />
-            <span className="hidden sm:inline">Profile</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate("/compiler")}
+              className="gap-2"
+            >
+              <Code className="h-5 w-5" />
+              <span className="hidden sm:inline">Compiler</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate("/student/profile")}
+              className="gap-2"
+            >
+              <User className="h-5 w-5" />
+              <span className="hidden sm:inline">Profile</span>
+            </Button>
+          </div>
         </div>
       </header>
 

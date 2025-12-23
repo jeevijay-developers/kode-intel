@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
@@ -23,6 +24,7 @@ import StudentProfile from "./pages/student/StudentProfile";
 import StudentVideo from "./pages/student/StudentVideo";
 import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
+import Compiler from "./pages/student/Compiler";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +52,7 @@ function App() {
           <Route path="/student/video/:videoId" element={<StudentVideo />} />
           <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
           <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
+          <Route path="/compiler" element={<StudentProtectedRoute><Compiler /></StudentProtectedRoute>} />
           
           {/* Admin routes */}
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
