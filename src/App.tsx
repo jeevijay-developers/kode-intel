@@ -20,6 +20,9 @@ import StudentLogin from "./pages/student/StudentLogin";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourse from "./pages/student/StudentCourse";
 import StudentProfile from "./pages/student/StudentProfile";
+import StudentVideo from "./pages/student/StudentVideo";
+import StudentEbook from "./pages/student/StudentEbook";
+import StudentQuiz from "./pages/student/StudentQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +47,9 @@ function App() {
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/student/profile" element={<StudentProfile />} />
           <Route path="/student/courses/:id" element={<StudentCourse />} />
+          <Route path="/student/video/:videoId" element={<StudentVideo />} />
+          <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
+          <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
           
           {/* Admin routes */}
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

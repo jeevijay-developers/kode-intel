@@ -215,6 +215,7 @@ interface ChapterAccordionProps {
 }
 
 function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -376,7 +377,7 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
               <div className="flex gap-2 shrink-0">
                 <Button
                   size="lg"
-                  onClick={() => window.open(video.youtube_url, "_blank")}
+                  onClick={() => navigate(`/student/video/${video.id}`)}
                   className="h-12 px-6"
                 >
                   <Play className="h-5 w-5 mr-2" />
@@ -413,7 +414,7 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
             <Button
               size="lg"
               variant="outline"
-              onClick={() => window.open(ebook.file_url, "_blank")}
+              onClick={() => navigate(`/student/ebook/${ebook.id}`)}
               className="h-12 px-6"
             >
               <BookOpen className="h-5 w-5 mr-2" />
@@ -437,7 +438,11 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
                 Pass with {quiz.passing_score}%
               </p>
             </div>
-            <Button size="lg" className="h-12 px-6">
+            <Button 
+              size="lg" 
+              className="h-12 px-6"
+              onClick={() => navigate(`/student/quiz/${quiz.id}`)}
+            >
               🎯 Take Quiz
             </Button>
           </div>
