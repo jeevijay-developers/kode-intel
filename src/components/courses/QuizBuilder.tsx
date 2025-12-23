@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -98,6 +98,41 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
   const { options, createOption, updateOption, deleteOption } = useQuizOptions(question.id);
   const [newOptionText, setNewOptionText] = useState("");
 
+  const didInitTrueFalseRef = useRef(false);
+
+  useEffect(() => {
+    // Reset init flag when switching questions or types
+    didInitTrueFalseRef.current = false;
+  }, [question.id, question.question_type]);
+
+  useEffect(() => {
+    if (question.question_type !== "true_false") return;
+    if (options.length > 0) return;
+    if (didInitTrueFalseRef.current) return;
+
+    didInitTrueFalseRef.current = true;
+
+    (async () => {
+      try {
+        await createOption.mutateAsync({
+          question_id: question.id,
+          option_text: "True",
+          is_correct: false,
+          order_index: 0,
+        });
+        await createOption.mutateAsync({
+          question_id: question.id,
+          option_text: "False",
+          is_correct: false,
+          order_index: 1,
+        });
+      } catch {
+        // If it failed, allow retry on next render
+        didInitTrueFalseRef.current = false;
+      }
+    })();
+  }, [question.id, question.question_type, options.length, createOption]);
+
   const handleAddOption = async () => {
     if (!newOptionText.trim()) return;
     await createOption.mutateAsync({
@@ -119,29 +154,6 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
     // Then set the selected option to correct
     await updateOption.mutateAsync({ id: optionId, is_correct: true });
   };
-
-  // For true/false questions, auto-create options if they don't exist
-  const initTrueFalse = async () => {
-    if (question.question_type === "true_false" && options.length === 0) {
-      await createOption.mutateAsync({
-        question_id: question.id,
-        option_text: "True",
-        is_correct: false,
-        order_index: 0,
-      });
-      await createOption.mutateAsync({
-        question_id: question.id,
-        option_text: "False",
-        is_correct: false,
-        order_index: 1,
-      });
-    }
-  };
-
-  // Initialize true/false options
-  if (question.question_type === "true_false" && options.length === 0) {
-    initTrueFalse();
-  }
 
   return (
     <div className="p-4 border rounded-lg space-y-3">
