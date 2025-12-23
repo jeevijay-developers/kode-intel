@@ -32,8 +32,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import kodeIntelLogo from "@/assets/kode-intel-logo.png";
-import brainIllustration from "@/assets/brain-illustration.png";
+import brainLogo from "@/assets/brain-logo.png";
+import heroKidsCoding from "@/assets/hero-kids-coding.png";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -197,7 +197,8 @@ export default function Landing() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
+            <img src={brainLogo} alt="Kode Intel" className="h-10 md:h-12" />
+            <span className="font-bold text-lg md:text-xl text-foreground">Kode Intel</span>
           </div>
           
           {/* Desktop Navigation */}
@@ -332,13 +333,13 @@ export default function Landing() {
               </div>
             </div>
             <div className="relative hidden lg:flex justify-center items-center">
-              {/* Brain illustration as centerpiece */}
+              {/* Hero image of kids coding */}
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-500/10 to-amber-500/20 rounded-full blur-3xl scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-500/10 to-amber-500/20 rounded-3xl blur-3xl scale-105" />
                 <img 
-                  src={brainIllustration} 
-                  alt="AI Brain" 
-                  className="relative z-10 w-80 h-auto drop-shadow-2xl"
+                  src={heroKidsCoding} 
+                  alt="Kids learning to code" 
+                  className="relative z-10 w-full max-w-lg h-auto rounded-2xl shadow-2xl"
                 />
                 {/* Floating cards around the illustration */}
                 <div className="absolute -top-4 -right-8 bg-card rounded-2xl shadow-lg p-4 border border-border animate-fade-in z-20">
@@ -619,7 +620,8 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 brightness-0 invert" />
+                <img src={brainLogo} alt="Kode Intel" className="h-10 brightness-0 invert" />
+                <span className="font-bold text-lg">Kode Intel</span>
               </div>
               <p className="text-background/70 max-w-sm">
                 Empowering young minds with AI and Computational Thinking skills for the future.
