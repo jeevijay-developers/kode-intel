@@ -46,11 +46,11 @@ function App() {
           
           {/* Admin routes */}
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/schools" element={<ProtectedRoute><Schools /></ProtectedRoute>} />
-          <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
-          <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
-          <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
-          <Route path="/courses/:id" element={<ProtectedRoute><CourseEditor /></ProtectedRoute>} />
+          <Route path="/admin/schools" element={<ProtectedRoute><Schools /></ProtectedRoute>} />
+          <Route path="/admin/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
+          <Route path="/admin/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
+          <Route path="/admin/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+          <Route path="/admin/courses/:id" element={<ProtectedRoute><CourseEditor /></ProtectedRoute>} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
