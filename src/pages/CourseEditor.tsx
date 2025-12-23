@@ -56,7 +56,7 @@ export default function CourseEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: course, isLoading: courseLoading } = useCourse(id);
-  const { chapters, createChapter, deleteChapter } = useChapters(id);
+  const { chapters, createChapter, updateChapter, deleteChapter } = useChapters(id);
   const { updateCourse } = useCourses();
   const { assignments, assignSchool, removeSchool } = useCourseSchoolAssignments(id);
   const schoolsQuery = useSchools();
@@ -94,6 +94,7 @@ export default function CourseEditor() {
       course_id: id,
       title: newChapterTitle,
       order_index: chapters.length,
+      is_published: true,
     });
     setNewChapterTitle("");
     setIsChapterDialogOpen(false);
@@ -337,6 +338,10 @@ export default function CourseEditor() {
                     <AccordionContent className="pb-4">
                       <ChapterContentManager
                         chapterId={chapter.id}
+                        isPublished={chapter.is_published}
+                        onTogglePublish={(published) =>
+                          updateChapter.mutate({ id: chapter.id, is_published: published })
+                        }
                         onDelete={() => deleteChapter.mutate(chapter.id)}
                       />
                     </AccordionContent>
