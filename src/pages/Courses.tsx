@@ -151,7 +151,7 @@ export default function Courses() {
               <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div
                   className="h-32 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center cursor-pointer"
-                  onClick={() => navigate(`/courses/${course.id}`)}
+                  onClick={() => navigate(`/admin/courses/${course.id}`)}
                 >
                   {course.thumbnail_url ? (
                     <img
@@ -167,7 +167,7 @@ export default function Courses() {
                   <div className="flex items-start justify-between">
                     <CardTitle
                       className="text-lg cursor-pointer hover:text-primary"
-                      onClick={() => navigate(`/courses/${course.id}`)}
+                      onClick={() => navigate(`/admin/courses/${course.id}`)}
                     >
                       {course.title}
                     </CardTitle>
@@ -207,7 +207,7 @@ export default function Courses() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/courses/${course.id}`)}
+                        onClick={() => navigate(`/admin/courses/${course.id}`)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

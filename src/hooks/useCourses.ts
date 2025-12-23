@@ -48,7 +48,8 @@ export interface ChapterEbook {
 
 export interface ChapterQuiz {
   id: string;
-  chapter_id: string;
+  chapter_id: string | null;
+  course_id: string | null;
   title: string;
   description: string | null;
   passing_score: number;
@@ -600,4 +601,140 @@ export function useCourseSchoolAssignments(courseId: string | undefined) {
   });
 
   return { assignments, isLoading, assignSchool, removeSchool };
+}
+
+// Hook for managing all quizzes (standalone quiz management)
+export function useAllQuizzes() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: quizzes = [], isLoading } = useQuery({
+    queryKey: ["all-quizzes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as ChapterQuiz[];
+    },
+  });
+
+  const createQuiz = useMutation({
+    mutationFn: async (quiz: { 
+      title: string; 
+      description?: string; 
+      passing_score?: number; 
+      course_id?: string | null;
+    }) => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .insert([{
+          title: quiz.title,
+          description: quiz.description || null,
+          passing_score: quiz.passing_score || 60,
+          course_id: quiz.course_id || null,
+          chapter_id: null,
+          order_index: 0,
+        }])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-quizzes"] });
+      toast({ title: "Quiz created successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error creating quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateQuiz = useMutation({
+    mutationFn: async ({ id, ...updates }: { 
+      id: string; 
+      title?: string; 
+      description?: string; 
+      passing_score?: number;
+      course_id?: string | null;
+      chapter_id?: string | null;
+    }) => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["chapter-quizzes"] });
+      toast({ title: "Quiz updated successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error updating quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const deleteQuiz = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("chapter_quizzes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["chapter-quizzes"] });
+      toast({ title: "Quiz deleted successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error deleting quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const assignToChapter = useMutation({
+    mutationFn: async ({ quizId, chapterId }: { quizId: string; chapterId: string }) => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .update({ chapter_id: chapterId })
+        .eq("id", quizId)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["chapter-quizzes"] });
+      toast({ title: "Quiz assigned to chapter" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error assigning quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const unassignFromChapter = useMutation({
+    mutationFn: async (quizId: string) => {
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .update({ chapter_id: null })
+        .eq("id", quizId)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["chapter-quizzes"] });
+      toast({ title: "Quiz unassigned from chapter" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error unassigning quiz", description: error.message, variant: "destructive" });
+    },
+  });
+
+  return { quizzes, isLoading, createQuiz, updateQuiz, deleteQuiz, assignToChapter, unassignFromChapter };
 }

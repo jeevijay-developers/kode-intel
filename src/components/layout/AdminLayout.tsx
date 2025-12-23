@@ -12,6 +12,7 @@ import {
   X,
   LogOut,
   BookOpen,
+  HelpCircle,
 } from "lucide-react";
 
 interface NavItem {
@@ -24,6 +25,7 @@ const navItems: NavItem[] = [
   { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { title: "Schools", href: "/admin/schools", icon: Building2 },
   { title: "Courses", href: "/admin/courses", icon: BookOpen },
+  { title: "Quiz Bank", href: "/admin/quizzes", icon: HelpCircle },
   { title: "Bulk Upload", href: "/admin/bulk-upload", icon: Upload },
   { title: "Students", href: "/admin/students", icon: Users },
 ];
