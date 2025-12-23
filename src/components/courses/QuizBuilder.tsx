@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -10,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Check } from "lucide-react";
+import { Plus, Trash2, Check, Edit, X, Save } from "lucide-react";
 import { useQuizQuestions, useQuizOptions } from "@/hooks/useCourses";
 
 interface QuizBuilderProps {
@@ -95,8 +94,10 @@ interface QuestionItemProps {
 }
 
 function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
-  const { options, createOption, updateOption, deleteOption } = useQuizOptions(question.id);
+  const { options, isLoading, createOption, updateOption, deleteOption } = useQuizOptions(question.id);
   const [newOptionText, setNewOptionText] = useState("");
+  const [editingOptionId, setEditingOptionId] = useState<string | null>(null);
+  const [editingOptionText, setEditingOptionText] = useState("");
 
   const didInitTrueFalseRef = useRef(false);
 
@@ -106,6 +107,8 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
   }, [question.id, question.question_type]);
 
   useEffect(() => {
+    // Wait for query to finish loading before checking length
+    if (isLoading) return;
     if (question.question_type !== "true_false") return;
     if (options.length > 0) return;
     if (didInitTrueFalseRef.current) return;
@@ -131,7 +134,7 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
         didInitTrueFalseRef.current = false;
       }
     })();
-  }, [question.id, question.question_type, options.length, createOption]);
+  }, [question.id, question.question_type, options.length, isLoading, createOption]);
 
   const handleAddOption = async () => {
     if (!newOptionText.trim()) return;
@@ -155,6 +158,26 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
     await updateOption.mutateAsync({ id: optionId, is_correct: true });
   };
 
+  const handleStartEdit = (optionId: string, currentText: string) => {
+    setEditingOptionId(optionId);
+    setEditingOptionText(currentText);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingOptionId || !editingOptionText.trim()) return;
+    await updateOption.mutateAsync({
+      id: editingOptionId,
+      option_text: editingOptionText,
+    });
+    setEditingOptionId(null);
+    setEditingOptionText("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingOptionId(null);
+    setEditingOptionText("");
+  };
+
   return (
     <div className="p-4 border rounded-lg space-y-3">
       <div className="flex items-start justify-between">
@@ -172,32 +195,91 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
         {options.map((option) => (
           <div
             key={option.id}
-            className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+            className={`flex items-center gap-2 p-2 rounded transition-colors ${
               option.is_correct
                 ? "bg-primary/10 border border-primary"
                 : "bg-muted hover:bg-muted/80"
-            }`}
-            onClick={() => handleSetCorrect(option.id)}
+            } ${editingOptionId === option.id ? "" : "cursor-pointer"}`}
+            onClick={() => {
+              if (editingOptionId !== option.id) {
+                handleSetCorrect(option.id);
+              }
+            }}
           >
             <div
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                 option.is_correct ? "border-primary bg-primary" : "border-muted-foreground"
               }`}
             >
               {option.is_correct && <Check className="h-3 w-3 text-primary-foreground" />}
             </div>
-            <span className="flex-1">{option.option_text}</span>
-            {question.question_type === "multiple_choice" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteOption.mutate(option.id);
-                }}
-              >
-                <Trash2 className="h-3 w-3 text-muted-foreground" />
-              </Button>
+            
+            {editingOptionId === option.id ? (
+              <div className="flex-1 flex items-center gap-2">
+                <Input
+                  value={editingOptionText}
+                  onChange={(e) => setEditingOptionText(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSaveEdit();
+                    if (e.key === "Escape") handleCancelEdit();
+                  }}
+                  className="h-8"
+                  autoFocus
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSaveEdit();
+                  }}
+                  className="h-8 w-8"
+                >
+                  <Save className="h-3 w-3 text-primary" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCancelEdit();
+                  }}
+                  className="h-8 w-8"
+                >
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <span className="flex-1">{option.option_text}</span>
+                {question.question_type === "multiple_choice" && (
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStartEdit(option.id, option.option_text);
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Edit className="h-3 w-3 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteOption.mutate(option.id);
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Trash2 className="h-3 w-3 text-muted-foreground" />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         ))}
