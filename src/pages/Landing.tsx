@@ -43,7 +43,7 @@ export default function Landing() {
     { href: "/about", label: "About" },
     { href: "/courses", label: "Courses" },
     { href: "#features", label: "Features" },
-    { href: "#faq", label: "FAQ" },
+    { href: "/compiler", label: "Compiler" },
   ];
 
   const steps = [
