@@ -31,8 +31,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import kodeIntelLogo from "@/assets/kode-intel-logo.png";
-import brainIllustration from "@/assets/brain-illustration.png";
+import brainLogo from "@/assets/brain-logo.png";
 
 export default function About() {
   const navigate = useNavigate();
@@ -161,7 +160,8 @@ export default function About() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
+            <img src={brainLogo} alt="Kode Intel" className="h-10 md:h-12" />
+            <span className="font-bold text-lg md:text-xl text-foreground">Kode Intel</span>
           </div>
           
           {/* Desktop Navigation */}
@@ -254,7 +254,7 @@ export default function About() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-500/10 to-amber-500/20 rounded-full blur-3xl scale-110" />
                 <img 
-                  src={brainIllustration} 
+                  src={brainLogo} 
                   alt="AI Brain" 
                   className="relative z-10 w-64 lg:w-80 h-auto drop-shadow-2xl"
                 />
