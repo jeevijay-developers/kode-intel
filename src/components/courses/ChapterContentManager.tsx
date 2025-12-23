@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, HelpCircle, Plus, Trash2, ExternalLink, Link2, Unlink } from "lucide-react";
+import { Video, FileText, HelpCircle, Plus, Trash2, ExternalLink, Link2, Unlink, Eye, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   useChapterVideos,
   useChapterEbooks,
@@ -31,10 +32,12 @@ import { QuizBuilder } from "./QuizBuilder";
 
 interface ChapterContentManagerProps {
   chapterId: string;
+  isPublished: boolean;
+  onTogglePublish: (published: boolean) => void;
   onDelete: () => void;
 }
 
-export function ChapterContentManager({ chapterId, onDelete }: ChapterContentManagerProps) {
+export function ChapterContentManager({ chapterId, isPublished, onTogglePublish, onDelete }: ChapterContentManagerProps) {
   const { toast } = useToast();
   const { videos, createVideo, deleteVideo } = useChapterVideos(chapterId);
   const { ebooks, createEbook, deleteEbook } = useChapterEbooks(chapterId);
@@ -392,7 +395,27 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-end pt-4 border-t border-border">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
+        <div className="flex items-center gap-3">
+          <Switch
+            id="publish-chapter"
+            checked={isPublished}
+            onCheckedChange={onTogglePublish}
+          />
+          <label htmlFor="publish-chapter" className="flex items-center gap-2 text-sm cursor-pointer">
+            {isPublished ? (
+              <>
+                <Eye className="h-4 w-4 text-primary" />
+                Published
+              </>
+            ) : (
+              <>
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                Unpublished
+              </>
+            )}
+          </label>
+        </div>
         <Button variant="destructive" size="sm" onClick={onDelete}>
           <Trash2 className="mr-2 h-4 w-4" />
           Delete Chapter
