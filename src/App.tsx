@@ -10,6 +10,7 @@ import BulkUpload from "./pages/BulkUpload";
 import Students from "./pages/Students";
 import Courses from "./pages/Courses";
 import CourseEditor from "./pages/CourseEditor";
+import QuizManagement from "./pages/QuizManagement";
 import CourseDetail from "./pages/CourseDetail";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
@@ -51,6 +52,7 @@ function App() {
           <Route path="/admin/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
           <Route path="/admin/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
           <Route path="/admin/courses/:id" element={<ProtectedRoute><CourseEditor /></ProtectedRoute>} />
+          <Route path="/admin/quizzes" element={<ProtectedRoute><QuizManagement /></ProtectedRoute>} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

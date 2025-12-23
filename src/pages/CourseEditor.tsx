@@ -124,7 +124,7 @@ export default function CourseEditor() {
       <AdminLayout>
         <div className="text-center py-12">
           <h2 className="text-xl font-semibold text-foreground">Course not found</h2>
-          <Button onClick={() => navigate("/courses")} className="mt-4">
+          <Button onClick={() => navigate("/admin/courses")} className="mt-4">
             Back to Courses
           </Button>
         </div>
@@ -137,7 +137,7 @@ export default function CourseEditor() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/courses")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/admin/courses")}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">

@@ -11,11 +11,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Video, FileText, HelpCircle, Plus, Trash2, ExternalLink } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Video, FileText, HelpCircle, Plus, Trash2, ExternalLink, Link2, Unlink } from "lucide-react";
 import {
   useChapterVideos,
   useChapterEbooks,
   useChapterQuizzes,
+  useAllQuizzes,
 } from "@/hooks/useCourses";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -30,17 +38,21 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
   const { toast } = useToast();
   const { videos, createVideo, deleteVideo } = useChapterVideos(chapterId);
   const { ebooks, createEbook, deleteEbook } = useChapterEbooks(chapterId);
-  const { quizzes, createQuiz, deleteQuiz } = useChapterQuizzes(chapterId);
+  const { quizzes, deleteQuiz } = useChapterQuizzes(chapterId);
+  const { quizzes: allQuizzes, assignToChapter, unassignFromChapter } = useAllQuizzes();
 
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [ebookDialogOpen, setEbookDialogOpen] = useState(false);
-  const [quizDialogOpen, setQuizDialogOpen] = useState(false);
+  const [assignQuizDialogOpen, setAssignQuizDialogOpen] = useState(false);
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
+  const [selectedQuizToAssign, setSelectedQuizToAssign] = useState("");
 
   const [newVideo, setNewVideo] = useState({ title: "", youtube_url: "", description: "" });
   const [newEbook, setNewEbook] = useState({ title: "", description: "" });
-  const [newQuiz, setNewQuiz] = useState({ title: "", description: "", passing_score: 60 });
   const [uploadingEbook, setUploadingEbook] = useState(false);
+
+  // Get available quizzes (not assigned to any chapter)
+  const availableQuizzes = allQuizzes.filter((q) => !q.chapter_id);
 
   const handleAddVideo = async () => {
     if (!newVideo.title.trim() || !newVideo.youtube_url.trim()) return;
@@ -93,17 +105,18 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
     }
   };
 
-  const handleAddQuiz = async () => {
-    if (!newQuiz.title.trim()) return;
-    await createQuiz.mutateAsync({
-      chapter_id: chapterId,
-      title: newQuiz.title,
-      description: newQuiz.description,
-      passing_score: newQuiz.passing_score,
-      order_index: quizzes.length,
+  const handleAssignQuiz = async () => {
+    if (!selectedQuizToAssign) return;
+    await assignToChapter.mutateAsync({
+      quizId: selectedQuizToAssign,
+      chapterId: chapterId,
     });
-    setNewQuiz({ title: "", description: "", passing_score: 60 });
-    setQuizDialogOpen(false);
+    setSelectedQuizToAssign("");
+    setAssignQuizDialogOpen(false);
+  };
+
+  const handleUnassignQuiz = async (quizId: string) => {
+    await unassignFromChapter.mutateAsync(quizId);
   };
 
   const extractYouTubeId = (url: string) => {
@@ -289,51 +302,51 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
         </TabsContent>
 
         <TabsContent value="quizzes" className="space-y-3 mt-4">
-          <Dialog open={quizDialogOpen} onOpenChange={setQuizDialogOpen}>
+          <Dialog open={assignQuizDialogOpen} onOpenChange={setAssignQuizDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Quiz
+                <Link2 className="mr-2 h-4 w-4" />
+                Assign Quiz from Bank
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create Quiz</DialogTitle>
+                <DialogTitle>Assign Quiz to Chapter</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="quizTitle">Title</Label>
-                  <Input
-                    id="quizTitle"
-                    value={newQuiz.title}
-                    onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
-                    placeholder="Quiz title"
-                  />
+                  <Label htmlFor="quizSelect">Select a Quiz</Label>
+                  <Select
+                    value={selectedQuizToAssign}
+                    onValueChange={setSelectedQuizToAssign}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a quiz from the bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableQuizzes.length === 0 ? (
+                        <SelectItem value="" disabled>
+                          No available quizzes
+                        </SelectItem>
+                      ) : (
+                        availableQuizzes.map((quiz) => (
+                          <SelectItem key={quiz.id} value={quiz.id}>
+                            {quiz.title} ({quiz.passing_score}%)
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Create quizzes in the Quiz Bank first, then assign them here.
+                  </p>
                 </div>
-                <div>
-                  <Label htmlFor="quizDesc">Description (optional)</Label>
-                  <Textarea
-                    id="quizDesc"
-                    value={newQuiz.description}
-                    onChange={(e) => setNewQuiz({ ...newQuiz, description: e.target.value })}
-                    placeholder="Quiz description"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="passingScore">Passing Score (%)</Label>
-                  <Input
-                    id="passingScore"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={newQuiz.passing_score}
-                    onChange={(e) =>
-                      setNewQuiz({ ...newQuiz, passing_score: parseInt(e.target.value) || 60 })
-                    }
-                  />
-                </div>
-                <Button onClick={handleAddQuiz} className="w-full">
-                  Create Quiz
+                <Button 
+                  onClick={handleAssignQuiz} 
+                  className="w-full" 
+                  disabled={!selectedQuizToAssign || assignToChapter.isPending}
+                >
+                  Assign Quiz
                 </Button>
               </div>
             </DialogContent>
@@ -355,12 +368,13 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
                 <Button
                   variant="ghost"
                   size="icon"
+                  title="Unassign from chapter"
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteQuiz.mutate(quiz.id);
+                    handleUnassignQuiz(quiz.id);
                   }}
                 >
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                  <Unlink className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </div>
               {selectedQuizId === quiz.id && (
@@ -371,7 +385,9 @@ export function ChapterContentManager({ chapterId, onDelete }: ChapterContentMan
             </div>
           ))}
           {quizzes.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-4">No quizzes added yet</p>
+            <p className="text-sm text-muted-foreground text-center py-4">
+              No quizzes assigned. Create quizzes in the Quiz Bank and assign them here.
+            </p>
           )}
         </TabsContent>
       </Tabs>

@@ -60,7 +60,8 @@ export type Database = {
       }
       chapter_quizzes: {
         Row: {
-          chapter_id: string
+          chapter_id: string | null
+          course_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -71,7 +72,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          chapter_id: string
+          chapter_id?: string | null
+          course_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -82,7 +84,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          chapter_id?: string
+          chapter_id?: string | null
+          course_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -98,6 +101,13 @@ export type Database = {
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapter_quizzes_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
             referencedColumns: ["id"]
           },
         ]
