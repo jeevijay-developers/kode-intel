@@ -36,7 +36,8 @@ export default function PublicCourses() {
       id: "1",
       slug: "introduction-to-ai-for-kids",
       title: "Introduction to AI for Kids",
-      description: "Learn the basics of Artificial Intelligence through fun activities and games. Understand what AI is and how it's used in everyday life.",
+      description:
+        "Learn the basics of Artificial Intelligence through fun activities and games. Understand what AI is and how it's used in everyday life.",
       level: "Classes 3-4",
       levelIcon: Lightbulb,
       duration: "8 weeks",
@@ -50,7 +51,8 @@ export default function PublicCourses() {
       id: "2",
       slug: "computational-thinking-basics",
       title: "Computational Thinking Basics",
-      description: "Develop problem-solving skills through computational thinking. Learn to break down complex problems into simple steps.",
+      description:
+        "Develop problem-solving skills through computational thinking. Learn to break down complex problems into simple steps.",
       level: "Classes 3-4",
       levelIcon: Lightbulb,
       duration: "6 weeks",
@@ -64,7 +66,8 @@ export default function PublicCourses() {
       id: "3",
       slug: "pattern-recognition-logic",
       title: "Pattern Recognition & Logic",
-      description: "Master pattern recognition and logical reasoning. Build a strong foundation for advanced programming concepts.",
+      description:
+        "Master pattern recognition and logical reasoning. Build a strong foundation for advanced programming concepts.",
       level: "Classes 5-6",
       levelIcon: Rocket,
       duration: "10 weeks",
@@ -78,7 +81,8 @@ export default function PublicCourses() {
       id: "4",
       slug: "introduction-to-algorithms",
       title: "Introduction to Algorithms",
-      description: "Discover how algorithms work and create your own step-by-step solutions. Learn sorting, searching, and more!",
+      description:
+        "Discover how algorithms work and create your own step-by-step solutions. Learn sorting, searching, and more!",
       level: "Classes 5-6",
       levelIcon: Rocket,
       duration: "8 weeks",
@@ -92,7 +96,8 @@ export default function PublicCourses() {
       id: "5",
       slug: "data-structures-for-young-coders",
       title: "Data Structures for Young Coders",
-      description: "Learn about arrays, lists, and trees through interactive examples. Build projects that use real data structures.",
+      description:
+        "Learn about arrays, lists, and trees through interactive examples. Build projects that use real data structures.",
       level: "Classes 7-8",
       levelIcon: Code,
       duration: "12 weeks",
@@ -106,7 +111,8 @@ export default function PublicCourses() {
       id: "6",
       slug: "machine-learning-fundamentals",
       title: "Machine Learning Fundamentals",
-      description: "Understand how machines learn from data. Create simple ML models and see AI in action!",
+      description:
+        "Understand how machines learn from data. Create simple ML models and see AI in action!",
       level: "Classes 7-8",
       levelIcon: Code,
       duration: "10 weeks",
@@ -120,7 +126,8 @@ export default function PublicCourses() {
       id: "7",
       slug: "ai-in-the-real-world",
       title: "AI in the Real World",
-      description: "Explore how AI is used in healthcare, transportation, entertainment, and more. Analyze real case studies.",
+      description:
+        "Explore how AI is used in healthcare, transportation, entertainment, and more. Analyze real case studies.",
       level: "Classes 9-10",
       levelIcon: Cpu,
       duration: "12 weeks",
@@ -134,7 +141,8 @@ export default function PublicCourses() {
       id: "8",
       slug: "building-ai-projects",
       title: "Building AI Projects",
-      description: "Apply everything you've learned to build real AI projects. Create chatbots, image classifiers, and more!",
+      description:
+        "Apply everything you've learned to build real AI projects. Create chatbots, image classifiers, and more!",
       level: "Classes 9-10",
       levelIcon: Cpu,
       duration: "14 weeks",
@@ -156,26 +164,32 @@ export default function PublicCourses() {
 
   const [selectedLevel, setSelectedLevel] = useState("all");
 
-  const filteredCourses = selectedLevel === "all" 
-    ? courses 
-    : courses.filter(course => course.level.includes(selectedLevel));
+  const filteredCourses =
+    selectedLevel === "all"
+      ? courses
+      : courses.filter((course) => course.level.includes(selectedLevel));
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
           </div>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button 
+              <button
                 key={link.href}
                 onClick={() => navigate(link.href)}
-                className={`text-muted-foreground hover:text-foreground transition-colors ${link.href === '/courses' ? 'text-foreground font-medium' : ''}`}
+                className={`text-muted-foreground hover:text-foreground transition-colors ${
+                  link.href === "/courses" ? "text-foreground font-medium" : ""
+                }`}
               >
                 {link.label}
               </button>
@@ -183,12 +197,12 @@ export default function PublicCourses() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Button 
+            <Button
               onClick={() => navigate("/student/login")}
               className="gap-2 rounded-full px-6 hidden sm:flex"
             >
               <GraduationCap className="h-4 w-4" />
-              Student Login
+              Login
             </Button>
 
             {/* Mobile Menu */}
@@ -212,7 +226,7 @@ export default function PublicCourses() {
                       {link.label}
                     </button>
                   ))}
-                  <Button 
+                  <Button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       navigate("/student/login");
@@ -220,7 +234,7 @@ export default function PublicCourses() {
                     className="gap-2 rounded-full mt-4"
                   >
                     <GraduationCap className="h-4 w-4" />
-                    Student Login
+                    Login
                   </Button>
                 </nav>
               </SheetContent>
@@ -232,8 +246,8 @@ export default function PublicCourses() {
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-muted/30">
         <div className="container mx-auto">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => navigate("/")}
             className="gap-2 mb-6 -ml-2"
           >
@@ -245,8 +259,9 @@ export default function PublicCourses() {
               Explore Our Courses 📚
             </h1>
             <p className="text-lg text-muted-foreground">
-              Discover our comprehensive curriculum designed to teach AI and Computational Thinking 
-              to students from Class 3 to Class 10. Each course is packed with videos, ebooks, and fun quizzes!
+              Discover our comprehensive curriculum designed to teach AI and
+              Computational Thinking to students from Class 3 to Class 10. Each
+              course is packed with videos, ebooks, and fun quizzes!
             </p>
           </div>
         </div>
@@ -276,18 +291,22 @@ export default function PublicCourses() {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCourses.map((course) => (
-              <Card 
-                key={course.id} 
+              <Card
+                key={course.id}
                 className="overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group"
                 onClick={() => navigate(`/course/${course.slug}`)}
               >
-                <div className={`h-32 bg-gradient-to-br ${course.color} flex items-center justify-center text-6xl`}>
+                <div
+                  className={`h-32 bg-gradient-to-br ${course.color} flex items-center justify-center text-6xl`}
+                >
                   {course.thumbnail}
                 </div>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <course.levelIcon className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium text-primary">{course.level}</span>
+                    <span className="text-xs font-medium text-primary">
+                      {course.level}
+                    </span>
                   </div>
                   <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {course.title}
@@ -308,7 +327,9 @@ export default function PublicCourses() {
                   <div className="flex items-center justify-between pt-3 border-t border-border">
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="text-sm font-medium">{course.rating}</span>
+                      <span className="text-sm font-medium">
+                        {course.rating}
+                      </span>
                     </div>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <Users className="h-3 w-3" />
@@ -329,16 +350,17 @@ export default function PublicCourses() {
             Ready to Start Learning? 🎉
           </h2>
           <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Log in with your school credentials to access all your assigned courses and start your AI learning journey!
+            Log in with your school credentials to access all your assigned
+            courses and start your AI learning journey!
           </p>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             variant="secondary"
             onClick={() => navigate("/student/login")}
             className="gap-2 rounded-full px-8"
           >
             <GraduationCap className="h-5 w-5" />
-            Student Login
+            Login
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>

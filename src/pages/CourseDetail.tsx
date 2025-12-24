@@ -30,29 +30,39 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const coursesData: Record<string, {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  fullDescription: string;
-  level: string;
-  levelIcon: typeof Lightbulb;
-  duration: string;
-  lessons: number;
-  students: number;
-  rating: number;
-  thumbnail: string;
-  color: string;
-  objectives: string[];
-  chapters: { title: string; videos: number; quizzes: number; ebooks: number }[];
-}> = {
+const coursesData: Record<
+  string,
+  {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    fullDescription: string;
+    level: string;
+    levelIcon: typeof Lightbulb;
+    duration: string;
+    lessons: number;
+    students: number;
+    rating: number;
+    thumbnail: string;
+    color: string;
+    objectives: string[];
+    chapters: {
+      title: string;
+      videos: number;
+      quizzes: number;
+      ebooks: number;
+    }[];
+  }
+> = {
   "introduction-to-ai-for-kids": {
     id: "1",
     slug: "introduction-to-ai-for-kids",
     title: "Introduction to AI for Kids",
-    description: "Learn the basics of Artificial Intelligence through fun activities and games.",
-    fullDescription: "This beginner-friendly course introduces young learners to the exciting world of Artificial Intelligence. Through interactive activities, games, and hands-on projects, students will discover what AI is, how it works, and how it impacts their daily lives. From smart assistants to recommendation systems, we explore AI in a way that's engaging and easy to understand.",
+    description:
+      "Learn the basics of Artificial Intelligence through fun activities and games.",
+    fullDescription:
+      "This beginner-friendly course introduces young learners to the exciting world of Artificial Intelligence. Through interactive activities, games, and hands-on projects, students will discover what AI is, how it works, and how it impacts their daily lives. From smart assistants to recommendation systems, we explore AI in a way that's engaging and easy to understand.",
     level: "Classes 3-4",
     levelIcon: Lightbulb,
     duration: "8 weeks",
@@ -81,8 +91,10 @@ const coursesData: Record<string, {
     id: "2",
     slug: "computational-thinking-basics",
     title: "Computational Thinking Basics",
-    description: "Develop problem-solving skills through computational thinking.",
-    fullDescription: "Computational thinking is a fundamental skill that helps students solve complex problems by breaking them down into manageable parts. This course teaches the four pillars of computational thinking: decomposition, pattern recognition, abstraction, and algorithm design through engaging activities and real-world examples.",
+    description:
+      "Develop problem-solving skills through computational thinking.",
+    fullDescription:
+      "Computational thinking is a fundamental skill that helps students solve complex problems by breaking them down into manageable parts. This course teaches the four pillars of computational thinking: decomposition, pattern recognition, abstraction, and algorithm design through engaging activities and real-world examples.",
     level: "Classes 3-4",
     levelIcon: Lightbulb,
     duration: "6 weeks",
@@ -99,7 +111,12 @@ const coursesData: Record<string, {
       "Apply computational thinking to everyday situations",
     ],
     chapters: [
-      { title: "Introduction to Problem Solving", videos: 3, quizzes: 1, ebooks: 1 },
+      {
+        title: "Introduction to Problem Solving",
+        videos: 3,
+        quizzes: 1,
+        ebooks: 1,
+      },
       { title: "Decomposition", videos: 3, quizzes: 1, ebooks: 1 },
       { title: "Pattern Recognition", videos: 3, quizzes: 2, ebooks: 1 },
       { title: "Abstraction", videos: 3, quizzes: 1, ebooks: 1 },
@@ -111,7 +128,8 @@ const coursesData: Record<string, {
     slug: "pattern-recognition-logic",
     title: "Pattern Recognition & Logic",
     description: "Master pattern recognition and logical reasoning.",
-    fullDescription: "This intermediate course dives deeper into pattern recognition and logical reasoning, essential skills for programming and AI. Students will work with sequences, puzzles, and logical operators to build a strong foundation for advanced concepts.",
+    fullDescription:
+      "This intermediate course dives deeper into pattern recognition and logical reasoning, essential skills for programming and AI. Students will work with sequences, puzzles, and logical operators to build a strong foundation for advanced concepts.",
     level: "Classes 5-6",
     levelIcon: Rocket,
     duration: "10 weeks",
@@ -141,7 +159,8 @@ const coursesData: Record<string, {
     slug: "introduction-to-algorithms",
     title: "Introduction to Algorithms",
     description: "Discover how algorithms work and create your own solutions.",
-    fullDescription: "Algorithms are the heart of computer science. This course introduces students to algorithmic thinking through sorting, searching, and optimization problems. Students will learn to design, analyze, and implement their own algorithms.",
+    fullDescription:
+      "Algorithms are the heart of computer science. This course introduces students to algorithmic thinking through sorting, searching, and optimization problems. Students will learn to design, analyze, and implement their own algorithms.",
     level: "Classes 5-6",
     levelIcon: Rocket,
     duration: "8 weeks",
@@ -169,8 +188,10 @@ const coursesData: Record<string, {
     id: "5",
     slug: "data-structures-for-young-coders",
     title: "Data Structures for Young Coders",
-    description: "Learn about arrays, lists, and trees through interactive examples.",
-    fullDescription: "Data structures are fundamental to programming. This course introduces students to essential data structures like arrays, linked lists, stacks, queues, and trees through visual examples and hands-on coding projects.",
+    description:
+      "Learn about arrays, lists, and trees through interactive examples.",
+    fullDescription:
+      "Data structures are fundamental to programming. This course introduces students to essential data structures like arrays, linked lists, stacks, queues, and trees through visual examples and hands-on coding projects.",
     level: "Classes 7-8",
     levelIcon: Code,
     duration: "12 weeks",
@@ -187,7 +208,12 @@ const coursesData: Record<string, {
       "Choose the right data structure for problems",
     ],
     chapters: [
-      { title: "Introduction to Data Structures", videos: 4, quizzes: 1, ebooks: 1 },
+      {
+        title: "Introduction to Data Structures",
+        videos: 4,
+        quizzes: 1,
+        ebooks: 1,
+      },
       { title: "Arrays", videos: 5, quizzes: 2, ebooks: 2 },
       { title: "Linked Lists", videos: 5, quizzes: 2, ebooks: 1 },
       { title: "Stacks & Queues", videos: 6, quizzes: 2, ebooks: 2 },
@@ -200,7 +226,8 @@ const coursesData: Record<string, {
     slug: "machine-learning-fundamentals",
     title: "Machine Learning Fundamentals",
     description: "Understand how machines learn from data.",
-    fullDescription: "This course introduces students to the fascinating world of machine learning. Learn how AI systems learn from data, understand different types of ML, and create simple models using beginner-friendly tools.",
+    fullDescription:
+      "This course introduces students to the fascinating world of machine learning. Learn how AI systems learn from data, understand different types of ML, and create simple models using beginner-friendly tools.",
     level: "Classes 7-8",
     levelIcon: Code,
     duration: "10 weeks",
@@ -228,8 +255,10 @@ const coursesData: Record<string, {
     id: "7",
     slug: "ai-in-the-real-world",
     title: "AI in the Real World",
-    description: "Explore how AI is used in healthcare, transportation, and more.",
-    fullDescription: "This advanced course explores real-world AI applications across industries. Students will analyze case studies from healthcare, transportation, entertainment, and more, understanding both the benefits and challenges of AI deployment.",
+    description:
+      "Explore how AI is used in healthcare, transportation, and more.",
+    fullDescription:
+      "This advanced course explores real-world AI applications across industries. Students will analyze case studies from healthcare, transportation, entertainment, and more, understanding both the benefits and challenges of AI deployment.",
     level: "Classes 9-10",
     levelIcon: Cpu,
     duration: "12 weeks",
@@ -259,7 +288,8 @@ const coursesData: Record<string, {
     slug: "building-ai-projects",
     title: "Building AI Projects",
     description: "Apply everything you've learned to build real AI projects.",
-    fullDescription: "The capstone course where students apply all their knowledge to build real AI projects. From chatbots to image classifiers, students will work on hands-on projects that demonstrate practical AI skills.",
+    fullDescription:
+      "The capstone course where students apply all their knowledge to build real AI projects. From chatbots to image classifiers, students will work on hands-on projects that demonstrate practical AI skills.",
     level: "Classes 9-10",
     levelIcon: Cpu,
     duration: "14 weeks",
@@ -303,8 +333,12 @@ export default function CourseDetail() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Course Not Found</h1>
-          <p className="text-muted-foreground mb-6">The course you're looking for doesn't exist.</p>
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            Course Not Found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            The course you're looking for doesn't exist.
+          </p>
           <Button onClick={() => navigate("/courses")} className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Courses
@@ -321,13 +355,16 @@ export default function CourseDetail() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
           </div>
-          
+
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button 
+              <button
                 key={link.href}
                 onClick={() => navigate(link.href)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -338,12 +375,12 @@ export default function CourseDetail() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Button 
+            <Button
               onClick={() => navigate("/student/login")}
               className="gap-2 rounded-full px-6 hidden sm:flex"
             >
               <GraduationCap className="h-4 w-4" />
-              Student Login
+              Login
             </Button>
 
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -366,7 +403,7 @@ export default function CourseDetail() {
                       {link.label}
                     </button>
                   ))}
-                  <Button 
+                  <Button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       navigate("/student/login");
@@ -374,7 +411,7 @@ export default function CourseDetail() {
                     className="gap-2 rounded-full mt-4"
                   >
                     <GraduationCap className="h-4 w-4" />
-                    Student Login
+                    Login
                   </Button>
                 </nav>
               </SheetContent>
@@ -386,8 +423,8 @@ export default function CourseDetail() {
       {/* Hero Section */}
       <section className={`pt-24 pb-12 px-4 bg-gradient-to-br ${course.color}`}>
         <div className="container mx-auto">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => navigate("/courses")}
             className="gap-2 mb-6 -ml-2"
           >
@@ -398,7 +435,9 @@ export default function CourseDetail() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <LevelIcon className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium text-primary">{course.level}</span>
+                <span className="text-sm font-medium text-primary">
+                  {course.level}
+                </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 {course.title}
@@ -424,7 +463,7 @@ export default function CourseDetail() {
                   {course.rating} rating
                 </span>
               </div>
-              <Button 
+              <Button
                 size="lg"
                 onClick={() => navigate("/student/login")}
                 className="gap-2 rounded-full px-8"
@@ -460,7 +499,9 @@ export default function CourseDetail() {
                     {course.objectives.map((objective, index) => (
                       <div key={index} className="flex items-start gap-2">
                         <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        <span className="text-sm text-muted-foreground">{objective}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {objective}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -514,8 +555,12 @@ export default function CourseDetail() {
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <div className="text-4xl mb-2">{course.thumbnail}</div>
-                    <h3 className="font-semibold text-foreground">{course.title}</h3>
-                    <p className="text-sm text-muted-foreground">{course.level}</p>
+                    <h3 className="font-semibold text-foreground">
+                      {course.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {course.level}
+                    </p>
                   </div>
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between text-sm">
@@ -528,7 +573,9 @@ export default function CourseDetail() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Chapters</span>
-                      <span className="font-medium">{course.chapters.length}</span>
+                      <span className="font-medium">
+                        {course.chapters.length}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Rating</span>
@@ -538,7 +585,7 @@ export default function CourseDetail() {
                       </span>
                     </div>
                   </div>
-                  <Button 
+                  <Button
                     className="w-full gap-2 rounded-full"
                     onClick={() => navigate("/student/login")}
                   >
