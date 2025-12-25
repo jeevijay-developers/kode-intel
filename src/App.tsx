@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
+import PublicLayout from "@/components/layout/PublicLayout";
 import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
@@ -31,43 +32,103 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/courses" element={<PublicCourses />} />
-          <Route path="/course/:slug" element={<CourseDetail />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/auth" element={<Auth />} />
-          
-          {/* Student routes */}
-          <Route path="/student/login" element={<StudentLogin />} />
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/student/profile" element={<StudentProfile />} />
-          <Route path="/student/courses/:id" element={<StudentCourse />} />
-          <Route path="/student/video/:videoId" element={<StudentVideo />} />
-          <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
-          <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
-          <Route path="/compiler" element={<StudentProtectedRoute><Compiler /></StudentProtectedRoute>} />
-          
-          {/* Admin routes */}
-          <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/admin/schools" element={<ProtectedRoute><Schools /></ProtectedRoute>} />
-          <Route path="/admin/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
-          <Route path="/admin/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
-          <Route path="/admin/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
-          <Route path="/admin/courses/:id" element={<ProtectedRoute><CourseEditor /></ProtectedRoute>} />
-          <Route path="/admin/quizzes" element={<ProtectedRoute><QuizManagement /></ProtectedRoute>} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes with common header */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Landing />} />
+              <Route path="/courses" element={<PublicCourses />} />
+              <Route path="/course/:slug" element={<CourseDetail />} />
+              <Route path="/about" element={<About />} />
+            </Route>
+
+            {/* Student routes (separate, no public header) */}
+            <Route path="/student/login" element={<StudentLogin />} />
+            <Route path="/student" element={<StudentDashboard />} />
+            <Route path="/student/profile" element={<StudentProfile />} />
+            <Route path="/student/courses/:id" element={<StudentCourse />} />
+            <Route path="/student/video/:videoId" element={<StudentVideo />} />
+            <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
+            <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
+            <Route
+              path="/compiler"
+              element={
+                <StudentProtectedRoute>
+                  <Compiler />
+                </StudentProtectedRoute>
+              }
+            />
+
+            {/* Auth route (no header) */}
+            <Route path="/auth" element={<Auth />} />
+
+            {/* Admin routes (separate admin layout) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/schools"
+              element={
+                <ProtectedRoute>
+                  <Schools />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/bulk-upload"
+              element={
+                <ProtectedRoute>
+                  <BulkUpload />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/students"
+              element={
+                <ProtectedRoute>
+                  <Students />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/courses"
+              element={
+                <ProtectedRoute>
+                  <Courses />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/courses/:id"
+              element={
+                <ProtectedRoute>
+                  <CourseEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/quizzes"
+              element={
+                <ProtectedRoute>
+                  <QuizManagement />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 

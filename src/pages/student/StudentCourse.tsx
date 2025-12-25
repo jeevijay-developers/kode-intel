@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,18 @@ import {
   Brain,
   User,
   Video,
+  Rocket,
+  Search,
+  Inbox,
+  Star,
+  Zap,
+  Lightbulb,
+  Target,
+  Flame,
+  Palette,
+  Gamepad2,
+  Trophy,
+  Rainbow,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useCourse, useChapters } from "@/hooks/useCourses";
@@ -84,7 +97,9 @@ export default function StudentCourse() {
   if (loading || !student) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-xl">Loading... 🚀</div>
+        <div className="animate-pulse text-xl flex items-center gap-2">
+          Loading... <Rocket className="h-5 w-5" />
+        </div>
       </div>
     );
   }
@@ -94,8 +109,8 @@ export default function StudentCourse() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/4" />
-            <div className="h-64 bg-muted rounded" />
+            <div className="h-8 border border-gray-400 rounded w-1/4" />
+            <div className="h-64 border border-gray-400 rounded" />
           </div>
         </div>
       </div>
@@ -106,8 +121,10 @@ export default function StudentCourse() {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 text-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <h2 className="text-xl font-semibold text-foreground">Course not found</h2>
+          <Search className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h2 className="text-xl font-semibold text-foreground">
+            Course not found
+          </h2>
           <Button onClick={() => navigate("/student")} className="mt-4">
             Back to Dashboard
           </Button>
@@ -124,7 +141,11 @@ export default function StudentCourse() {
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/student")}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/student")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2">
@@ -134,9 +155,9 @@ export default function StudentCourse() {
               </span>
             </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => navigate("/student/profile")}
           >
             <User className="h-5 w-5" />
@@ -160,15 +181,21 @@ export default function StudentCourse() {
               )}
             </div>
             <div className="p-6 flex-1">
-              <h1 className="text-2xl font-bold text-foreground mb-2">{course.title}</h1>
+              <h1 className="text-2xl font-bold text-foreground mb-2">
+                {course.title}
+              </h1>
               <p className="text-muted-foreground mb-4">{course.description}</p>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline" className="text-base py-1 px-3">
-                  📚 {publishedChapters.length} Chapters
+                <Badge
+                  variant="outline"
+                  className="text-base py-1 px-3 flex items-center gap-1.5"
+                >
+                  <BookOpen className="h-4 w-4" /> {publishedChapters.length}{" "}
+                  Chapters
                 </Badge>
                 {courseProgress?.completed_at && (
-                  <Badge className="bg-primary/20 text-primary text-base py-1 px-3">
-                    ✅ Completed
+                  <Badge className="bg-primary/20 text-primary text-base py-1 px-3 flex items-center gap-1.5">
+                    <CheckCircle className="h-4 w-4" /> Completed
                   </Badge>
                 )}
               </div>
@@ -180,13 +207,13 @@ export default function StudentCourse() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
-              📖 Course Content
+              <BookOpen className="h-5 w-5" /> Course Content
             </CardTitle>
           </CardHeader>
           <CardContent>
             {publishedChapters.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">📭</div>
+                <Inbox className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground text-lg">
                   No content available yet. Check back soon!
                 </p>
@@ -216,7 +243,11 @@ interface ChapterAccordionProps {
   studentId: string;
 }
 
-function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) {
+function ChapterAccordion({
+  chapter,
+  index,
+  studentId,
+}: ChapterAccordionProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -299,7 +330,7 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["video-progress"] });
-      toast({ title: "Great job! Video completed! 🎉" });
+      toast({ title: "Great job! Video completed!" });
     },
   });
 
@@ -311,19 +342,40 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
   };
 
   const totalContent = videos.length + ebooks.length + quizzes.length;
-  const completedVideos = videoProgress.filter((p: any) => p.is_completed).length;
-  const allVideosCompleted = videos.length > 0 && completedVideos === videos.length;
+  const completedVideos = videoProgress.filter(
+    (p: any) => p.is_completed
+  ).length;
+  const allVideosCompleted =
+    videos.length > 0 && completedVideos === videos.length;
 
   // Chapter icon based on index
-  const chapterEmojis = ["🌟", "🚀", "💡", "🎯", "🔥", "⚡", "🎨", "🎮", "🏆", "🌈"];
-  const chapterEmoji = chapterEmojis[index % chapterEmojis.length];
+  const chapterIcons = [
+    Star,
+    Rocket,
+    Lightbulb,
+    Target,
+    Flame,
+    Zap,
+    Palette,
+    Gamepad2,
+    Trophy,
+    Rainbow,
+  ];
+  const ChapterIcon = chapterIcons[index % chapterIcons.length];
 
   return (
-    <AccordionItem value={chapter.id} className="border-2 rounded-xl px-4 overflow-hidden">
+    <AccordionItem
+      value={chapter.id}
+      className="border-2 rounded-xl px-4 overflow-hidden"
+    >
       <AccordionTrigger className="hover:no-underline py-4">
         <div className="flex items-center gap-3 text-left">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-            {allVideosCompleted ? "✅" : chapterEmoji}
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            {allVideosCompleted ? (
+              <CheckCircle className="h-6 w-6 text-primary" />
+            ) : (
+              <ChapterIcon className="h-6 w-6 text-primary" />
+            )}
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -357,9 +409,11 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
 
           <TabsContent value="videos" className="space-y-3 mt-0">
             {videos.length === 0 ? (
-              <div className="text-center py-8 bg-muted/50 rounded-xl">
+              <div className="text-center py-8 rounded-xl">
                 <Video className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">No videos in this chapter</p>
+                <p className="text-muted-foreground">
+                  No videos in this chapter
+                </p>
               </div>
             ) : (
               videos.map((video: any) => {
@@ -367,11 +421,11 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
                   (p: any) => p.video_id === video.id && p.is_completed
                 );
                 const youtubeId = extractYouTubeId(video.youtube_url);
-                
+
                 return (
                   <div
                     key={video.id}
-                    className="flex items-center gap-4 p-4 bg-muted rounded-xl"
+                    className="flex items-center gap-4  border border-gray-400 p-4 rounded-xl"
                   >
                     <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
                       {youtubeId && (
@@ -395,7 +449,9 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {video.duration_minutes ? `${video.duration_minutes} min` : "Video"}
+                        {video.duration_minutes
+                          ? `${video.duration_minutes} min`
+                          : "Video"}
                       </p>
                     </div>
                     <div className="flex gap-2 shrink-0">
@@ -426,22 +482,26 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
 
           <TabsContent value="ebooks" className="space-y-3 mt-0">
             {ebooks.length === 0 ? (
-              <div className="text-center py-8 bg-muted/50 rounded-xl">
+              <div className="text-center py-8 border border-gray-400 rounded-xl">
                 <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">No ebooks in this chapter</p>
+                <p className="text-muted-foreground">
+                  No ebooks in this chapter
+                </p>
               </div>
             ) : (
               ebooks.map((ebook: any) => (
                 <div
                   key={ebook.id}
-                  className="flex items-center gap-4 p-4 bg-muted rounded-xl"
+                  className="flex items-center gap-4 p-4 border border-gray-400 rounded-xl"
                 >
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                     <FileText className="h-7 w-7 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{ebook.title}</p>
-                    <p className="text-sm text-muted-foreground">Digital Book</p>
+                    <p className="text-sm text-muted-foreground">
+                      Digital Book
+                    </p>
                   </div>
                   <Button
                     size="lg"
@@ -459,15 +519,17 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
 
           <TabsContent value="quizzes" className="space-y-3 mt-0">
             {quizzes.length === 0 ? (
-              <div className="text-center py-8 bg-muted/50 rounded-xl">
+              <div className="text-center py-8 border border-gray-400/50 rounded-xl">
                 <HelpCircle className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">No quizzes in this chapter</p>
+                <p className="text-muted-foreground">
+                  No quizzes in this chapter
+                </p>
               </div>
             ) : (
               quizzes.map((quiz: any) => (
                 <div
                   key={quiz.id}
-                  className="flex items-center gap-4 p-4 bg-muted rounded-xl"
+                  className="flex items-center gap-4 p-4 border border-gray-400 rounded-xl"
                 >
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                     <HelpCircle className="h-7 w-7 text-primary" />
@@ -478,12 +540,13 @@ function ChapterAccordion({ chapter, index, studentId }: ChapterAccordionProps) 
                       Pass with {quiz.passing_score}%
                     </p>
                   </div>
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="h-12 px-6"
                     onClick={() => navigate(`/student/quiz/${quiz.id}`)}
                   >
-                    🎯 Take Quiz
+                    <Target className="h-5 w-5 mr-2" />
+                    Take Quiz
                   </Button>
                 </div>
               ))

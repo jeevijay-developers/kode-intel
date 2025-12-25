@@ -53,7 +53,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           size="icon"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {sidebarOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </Button>
         <h1 className="ml-4 font-semibold text-foreground">LMS Admin</h1>
       </header>
@@ -65,8 +69,20 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center border-b border-border px-6">
-          <h1 className="text-lg font-semibold text-foreground">LMS Super Admin</h1>
+        <div className="border-b border-border">
+          <div className="flex h-12 mt-5 items-center  px-6 gap-1">
+            <img
+              src="/src/assets/brain-logo.png"
+              alt="Logo"
+              className="h-8 w-12"
+            />
+            <h1 className="text-2xl font-semibold text-foreground">
+              KODE INTEL
+            </h1>
+          </div>
+          <p className="px-6 pb-2 text-sm text-muted-foreground text-center">
+            Admin dashboard
+          </p>
         </div>
         <nav className="p-4 space-y-1 flex-1">
           {navItems.map((item) => (
@@ -88,11 +104,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </NavLink>
           ))}
         </nav>
-        
         {/* User info and logout */}
         <div className="p-4 border-t border-border">
           <div className="mb-3 px-3">
-            <p className="text-sm font-medium text-foreground truncate">{user?.email}</p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {user?.email}
+            </p>
             <p className="text-xs text-muted-foreground">Super Admin</p>
           </div>
           <Button

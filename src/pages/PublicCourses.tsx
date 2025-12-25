@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   BookOpen,
   GraduationCap,
@@ -11,7 +10,6 @@ import {
   Users,
   Star,
   ChevronRight,
-  Menu,
   Lightbulb,
   Rocket,
   Code,
@@ -19,17 +17,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
-import kodeIntelLogo from "@/assets/kode-intel-logo.png";
 
 export default function PublicCourses() {
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/courses", label: "Courses" },
-  ];
 
   const courses = [
     {
@@ -171,80 +161,8 @@ export default function PublicCourses() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <img src={kodeIntelLogo} alt="Kode Intel" className="h-8 md:h-10" />
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => navigate(link.href)}
-                className={`text-muted-foreground hover:text-foreground transition-colors ${
-                  link.href === "/courses" ? "text-foreground font-medium" : ""
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => navigate("/student/login")}
-              className="gap-2 rounded-full px-6 hidden sm:flex"
-            >
-              <GraduationCap className="h-4 w-4" />
-              Login
-            </Button>
-
-            {/* Mobile Menu */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col gap-4 mt-8">
-                  {navLinks.map((link) => (
-                    <button
-                      key={link.href}
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        navigate(link.href);
-                      }}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left py-2"
-                    >
-                      {link.label}
-                    </button>
-                  ))}
-                  <Button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      navigate("/student/login");
-                    }}
-                    className="gap-2 rounded-full mt-4"
-                  >
-                    <GraduationCap className="h-4 w-4" />
-                    Login
-                  </Button>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4 bg-muted/30">
+      <section className="pt-8 pb-12 px-4 bg-muted/30">
         <div className="container mx-auto">
           <Button
             variant="ghost"

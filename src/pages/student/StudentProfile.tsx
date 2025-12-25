@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Brain,
   ArrowLeft,
@@ -25,7 +31,7 @@ export default function StudentProfile() {
   const navigate = useNavigate();
   const { student, loading, signOut, updatePassword } = useStudentAuth();
   const { toast } = useToast();
-  
+
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -55,14 +61,22 @@ export default function StudentProfile() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (newPassword.length < 4) {
-      toast({ title: "Password too short", description: "Password must be at least 4 characters", variant: "destructive" });
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 4 characters",
+        variant: "destructive",
+      });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast({ title: "Passwords don't match", description: "Please make sure both passwords are the same", variant: "destructive" });
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure both passwords are the same",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -71,9 +85,16 @@ export default function StudentProfile() {
     setIsUpdating(false);
 
     if (error) {
-      toast({ title: "Failed to update password", description: error.message, variant: "destructive" });
+      toast({
+        title: "Failed to update password",
+        description: error.message,
+        variant: "destructive",
+      });
     } else {
-      toast({ title: "Password updated! 🎉", description: "Your new password is now active" });
+      toast({
+        title: "Password updated! 🎉",
+        description: "Your new password is now active",
+      });
       setShowPasswordForm(false);
       setNewPassword("");
       setConfirmPassword("");
@@ -81,8 +102,11 @@ export default function StudentProfile() {
   };
 
   const handleSignOut = () => {
-    signOut();
-    navigate("/student/login");
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (confirmed) {
+      signOut();
+      navigate("/student/login");
+    }
   };
 
   if (loading || !student) {
@@ -99,7 +123,11 @@ export default function StudentProfile() {
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/student")}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/student")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2">
@@ -123,13 +151,14 @@ export default function StudentProfile() {
             </div>
             <CardTitle className="text-2xl">{student.student_name}</CardTitle>
             <CardDescription className="text-base">
-              Class {student.class}{student.section && ` - Section ${student.section}`}
+              Class {student.class}
+              {student.section && ` - Section ${student.section}`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Student Details */}
             <div className="grid gap-4">
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+              <div className="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
                 <User className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Username</p>
@@ -137,7 +166,7 @@ export default function StudentProfile() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+              <div className="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
                 <Phone className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Mobile Number</p>
@@ -146,7 +175,7 @@ export default function StudentProfile() {
               </div>
 
               {student.email && (
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
                   <Mail className="h-5 w-5 text-primary" />
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
@@ -155,23 +184,26 @@ export default function StudentProfile() {
                 </div>
               )}
 
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+              <div className="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
                 <BookOpen className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Class</p>
                   <p className="font-medium">
-                    {student.class}{student.section && ` - Section ${student.section}`}
+                    {student.class}
+                    {student.section && ` - Section ${student.section}`}
                   </p>
                 </div>
               </div>
 
               {school && (
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
                   <School className="h-5 w-5 text-primary" />
                   <div>
                     <p className="text-sm text-muted-foreground">School</p>
                     <p className="font-medium">{school.name}</p>
-                    <p className="text-sm text-muted-foreground">{school.city}, {school.state}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {school.city}, {school.state}
+                    </p>
                   </div>
                 </div>
               )}
@@ -192,8 +224,8 @@ export default function StudentProfile() {
           </CardHeader>
           <CardContent>
             {!showPasswordForm ? (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowPasswordForm(true)}
                 className="w-full h-12"
               >
@@ -227,8 +259,8 @@ export default function StudentProfile() {
                   />
                 </div>
                 <div className="flex gap-3">
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     variant="outline"
                     onClick={() => {
                       setShowPasswordForm(false);
@@ -240,12 +272,14 @@ export default function StudentProfile() {
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isUpdating}
                     className="flex-1"
                   >
-                    {isUpdating ? "Saving..." : (
+                    {isUpdating ? (
+                      "Saving..."
+                    ) : (
                       <>
                         <Check className="h-4 w-4 mr-2" />
                         Save Password
@@ -259,8 +293,8 @@ export default function StudentProfile() {
         </Card>
 
         {/* Logout Button */}
-        <Button 
-          variant="destructive" 
+        <Button
+          variant="destructive"
           onClick={handleSignOut}
           className="w-full mt-6 h-12 text-lg"
         >

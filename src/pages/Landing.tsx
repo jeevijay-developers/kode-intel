@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   BookOpen,
   GraduationCap,
@@ -21,10 +19,6 @@ import {
   Lightbulb,
   Code,
   Cpu,
-  Monitor,
-  Smartphone,
-  Menu,
-  X,
 } from "lucide-react";
 import {
   Accordion,
@@ -42,15 +36,7 @@ import { useStudentAuth } from "@/hooks/useStudentAuth";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { student } = useStudentAuth();
-
-  const navLinks = [
-    { href: "/about", label: "About" },
-    { href: "/courses", label: "Courses" },
-    { href: "#features", label: "Features" },
-    { href: "/compiler", label: "Compiler" },
-  ];
 
   const steps = [
     {
@@ -192,88 +178,10 @@ export default function Landing() {
     },
   ];
 
-  const handleNavClick = (href: string) => {
-    setMobileMenuOpen(false);
-    if (href.startsWith("#")) {
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      navigate(href);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={brainLogo} alt="Kode Intel" className="h-10 md:h-12" />
-            <span className="font-bold text-lg md:text-xl text-foreground">
-              Kode Intel
-            </span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => handleNavClick(link.href)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => navigate("/student/login")}
-              className="gap-2 rounded-full px-6 hidden sm:flex"
-            >
-              <GraduationCap className="h-4 w-4" />
-              {student ? "Go to Dashboard" : "Login"}
-            </Button>
-
-            {/* Mobile Menu */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col gap-4 mt-8">
-                  {navLinks.map((link) => (
-                    <button
-                      key={link.href}
-                      onClick={() => handleNavClick(link.href)}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left py-2"
-                    >
-                      {link.label}
-                    </button>
-                  ))}
-                  <Button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      navigate(
-                        student ? "/student/dashboard" : "/student/login"
-                      );
-                    }}
-                    className="gap-2 rounded-full mt-4"
-                  >
-                    <GraduationCap className="h-4 w-4" />
-                    {student ? "Go to Dashboard" : "Login"}
-                  </Button>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 overflow-hidden relative min-h-screen flex items-center">
+      <section className="pt-16 pb-20 px-4 overflow-hidden relative min-h-screen flex items-center">
         {/* Background Pattern */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
@@ -423,6 +331,25 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 px-4 bg-[#0284C5]">
+        <div className="max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 rounded-2xl bg-black/60 flex items-center justify-center mx-auto mb-4">
+                  <stat.icon className="h-8 w-8 text-white" />
+                </div>
+                <div className="text-3xl font-bold text-white mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-white">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-20 px-4 ">
         <div className="container mx-auto">
@@ -507,55 +434,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Learn Anywhere Banner */}
-      <section className="py-20 my-20 px-4 bg-foreground text-background">
-        <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-background/10 rounded-full text-background/80 text-sm font-medium mb-6">
-                <Smartphone className="h-4 w-4" />
-                Mobile Friendly
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Learn Anytime, Anywhere 📱
-              </h2>
-              <p className="text-background/70 mb-8 max-w-lg">
-                Access your courses from any device. Our platform is designed to
-                work perfectly on phones, tablets, and computers.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span>Mobile Responsive</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span>Offline Access</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span>Progress Sync</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="relative">
-                <div className="w-64 h-[500px] bg-background/10 rounded-[3rem] border-4 border-background/20 p-4">
-                  <div className="w-full h-full bg-background rounded-[2.5rem] flex items-center justify-center">
-                    <div className="text-center p-6">
-                      <Monitor className="h-16 w-16 text-primary mx-auto mb-4" />
-                      <p className="text-foreground font-medium">
-                        Learn on any device!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section id="features" className="py-20 px-4">
         <div className="container mx-auto">
@@ -580,7 +458,7 @@ export default function Landing() {
               >
                 <CardContent className="pt-6 text-center">
                   <div
-                    className={`w-16 h-16 rounded-2xl ${feature.color} flex items-center justify-center mb-4 mx-auto`}
+                    className={`w-12 h-12 rounded-2xl ${feature.color} flex items-center justify-center mb-4 mx-auto`}
                   >
                     <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
                   </div>
@@ -592,25 +470,6 @@ export default function Landing() {
                   </p>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <stat.icon className="h-8 w-8 text-primary" />
-                </div>
-                <div className="text-3xl font-bold text-foreground">
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground">{stat.label}</div>
-              </div>
             ))}
           </div>
         </div>
@@ -668,7 +527,7 @@ export default function Landing() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 bg-muted/30">
+      <section id="faq" className="py-20 px-4">
         <div className="container mx-auto max-w-3xl">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-4">
@@ -731,12 +590,10 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img
-                  src={brainLogo}
-                  alt="Kode Intel"
-                  className="h-10 brightness-0 invert"
-                />
-                <span className="font-bold text-lg">Kode Intel</span>
+                <img src={brainLogo} alt="Kode Intel" className="h-10" />
+                <span className="text-2xl font-bold text-foreground hidden sm:block">
+                  Kode Intel
+                </span>
               </div>
               <p className="text-background/70 max-w-sm">
                 Empowering young minds with AI and Computational Thinking skills
