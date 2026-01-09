@@ -33,6 +33,8 @@ import {
   Gamepad2,
   Trophy,
   Rainbow,
+  Lock,
+  Sparkles,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useCourse, useChapters } from "@/hooks/useCourses";
@@ -45,9 +47,13 @@ export default function StudentCourse() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { student, loading } = useStudentAuth();
+  const { student, loading, isTrialExpired } = useStudentAuth();
   const { data: course, isLoading: courseLoading } = useCourse(id);
   const { chapters } = useChapters(id);
+
+  const isTrial = student?.subscription_status === "trial" && !isTrialExpired();
+  const isActive = student?.subscription_status === "active" || student?.is_active;
+  const hasFullAccess = isActive && !isTrial;
 
   useEffect(() => {
     if (!loading && !student) {
@@ -109,8 +115,8 @@ export default function StudentCourse() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 border border-gray-400 rounded w-1/4" />
-            <div className="h-64 border border-gray-400 rounded" />
+            <div className="h-8 bg-muted rounded w-1/4" />
+            <div className="h-64 bg-muted rounded" />
           </div>
         </div>
       </div>
@@ -155,6 +161,12 @@ export default function StudentCourse() {
               </span>
             </div>
           </div>
+          {isTrial && (
+            <Badge className="bg-sunny text-foreground">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Free Trial
+            </Badge>
+          )}
           <Button
             variant="ghost"
             size="sm"
@@ -166,7 +178,7 @@ export default function StudentCourse() {
       </header>
 
       <main className="container mx-auto px-4 py-6">
-        {/* Course Header - Child Friendly */}
+        {/* Course Header */}
         <Card className="mb-6 overflow-hidden">
           <div className="flex flex-col md:flex-row">
             <div className="w-full md:w-48 h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
@@ -190,9 +202,13 @@ export default function StudentCourse() {
                   variant="outline"
                   className="text-base py-1 px-3 flex items-center gap-1.5"
                 >
-                  <BookOpen className="h-4 w-4" /> {publishedChapters.length}{" "}
-                  Chapters
+                  <BookOpen className="h-4 w-4" /> {publishedChapters.length} Chapters
                 </Badge>
+                {isTrial && (
+                  <Badge className="bg-sunny/20 text-sunny border-sunny/30 text-base py-1 px-3">
+                    <Lock className="h-4 w-4 mr-1" /> Chapter 1 Free
+                  </Badge>
+                )}
                 {courseProgress?.completed_at && (
                   <Badge className="bg-primary/20 text-primary text-base py-1 px-3 flex items-center gap-1.5">
                     <CheckCircle className="h-4 w-4" /> Completed
@@ -203,7 +219,31 @@ export default function StudentCourse() {
           </div>
         </Card>
 
-        {/* Chapters - Child Friendly Design */}
+        {/* Trial Banner */}
+        {isTrial && (
+          <Card className="mb-6 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
+            <CardContent className="py-4 px-5">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <Lock className="h-6 w-6 text-sunny" />
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      🎓 Trial Mode: Chapter 1 Unlocked
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Subscribe to unlock all chapters, quizzes, and ebooks
+                    </p>
+                  </div>
+                </div>
+                <Button className="bg-gradient-to-r from-sunny to-coral text-foreground">
+                  Upgrade Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Chapters */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
@@ -226,6 +266,8 @@ export default function StudentCourse() {
                     chapter={chapter}
                     index={index}
                     studentId={student.id}
+                    isLocked={isTrial && index > 0}
+                    hasFullAccess={hasFullAccess}
                   />
                 ))}
               </Accordion>
@@ -241,12 +283,16 @@ interface ChapterAccordionProps {
   chapter: any;
   index: number;
   studentId: string;
+  isLocked: boolean;
+  hasFullAccess: boolean;
 }
 
 function ChapterAccordion({
   chapter,
   index,
   studentId,
+  isLocked,
+  hasFullAccess,
 }: ChapterAccordionProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -342,36 +388,44 @@ function ChapterAccordion({
   };
 
   const totalContent = videos.length + ebooks.length + quizzes.length;
-  const completedVideos = videoProgress.filter(
-    (p: any) => p.is_completed
-  ).length;
-  const allVideosCompleted =
-    videos.length > 0 && completedVideos === videos.length;
+  const completedVideos = videoProgress.filter((p: any) => p.is_completed).length;
+  const allVideosCompleted = videos.length > 0 && completedVideos === videos.length;
 
   // Chapter icon based on index
   const chapterIcons = [
-    Star,
-    Rocket,
-    Lightbulb,
-    Target,
-    Flame,
-    Zap,
-    Palette,
-    Gamepad2,
-    Trophy,
-    Rainbow,
+    Star, Rocket, Lightbulb, Target, Flame, Zap, Palette, Gamepad2, Trophy, Rainbow,
   ];
   const ChapterIcon = chapterIcons[index % chapterIcons.length];
+
+  const handleLockedAction = () => {
+    toast({
+      title: "🔒 Content Locked",
+      description: "Subscribe to unlock this chapter!",
+      variant: "destructive",
+    });
+  };
 
   return (
     <AccordionItem
       value={chapter.id}
-      className="border-2 rounded-xl px-4 overflow-hidden"
+      className={`border-2 rounded-xl px-4 overflow-hidden ${
+        isLocked ? "opacity-75 bg-muted/20" : ""
+      }`}
     >
       <AccordionTrigger className="hover:no-underline py-4">
         <div className="flex items-center gap-3 text-left">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            {allVideosCompleted ? (
+          <div
+            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
+              isLocked
+                ? "bg-muted"
+                : allVideosCompleted
+                ? "bg-primary/20"
+                : "bg-primary/10"
+            }`}
+          >
+            {isLocked ? (
+              <Lock className="h-6 w-6 text-muted-foreground" />
+            ) : allVideosCompleted ? (
               <CheckCircle className="h-6 w-6 text-primary" />
             ) : (
               <ChapterIcon className="h-6 w-6 text-primary" />
@@ -380,179 +434,198 @@ function ChapterAccordion({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-lg">Chapter {index + 1}</span>
-              {totalContent > 0 && (
+              {isLocked && (
+                <Badge variant="outline" className="text-xs">
+                  <Lock className="h-3 w-3 mr-1" /> Locked
+                </Badge>
+              )}
+              {!isLocked && totalContent > 0 && (
                 <Badge variant="secondary" className="text-xs">
                   {totalContent} items
                 </Badge>
               )}
             </div>
             <span className="text-muted-foreground">{chapter.title}</span>
+            {chapter.description && (
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                {chapter.description}
+              </p>
+            )}
           </div>
         </div>
       </AccordionTrigger>
       <AccordionContent className="pb-4">
-        <Tabs defaultValue="videos" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="videos" className="flex items-center gap-2">
-              <Video className="h-4 w-4" />
-              Videos ({videos.length})
-            </TabsTrigger>
-            <TabsTrigger value="ebooks" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Ebooks ({ebooks.length})
-            </TabsTrigger>
-            <TabsTrigger value="quizzes" className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4" />
-              Quizzes ({quizzes.length})
-            </TabsTrigger>
-          </TabsList>
+        {isLocked ? (
+          <div className="text-center py-8 bg-muted/30 rounded-xl">
+            <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground font-medium mb-2">
+              This chapter is locked
+            </p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Subscribe to unlock all content
+            </p>
+            <Button className="bg-gradient-to-r from-primary to-secondary">
+              Upgrade Now
+            </Button>
+          </div>
+        ) : (
+          <Tabs defaultValue="videos" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
+              <TabsTrigger value="videos" className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Videos ({videos.length})
+              </TabsTrigger>
+              <TabsTrigger value="ebooks" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Ebooks ({ebooks.length})
+              </TabsTrigger>
+              <TabsTrigger value="quizzes" className="flex items-center gap-2">
+                <HelpCircle className="h-4 w-4" />
+                Quizzes ({quizzes.length})
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="videos" className="space-y-3 mt-0">
-            {videos.length === 0 ? (
-              <div className="text-center py-8 rounded-xl">
-                <Video className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">
-                  No videos in this chapter
-                </p>
-              </div>
-            ) : (
-              videos.map((video: any) => {
-                const isCompleted = videoProgress.some(
-                  (p: any) => p.video_id === video.id && p.is_completed
-                );
-                const youtubeId = extractYouTubeId(video.youtube_url);
+            <TabsContent value="videos" className="space-y-3 mt-0">
+              {videos.length === 0 ? (
+                <div className="text-center py-8 rounded-xl">
+                  <Video className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">No videos in this chapter</p>
+                </div>
+              ) : (
+                videos.map((video: any) => {
+                  const isCompleted = videoProgress.some(
+                    (p: any) => p.video_id === video.id && p.is_completed
+                  );
+                  const youtubeId = extractYouTubeId(video.youtube_url);
 
-                return (
-                  <div
-                    key={video.id}
-                    className="flex items-center gap-4  border border-gray-400 p-4 rounded-xl"
-                  >
-                    <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
-                      {youtubeId && (
-                        <img
-                          src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                          alt={video.title}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                          <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
+                  return (
+                    <div
+                      key={video.id}
+                      className="flex items-center gap-4 border border-border p-4 rounded-xl hover:border-primary/30 transition-colors"
+                    >
+                      <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
+                        {youtubeId && (
+                          <img
+                            src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                            alt={video.title}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                            <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium truncate">{video.title}</p>
-                        {isCompleted && (
-                          <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium truncate">{video.title}</p>
+                          {isCompleted && (
+                            <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {video.duration_minutes
+                            ? `${video.duration_minutes} min`
+                            : "Video"}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          size="lg"
+                          onClick={() => navigate(`/student/video/${video.id}`)}
+                          className="h-12 px-6"
+                        >
+                          <Play className="h-5 w-5 mr-2" />
+                          Watch
+                        </Button>
+                        {!isCompleted && (
+                          <Button
+                            variant="outline"
+                            size="lg"
+                            onClick={() => markVideoComplete.mutate(video.id)}
+                            className="h-12"
+                          >
+                            <CheckCircle className="h-5 w-5" />
+                          </Button>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {video.duration_minutes
-                          ? `${video.duration_minutes} min`
-                          : "Video"}
+                    </div>
+                  );
+                })
+              )}
+            </TabsContent>
+
+            <TabsContent value="ebooks" className="space-y-3 mt-0">
+              {ebooks.length === 0 ? (
+                <div className="text-center py-8 border border-border rounded-xl">
+                  <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">No ebooks in this chapter</p>
+                </div>
+              ) : (
+                ebooks.map((ebook: any) => (
+                  <div
+                    key={ebook.id}
+                    className="flex items-center gap-4 p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <FileText className="h-7 w-7 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{ebook.title}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {ebook.description || "PDF Ebook"}
                       </p>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button
-                        size="lg"
-                        onClick={() => navigate(`/student/video/${video.id}`)}
-                        className="h-12 px-6"
-                      >
-                        <Play className="h-5 w-5 mr-2" />
-                        Watch
-                      </Button>
-                      {!isCompleted && (
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          onClick={() => markVideoComplete.mutate(video.id)}
-                          className="h-12"
-                        >
-                          <CheckCircle className="h-5 w-5" />
-                        </Button>
-                      )}
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => navigate(`/student/ebook/${ebook.id}`)}
+                      className="h-12 px-6"
+                    >
+                      <FileText className="h-5 w-5 mr-2" />
+                      Read
+                    </Button>
+                  </div>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="quizzes" className="space-y-3 mt-0">
+              {quizzes.length === 0 ? (
+                <div className="text-center py-8 border border-border rounded-xl">
+                  <HelpCircle className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">No quizzes in this chapter</p>
+                </div>
+              ) : (
+                quizzes.map((quiz: any) => (
+                  <div
+                    key={quiz.id}
+                    className="flex items-center gap-4 p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-sunny/20 flex items-center justify-center shrink-0">
+                      <HelpCircle className="h-7 w-7 text-sunny" />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{quiz.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {quiz.passing_score}% to pass
+                      </p>
+                    </div>
+                    <Button
+                      size="lg"
+                      className="h-12 px-6 bg-gradient-to-r from-sunny to-coral text-foreground"
+                      onClick={() => navigate(`/student/quiz/${quiz.id}`)}
+                    >
+                      <Zap className="h-5 w-5 mr-2" />
+                      Take Quiz
+                    </Button>
                   </div>
-                );
-              })
-            )}
-          </TabsContent>
-
-          <TabsContent value="ebooks" className="space-y-3 mt-0">
-            {ebooks.length === 0 ? (
-              <div className="text-center py-8 border border-gray-400 rounded-xl">
-                <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">
-                  No ebooks in this chapter
-                </p>
-              </div>
-            ) : (
-              ebooks.map((ebook: any) => (
-                <div
-                  key={ebook.id}
-                  className="flex items-center gap-4 p-4 border border-gray-400 rounded-xl"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <FileText className="h-7 w-7 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{ebook.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Digital Book
-                    </p>
-                  </div>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    onClick={() => navigate(`/student/ebook/${ebook.id}`)}
-                    className="h-12 px-6"
-                  >
-                    <BookOpen className="h-5 w-5 mr-2" />
-                    Read
-                  </Button>
-                </div>
-              ))
-            )}
-          </TabsContent>
-
-          <TabsContent value="quizzes" className="space-y-3 mt-0">
-            {quizzes.length === 0 ? (
-              <div className="text-center py-8 border border-gray-400/50 rounded-xl">
-                <HelpCircle className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">
-                  No quizzes in this chapter
-                </p>
-              </div>
-            ) : (
-              quizzes.map((quiz: any) => (
-                <div
-                  key={quiz.id}
-                  className="flex items-center gap-4 p-4 border border-gray-400 rounded-xl"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <HelpCircle className="h-7 w-7 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{quiz.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Pass with {quiz.passing_score}%
-                    </p>
-                  </div>
-                  <Button
-                    size="lg"
-                    className="h-12 px-6"
-                    onClick={() => navigate(`/student/quiz/${quiz.id}`)}
-                  >
-                    <Target className="h-5 w-5 mr-2" />
-                    Take Quiz
-                  </Button>
-                </div>
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
+                ))
+              )}
+            </TabsContent>
+          </Tabs>
+        )}
       </AccordionContent>
     </AccordionItem>
   );
