@@ -14,7 +14,6 @@ import {
   Eye, 
   EyeOff,
   Sparkles,
-  GraduationCap,
   Play,
   BookOpen,
   Trophy,
@@ -70,8 +69,8 @@ export default function StudentLogin() {
 
     setIsSubmitting(true);
     const { error } = loginMode === "school" 
-      ? await signIn(username, password, "school_provided")
-      : await signInWithMobile(mobileNumber, password, "individual");
+      ? await signIn(username, password)
+      : await signInWithMobile(mobileNumber, password);
     setIsSubmitting(false);
 
     if (error) {
