@@ -344,6 +344,19 @@ export default function StudentLogin() {
                 </p>
               </div>
 
+              {/* Signup Link */}
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Don't have an account?{" "}
+                  <button
+                    onClick={() => navigate("/student/signup")}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    Sign up for free
+                  </button>
+                </p>
+              </div>
+
               {/* Security Note */}
               <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-turquoise" />
