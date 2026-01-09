@@ -223,8 +223,38 @@ export default function StudentLogin() {
               </button>
             </div>
 
+            {/* Guest Preview Option */}
+            <div className="mt-8 text-center">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border/50" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4 text-muted-foreground">
+                    or
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate("/guest")}
+                className="mt-6 group relative w-full max-w-md mx-auto glass rounded-2xl p-5 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 border-dashed border-turquoise/40 hover:border-turquoise focus:outline-none focus:ring-2 focus:ring-turquoise/50"
+              >
+                <div className="flex items-center justify-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-turquoise to-lime flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                    <Sparkles className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-bold text-foreground font-display">Try as Guest</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Preview Class 3 course with free videos & quizzes
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
             {/* Features */}
-            <div className="mt-12 flex flex-wrap justify-center gap-6">
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
               {[
                 { icon: Play, label: "Video Lessons" },
                 { icon: BookOpen, label: "E-Books" },

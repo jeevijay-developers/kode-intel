@@ -34,6 +34,7 @@ import StudentVideo from "./pages/student/StudentVideo";
 import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
 import Compiler from "./pages/student/Compiler";
+import GuestPreview from "./pages/student/GuestPreview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ function App() {
             {/* Student auth routes (no sidebar) */}
             <Route path="/student/login" element={<StudentLogin />} />
             <Route path="/student/signup" element={<StudentSignup />} />
+            <Route path="/guest" element={<GuestPreview />} />
 
             {/* Student routes with sidebar layout */}
             <Route path="/student" element={<StudentLayout />}>
