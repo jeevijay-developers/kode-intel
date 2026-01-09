@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   Phone,
@@ -31,26 +32,39 @@ import {
   Zap,
   Play,
   Brain,
+  Info,
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 import mascotKodi from "@/assets/mascot-kodi.png";
 
 const classes = ["3", "4", "5", "6", "7", "8", "9", "10"];
 
+interface LocationState {
+  prefill?: {
+    mobile_number: string;
+    password: string;
+  };
+}
+
 export default function StudentSignup() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { student, loading, autoLogin } = useStudentAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Check for pre-filled data from login redirect
+  const locationState = location.state as LocationState | null;
+  const hasPrefill = !!locationState?.prefill;
 
   const [formData, setFormData] = useState({
     student_name: "",
     email: "",
-    mobile_number: "",
+    mobile_number: locationState?.prefill?.mobile_number || "",
     class: "",
-    password: "",
-    confirmPassword: "",
+    password: locationState?.prefill?.password || "",
+    confirmPassword: locationState?.prefill?.password || "",
   });
 
   useEffect(() => {
@@ -93,7 +107,6 @@ export default function StudentSignup() {
 
     const username = generateUsername(formData.student_name, formData.mobile_number);
     
-    // Set trial dates
     const trialStartDate = new Date();
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + 7);
@@ -133,7 +146,6 @@ export default function StudentSignup() {
         });
       }
     } else if (data) {
-      // Auto-login the user after successful signup
       autoLogin(data);
       toast({ title: "Welcome to KodeIntel! 🎉", description: "Your 7-day free trial has started!" });
       navigate("/student");
@@ -183,10 +195,14 @@ export default function StudentSignup() {
         <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-center">
           <div className="max-w-md">
             <h2 className="text-4xl font-bold text-foreground mb-4 font-display">
-              Join the <span className="text-gradient-primary">Learning Adventure!</span>
+              {hasPrefill ? "Complete Your " : "Join the "}
+              <span className="text-gradient-primary">{hasPrefill ? "Signup!" : "Learning Adventure!"}</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Create your free account and start exploring the exciting world of AI and coding.
+              {hasPrefill 
+                ? "Just a few more details and you're ready to start learning!"
+                : "Create your free account and start exploring the exciting world of AI and coding."
+              }
             </p>
 
             {/* Benefits */}
@@ -214,7 +230,10 @@ export default function StudentSignup() {
               <img src={mascotKodi} alt="Kodi" className="h-20 w-20 animate-bounce-soft" />
               <div className="glass rounded-2xl p-4">
                 <p className="text-foreground font-medium">
-                  "Welcome aboard! Let's unlock your coding superpowers!"
+                  {hasPrefill 
+                    ? "Almost there! Just add your name and class to get started!"
+                    : "Welcome aboard! Let's unlock your coding superpowers!"
+                  }
                 </p>
                 <p className="text-sm text-primary font-semibold mt-1">- Kodi</p>
               </div>
@@ -235,11 +254,23 @@ export default function StudentSignup() {
                 <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-2 backdrop-blur-sm">
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-white font-display">Create Your Account</h2>
+                <h2 className="text-xl font-bold text-white font-display">
+                  {hasPrefill ? "Complete Your Signup" : "Create Your Account"}
+                </h2>
                 <p className="text-white/80 text-sm">Start your 7-day free trial instantly</p>
               </div>
 
               <CardContent className="p-5">
+                {/* Pre-fill notice */}
+                {hasPrefill && (
+                  <Alert className="mb-4 border-primary/20 bg-primary/5">
+                    <Info className="h-4 w-4 text-primary" />
+                    <AlertDescription className="text-sm">
+                      We've pre-filled your mobile & password. Just add your name and class!
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label className="text-foreground font-medium flex items-center gap-2 text-sm">
@@ -252,6 +283,7 @@ export default function StudentSignup() {
                       onChange={(e) => setFormData({ ...formData, student_name: e.target.value })}
                       className="h-11 rounded-xl"
                       disabled={isSubmitting}
+                      autoFocus={hasPrefill}
                     />
                   </div>
 

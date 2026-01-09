@@ -19,6 +19,11 @@ interface Student {
   activation_status: string;
 }
 
+interface AuthError {
+  message: string;
+  code?: string;
+}
+
 export function useStudentAuth() {
   const [student, setStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +43,6 @@ export function useStudentAuth() {
   };
 
   useEffect(() => {
-    // Check localStorage for existing student session
     const storedStudent = localStorage.getItem("student_session");
     if (storedStudent) {
       try {
@@ -62,11 +66,11 @@ export function useStudentAuth() {
       .maybeSingle();
 
     if (error) {
-      return { error: { message: error.message } };
+      return { error: { message: error.message } as AuthError };
     }
 
     if (!data) {
-      return { error: { message: "Invalid username or password. Please check your credentials or contact your school admin." } };
+      return { error: { message: "Invalid username or password. Please check your credentials or contact your school admin." } as AuthError };
     }
 
     localStorage.setItem("student_session", JSON.stringify(data));
@@ -75,38 +79,48 @@ export function useStudentAuth() {
   };
 
   // Login for individual students (mobile + password)
-  // Individual students can login if they have active trial OR are fully activated
   const signInWithMobile = async (mobileNumber: string, password: string) => {
-    const { data, error } = await supabase
+    // First check if user exists with this mobile number
+    const { data: existingUser, error: checkError } = await supabase
       .from("students")
       .select("*")
       .eq("mobile_number", mobileNumber)
-      .eq("temp_password", password)
       .eq("student_type", "individual")
       .maybeSingle();
 
-    if (error) {
-      return { error: { message: error.message } };
+    if (checkError) {
+      return { error: { message: checkError.message } as AuthError };
     }
 
-    if (!data) {
-      return { error: { message: "Invalid mobile number or password. Please check your credentials." } };
+    // User doesn't exist - return special code to redirect to signup
+    if (!existingUser) {
+      return { 
+        error: { 
+          message: "You're not registered yet. Let's complete your signup!", 
+          code: "NOT_REGISTERED" 
+        } as AuthError 
+      };
+    }
+
+    // User exists but password doesn't match
+    if (existingUser.temp_password !== password) {
+      return { error: { message: "Incorrect password. Please try again." } as AuthError };
     }
 
     // Check if individual student can access (either activated OR has active trial)
-    const hasActiveTrial = data.is_trial_active && data.trial_end_date && new Date(data.trial_end_date) > new Date();
-    const isActivated = data.is_active;
+    const hasActiveTrial = existingUser.is_trial_active && existingUser.trial_end_date && new Date(existingUser.trial_end_date) > new Date();
+    const isActivated = existingUser.is_active;
 
     if (!hasActiveTrial && !isActivated) {
-      return { error: { message: "Your trial has expired. Please contact support to continue learning." } };
+      return { error: { message: "Your trial has expired. Please contact support to continue learning." } as AuthError };
     }
 
-    localStorage.setItem("student_session", JSON.stringify(data));
-    setStudent(data as Student);
+    localStorage.setItem("student_session", JSON.stringify(existingUser));
+    setStudent(existingUser as Student);
     return { error: null };
   };
 
-  // Auto-login after signup (for individual students)
+  // Auto-login after signup
   const autoLogin = (studentData: Student) => {
     localStorage.setItem("student_session", JSON.stringify(studentData));
     setStudent(studentData);

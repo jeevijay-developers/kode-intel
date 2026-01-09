@@ -68,20 +68,52 @@ export default function StudentLogin() {
     }
 
     setIsSubmitting(true);
-    const { error } = loginMode === "school" 
-      ? await signIn(username, password)
-      : await signInWithMobile(mobileNumber, password);
-    setIsSubmitting(false);
-
-    if (error) {
-      toast({ 
-        title: "Login Failed", 
-        description: error.message, 
-        variant: "destructive" 
-      });
+    
+    if (loginMode === "school") {
+      const { error } = await signIn(username, password);
+      setIsSubmitting(false);
+      
+      if (error) {
+        toast({ 
+          title: "Login Failed", 
+          description: error.message, 
+          variant: "destructive" 
+        });
+      } else {
+        toast({ title: "Welcome back, Champion! 🎉" });
+        navigate("/student");
+      }
     } else {
-      toast({ title: "Welcome back, Champion! 🎉" });
-      navigate("/student");
+      const { error } = await signInWithMobile(mobileNumber, password);
+      setIsSubmitting(false);
+      
+      if (error) {
+        // Check if user is not registered - redirect to signup with pre-filled data
+        if (error.code === "NOT_REGISTERED") {
+          toast({ 
+            title: "Not Registered", 
+            description: "Let's create your account first!",
+          });
+          // Navigate to signup with pre-filled data
+          navigate("/student/signup", { 
+            state: { 
+              prefill: { 
+                mobile_number: mobileNumber, 
+                password: password 
+              } 
+            } 
+          });
+        } else {
+          toast({ 
+            title: "Login Failed", 
+            description: error.message, 
+            variant: "destructive" 
+          });
+        }
+      } else {
+        toast({ title: "Welcome back, Champion! 🎉" });
+        navigate("/student");
+      }
     }
   };
 
@@ -273,7 +305,7 @@ export default function StudentLogin() {
               <p className="text-white/80 text-sm mt-1">
                 {loginMode === "school" 
                   ? "Enter credentials provided by your school"
-                  : "Sign in with your mobile number"
+                  : "Sign in or we'll help you sign up"
                 }
               </p>
             </div>
@@ -349,27 +381,19 @@ export default function StudentLogin() {
                   ) : (
                     <>
                       <Sparkles className="h-5 w-5" />
-                      Start Learning
+                      {loginMode === "individual" ? "Continue" : "Start Learning"}
                       <ArrowRight className="h-5 w-5" />
                     </>
                   )}
                 </Button>
               </form>
 
-              {/* Individual students can sign up */}
+              {/* Individual students info */}
               {loginMode === "individual" && (
                 <div className="mt-6 p-4 glass rounded-xl text-center">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Don't have an account?
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">New here?</span> Just enter your mobile & password above. We'll help you sign up if you're not registered!
                   </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate("/student/signup")}
-                    className="w-full h-11 rounded-xl gap-2"
-                  >
-                    <Star className="h-4 w-4" />
-                    Sign up for Free Trial
-                  </Button>
                 </div>
               )}
 
