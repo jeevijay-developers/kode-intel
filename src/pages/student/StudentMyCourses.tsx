@@ -80,7 +80,8 @@ export default function StudentMyCourses() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground font-display flex items-center gap-2">
-            📚 My Courses
+            <BookOpen className="h-6 w-6 text-primary" />
+            My Courses
           </h1>
           <p className="text-muted-foreground">
             {isTrial
