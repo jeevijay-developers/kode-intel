@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +11,11 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Eye, Sparkles, GraduationCap } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { BookOpen, Eye, Sparkles, GraduationCap, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+
+// Set up PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface SampleEbook {
   id: string;
@@ -75,6 +82,34 @@ const colorClasses = {
 
 export function SampleEbookViewer() {
   const [selectedEbook, setSelectedEbook] = useState<SampleEbook | null>(null);
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setIsLoading(false);
+  };
+
+  const handleOpenEbook = (ebook: SampleEbook) => {
+    setSelectedEbook(ebook);
+    setPageNumber(1);
+    setIsLoading(true);
+  };
+
+  const handleClose = () => {
+    setSelectedEbook(null);
+    setPageNumber(1);
+    setNumPages(0);
+  };
+
+  const goToPrevPage = () => {
+    setPageNumber((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setPageNumber((prev) => Math.min(prev + 1, numPages));
+  };
 
   return (
     <>
@@ -108,7 +143,7 @@ export function SampleEbookViewer() {
                 <Card
                   key={ebook.id}
                   className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group bg-gradient-to-br ${colors.bg} ${colors.border}`}
-                  onClick={() => setSelectedEbook(ebook)}
+                  onClick={() => handleOpenEbook(ebook)}
                 >
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex flex-col items-center text-center gap-3">
@@ -144,9 +179,9 @@ export function SampleEbookViewer() {
       </Card>
 
       {/* PDF Viewer Modal */}
-      <Dialog open={!!selectedEbook} onOpenChange={() => setSelectedEbook(null)}>
-        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0 overflow-hidden">
-          <DialogHeader className="p-4 pb-2 border-b bg-gradient-to-r from-primary/5 to-secondary/5">
+      <Dialog open={!!selectedEbook} onOpenChange={handleClose}>
+        <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="p-4 pb-2 border-b bg-gradient-to-r from-primary/5 to-secondary/5 shrink-0">
             <DialogTitle className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-white" />
@@ -162,19 +197,69 @@ export function SampleEbookViewer() {
             </DialogTitle>
           </DialogHeader>
           
-          {/* PDF Viewer - using iframe with toolbar hidden to prevent download */}
-          <div className="flex-1 h-full bg-muted/50" style={{ height: 'calc(90vh - 80px)' }}>
-            {selectedEbook && (
-              <iframe
-                src={`${selectedEbook.pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                className="w-full h-full border-0"
-                title={`${selectedEbook.title} - ${selectedEbook.chapter}`}
-                style={{ 
-                  pointerEvents: 'auto',
-                }}
-              />
-            )}
+          {/* PDF Viewer with react-pdf */}
+          <div className="flex-1 overflow-hidden bg-muted/30">
+            <ScrollArea className="h-full">
+              <div className="flex justify-center p-4 min-h-full">
+                {selectedEbook && (
+                  <Document
+                    file={selectedEbook.pdfUrl}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    loading={
+                      <div className="flex items-center justify-center h-96">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      </div>
+                    }
+                    error={
+                      <div className="flex flex-col items-center justify-center h-96 text-muted-foreground">
+                        <BookOpen className="h-12 w-12 mb-2 opacity-50" />
+                        <p>Failed to load PDF</p>
+                      </div>
+                    }
+                  >
+                    <Page
+                      pageNumber={pageNumber}
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
+                      className="shadow-xl rounded-lg overflow-hidden"
+                      width={Math.min(window.innerWidth * 0.85, 700)}
+                    />
+                  </Document>
+                )}
+              </div>
+            </ScrollArea>
           </div>
+
+          {/* Page Navigation */}
+          {numPages > 0 && (
+            <div className="p-3 border-t bg-background/95 backdrop-blur shrink-0">
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPrevPage}
+                  disabled={pageNumber <= 1}
+                  className="gap-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                <span className="text-sm font-medium px-4 py-1.5 bg-muted rounded-full">
+                  Page {pageNumber} of {numPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNextPage}
+                  disabled={pageNumber >= numPages}
+                  className="gap-1"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
