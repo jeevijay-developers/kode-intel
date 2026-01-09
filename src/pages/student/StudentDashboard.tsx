@@ -22,10 +22,11 @@ import {
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Clock, AlertTriangle } from "lucide-react";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-  const { student, loading, signOut } = useStudentAuth();
+  const { student, loading, signOut, getTrialDaysRemaining, isTrialExpired } = useStudentAuth();
 
   useEffect(() => {
     if (!loading && !student) {
@@ -256,12 +257,60 @@ export default function StudentDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-6">
+        {/* Trial Status Banner */}
+        {student.subscription_status === 'trial' && !isTrialExpired() && (
+          <Card className="mb-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-500/30">
+            <CardContent className="py-3 px-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Free Trial Active</p>
+                    <p className="text-sm text-muted-foreground">
+                      {getTrialDaysRemaining()} days remaining in your free trial
+                    </p>
+                  </div>
+                </div>
+                <Badge className="bg-amber-500 text-white">
+                  {getTrialDaysRemaining()} Days Left
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Trial Expired Banner */}
+        {isTrialExpired() && student.subscription_status !== 'active' && (
+          <Card className="mb-4 bg-gradient-to-r from-destructive/20 to-destructive/10 border-destructive/30">
+            <CardContent className="py-3 px-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Trial Expired</p>
+                    <p className="text-sm text-muted-foreground">
+                      Contact your school to continue learning
+                    </p>
+                  </div>
+                </div>
+                <Button variant="destructive" size="sm">
+                  Contact School
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Welcome Section - Child Friendly */}
         <Card className="mb-6 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
           <CardContent className="pt-6 pb-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-3xl">👋</span>
+                <Brain className="h-8 w-8 text-primary" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">

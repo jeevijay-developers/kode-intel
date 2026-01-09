@@ -587,11 +587,15 @@ export type Database = {
           email: string | null
           id: string
           is_active: boolean
+          is_trial_active: boolean | null
           mobile_number: string
           school_id: string
           section: string | null
           student_name: string
+          subscription_status: string | null
           temp_password: string
+          trial_end_date: string | null
+          trial_start_date: string | null
           updated_at: string
           username: string
         }
@@ -601,11 +605,15 @@ export type Database = {
           email?: string | null
           id?: string
           is_active?: boolean
+          is_trial_active?: boolean | null
           mobile_number: string
           school_id: string
           section?: string | null
           student_name: string
+          subscription_status?: string | null
           temp_password: string
+          trial_end_date?: string | null
+          trial_start_date?: string | null
           updated_at?: string
           username: string
         }
@@ -615,11 +623,15 @@ export type Database = {
           email?: string | null
           id?: string
           is_active?: boolean
+          is_trial_active?: boolean | null
           mobile_number?: string
           school_id?: string
           section?: string | null
           student_name?: string
+          subscription_status?: string | null
           temp_password?: string
+          trial_end_date?: string | null
+          trial_start_date?: string | null
           updated_at?: string
           username?: string
         }

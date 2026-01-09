@@ -11,11 +11,29 @@ interface Student {
   section: string | null;
   school_id: string;
   is_active: boolean;
+  trial_start_date: string | null;
+  trial_end_date: string | null;
+  is_trial_active: boolean;
+  subscription_status: string;
 }
 
 export function useStudentAuth() {
   const [student, setStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const getTrialDaysRemaining = () => {
+    if (!student?.trial_end_date) return 0;
+    const endDate = new Date(student.trial_end_date);
+    const now = new Date();
+    const diffTime = endDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
+  const isTrialExpired = () => {
+    if (!student?.trial_end_date) return false;
+    return new Date(student.trial_end_date) < new Date();
+  };
 
   useEffect(() => {
     // Check localStorage for existing student session
@@ -49,7 +67,7 @@ export function useStudentAuth() {
 
     // Store student session
     localStorage.setItem("student_session", JSON.stringify(data));
-    setStudent(data);
+    setStudent(data as Student);
     return { error: null };
   };
 
@@ -72,7 +90,7 @@ export function useStudentAuth() {
 
     // Store student session
     localStorage.setItem("student_session", JSON.stringify(data));
-    setStudent(data);
+    setStudent(data as Student);
     return { error: null };
   };
 
@@ -105,5 +123,7 @@ export function useStudentAuth() {
     signInWithMobile,
     updatePassword,
     signOut,
+    getTrialDaysRemaining,
+    isTrialExpired,
   };
 }
