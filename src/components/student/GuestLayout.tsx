@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { GuestSidebar } from "./GuestSidebar";
+import { GuestBottomNav } from "./GuestBottomNav";
 import { Button } from "@/components/ui/button";
 import { Menu, UserPlus } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -19,7 +20,7 @@ export default function GuestLayout() {
           {/* Top Header */}
           <header className="h-12 sm:h-14 border-b border-border/50 bg-card/80 backdrop-blur-xl sticky top-0 z-50 flex items-center justify-between px-2 sm:px-4">
             <div className="flex items-center gap-2 sm:gap-3">
-              <SidebarTrigger className="lg:hidden">
+              <SidebarTrigger className="hidden">
                 <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
               </SidebarTrigger>
               <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
@@ -45,11 +46,14 @@ export default function GuestLayout() {
             </div>
           </header>
 
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
+          {/* Main Content - add bottom padding on mobile for bottom nav */}
+          <main className="flex-1 overflow-auto pb-16 lg:pb-0">
             <Outlet />
           </main>
         </div>
+
+        {/* Mobile Bottom Navigation */}
+        <GuestBottomNav />
       </div>
     </SidebarProvider>
   );
