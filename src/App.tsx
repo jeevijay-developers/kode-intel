@@ -18,6 +18,9 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import PublicCourses from "./pages/PublicCourses";
 import About from "./pages/About";
+import EStore from "./pages/EStore";
+import SchoolPartnership from "./pages/SchoolPartnership";
+import Contact from "./pages/Contact";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourse from "./pages/student/StudentCourse";
@@ -44,6 +47,9 @@ function App() {
               <Route path="/courses" element={<PublicCourses />} />
               <Route path="/course/:slug" element={<CourseDetail />} />
               <Route path="/about" element={<About />} />
+              <Route path="/store" element={<EStore />} />
+              <Route path="/schools" element={<SchoolPartnership />} />
+              <Route path="/contact" element={<Contact />} />
             </Route>
 
             {/* Student routes (separate, no public header) */}
