@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,9 +22,416 @@ import {
   Trophy,
   ArrowLeft,
   ChevronRight,
+  Timer,
+  Zap,
+  Volume2,
+  VolumeX,
+  RotateCcw,
 } from "lucide-react";
+import { Confetti } from "@/components/ui/confetti";
+import quizMascot from "@/assets/quiz-brain-mascot.png";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import courseBannerClass3 from "@/assets/course-banner-class3.png";
+
+// Sound generator
+const playSound = (type: 'correct' | 'wrong' | 'tick' | 'timeout') => {
+  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  
+  switch(type) {
+    case 'correct':
+      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+      break;
+    case 'wrong':
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+      break;
+    case 'tick':
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.05);
+      break;
+    case 'timeout':
+      oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime + 0.2);
+      oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.4);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+      break;
+  }
+};
+
+// Gamified Quiz View Component
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct: number;
+  explanation: string;
+}
+
+interface QuizData {
+  id: string;
+  title: string;
+  chapterId: number;
+  questions: QuizQuestion[];
+}
+
+interface GamifiedQuizViewProps {
+  quiz: QuizData;
+  onBack: () => void;
+  onComplete: (score: number) => void;
+}
+
+function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [xpEarned, setXpEarned] = useState(0);
+  const [quizComplete, setQuizComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [isMuted, setIsMuted] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const currentQuestion = quiz.questions[currentQuestionIndex];
+  const totalQuestions = quiz.questions.length;
+  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
+  // Timer effect
+  useEffect(() => {
+    if (!showResult && !quizComplete && timeLeft > 0) {
+      timerRef.current = setTimeout(() => {
+        setTimeLeft(prev => {
+          if (prev <= 4 && prev > 1 && !isMuted) {
+            playSound('tick');
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else if (timeLeft === 0 && !showResult) {
+      // Time's up
+      if (!isMuted) playSound('timeout');
+      setShowResult(true);
+      setStreak(0);
+    }
+    
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [timeLeft, showResult, quizComplete, isMuted]);
+
+  // Reset timer for new question
+  useEffect(() => {
+    if (!showResult && !quizComplete) {
+      setTimeLeft(20);
+    }
+  }, [currentQuestionIndex]);
+
+  const handleAnswerSelect = (optionIndex: number) => {
+    if (showResult) return;
+    
+    setSelectedAnswer(optionIndex);
+    setShowResult(true);
+    
+    const isCorrect = optionIndex === currentQuestion.correct;
+    
+    if (isCorrect) {
+      if (!isMuted) playSound('correct');
+      setScore(prev => prev + 1);
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      const bonusXp = Math.min(newStreak * 5, 25);
+      const timeBonus = Math.floor(timeLeft / 2);
+      setXpEarned(prev => prev + 10 + bonusXp + timeBonus);
+    } else {
+      if (!isMuted) playSound('wrong');
+      setStreak(0);
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      setShowResult(false);
+    } else {
+      setQuizComplete(true);
+      if (score >= Math.ceil(totalQuestions * 0.7)) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+      }
+      onComplete(Math.round((score / totalQuestions) * 100));
+    }
+  };
+
+  const handleRestart = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setScore(0);
+    setStreak(0);
+    setXpEarned(0);
+    setQuizComplete(false);
+    setTimeLeft(20);
+  };
+
+  const getTimerColor = () => {
+    if (timeLeft > 10) return "bg-green-500";
+    if (timeLeft > 5) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  // Quiz Complete View
+  if (quizComplete) {
+    const percentage = Math.round((score / totalQuestions) * 100);
+    const isPassed = percentage >= 70;
+    
+    return (
+      <div className="p-3 sm:p-4 lg:p-6 max-w-2xl mx-auto animate-fade-in">
+        <Confetti isActive={showConfetti} />
+        
+        <Card className="overflow-hidden border-0 shadow-2xl">
+          <div className={`p-6 sm:p-8 text-center ${isPassed ? 'bg-gradient-to-br from-green-500/20 via-emerald-500/10 to-teal-500/20' : 'bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20'}`}>
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4">
+              <img 
+                src={quizMascot} 
+                alt="Quiz Mascot" 
+                className="w-full h-full object-contain animate-bounce"
+              />
+              <div className={`absolute -top-2 -right-2 w-10 h-10 sm:w-12 sm:h-12 rounded-full ${isPassed ? 'bg-green-500' : 'bg-orange-500'} flex items-center justify-center text-white font-bold text-sm sm:text-lg shadow-lg`}>
+                {isPassed ? '🎉' : '💪'}
+              </div>
+            </div>
+            
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+              {isPassed ? 'Fantastic Job!' : 'Keep Learning!'}
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              {isPassed ? 'You aced this quiz!' : 'Practice makes perfect!'}
+            </p>
+            
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+              <div className="bg-background/80 backdrop-blur rounded-xl p-3 sm:p-4">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">{percentage}%</div>
+                <div className="text-xs text-muted-foreground">Score</div>
+              </div>
+              <div className="bg-background/80 backdrop-blur rounded-xl p-3 sm:p-4">
+                <div className="text-2xl sm:text-3xl font-bold text-amber-500">{score}/{totalQuestions}</div>
+                <div className="text-xs text-muted-foreground">Correct</div>
+              </div>
+              <div className="bg-background/80 backdrop-blur rounded-xl p-3 sm:p-4">
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-500">+{xpEarned}</div>
+                <div className="text-xs text-muted-foreground">XP Earned</div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={handleRestart} variant="outline" className="gap-2">
+                <RotateCcw className="h-4 w-4" />
+                Try Again
+              </Button>
+              <Button onClick={onBack} className="gap-2 bg-gradient-to-r from-primary to-primary/80">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Course
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Active Quiz View
+  return (
+    <div className="p-3 sm:p-4 lg:p-6 max-w-2xl mx-auto animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="gap-1.5 text-xs sm:text-sm"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          Back
+        </Button>
+        
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mute Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setIsMuted(!isMuted)}
+          >
+            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </Button>
+          
+          {/* Score */}
+          <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
+            <Zap className="h-4 w-4 text-amber-500" />
+            <span className="font-bold text-sm">{xpEarned} XP</span>
+          </div>
+        </div>
+      </div>
+
+      <Card className="overflow-hidden border-0 shadow-xl">
+        {/* Progress & Timer Bar */}
+        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-xs">
+                Question {currentQuestionIndex + 1}/{totalQuestions}
+              </Badge>
+              {streak > 1 && (
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs animate-pulse">
+                  🔥 {streak} Streak!
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Timer className={`h-4 w-4 ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-muted-foreground'}`} />
+              <span className={`font-mono font-bold text-sm ${timeLeft <= 5 ? 'text-red-500' : ''}`}>
+                {timeLeft}s
+              </span>
+            </div>
+          </div>
+          
+          {/* Combined Progress Bar */}
+          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+            <div 
+              className="absolute left-0 top-0 h-full bg-primary/30 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+            <div 
+              className={`absolute right-0 top-0 h-full ${getTimerColor()} transition-all duration-1000`}
+              style={{ width: `${(timeLeft / 20) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Mascot & Question */}
+        <div className="p-4 sm:p-6">
+          <div className="flex items-start gap-3 sm:gap-4 mb-6">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 relative">
+              <img 
+                src={quizMascot} 
+                alt="Quiz Mascot" 
+                className="w-full h-full object-contain"
+              />
+              {showResult && selectedAnswer === currentQuestion.correct && (
+                <div className="absolute -top-1 -right-1 text-lg">✨</div>
+              )}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-tight">
+                {currentQuestion.question}
+              </h3>
+            </div>
+          </div>
+
+          {/* Options */}
+          <div className="grid gap-2 sm:gap-3">
+            {currentQuestion.options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = index === currentQuestion.correct;
+              const showCorrect = showResult && isCorrect;
+              const showWrong = showResult && isSelected && !isCorrect;
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(index)}
+                  disabled={showResult}
+                  className={`
+                    relative p-3 sm:p-4 rounded-xl text-left transition-all duration-300 border-2
+                    ${showCorrect 
+                      ? 'bg-green-500/20 border-green-500 scale-[1.02]' 
+                      : showWrong 
+                        ? 'bg-red-500/20 border-red-500 shake-animation' 
+                        : isSelected && !showResult
+                          ? 'bg-primary/20 border-primary scale-[1.02]'
+                          : 'bg-muted/50 border-transparent hover:bg-muted hover:border-muted-foreground/20'
+                    }
+                    ${!showResult && 'hover:scale-[1.01] active:scale-[0.99]'}
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`
+                      w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold shrink-0 transition-colors
+                      ${showCorrect 
+                        ? 'bg-green-500 text-white' 
+                        : showWrong 
+                          ? 'bg-red-500 text-white' 
+                          : isSelected 
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-background'
+                      }
+                    `}>
+                      {showCorrect ? <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" /> : String.fromCharCode(65 + index)}
+                    </span>
+                    <span className="text-sm sm:text-base flex-1">{option}</span>
+                    {showCorrect && <Sparkles className="h-5 w-5 text-green-500 animate-pulse" />}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Explanation & Next */}
+          {showResult && (
+            <div className="mt-4 sm:mt-6 space-y-4 animate-fade-in">
+              <div className={`p-3 sm:p-4 rounded-xl ${selectedAnswer === currentQuestion.correct ? 'bg-green-500/10 border border-green-500/30' : 'bg-amber-500/10 border border-amber-500/30'}`}>
+                <p className="text-xs sm:text-sm">
+                  <span className="font-semibold">💡 Explanation:</span> {currentQuestion.explanation}
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleNextQuestion}
+                className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                size="lg"
+              >
+                {currentQuestionIndex < totalQuestions - 1 ? (
+                  <>
+                    Next Question
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    <Trophy className="h-4 w-4" />
+                    See Results
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+      </Card>
+    </div>
+  );
+}
 
 // Guest quiz data based on Class 3 curriculum
 const guestQuizzes = [
@@ -250,129 +657,16 @@ export default function GuestCourses() {
     );
   }
 
-  // Quiz View
+  // Gamified Quiz View
   if (activeQuiz && currentQuiz) {
-    const isSubmitted = quizSubmitted[activeQuiz];
-    const score = getQuizScore(activeQuiz);
-
     return (
-      <div className="p-2 sm:p-4 lg:p-6 max-w-3xl mx-auto">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setActiveQuiz(null)}
-          className="gap-1.5 mb-3 text-xs sm:text-sm"
-        >
-          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          Back to Course
-        </Button>
-
-        <Card>
-          <CardHeader className="p-3 sm:p-4 lg:p-6">
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base lg:text-lg">
-              <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-              {currentQuiz.title} Quiz
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 sm:space-y-4 lg:space-y-6 p-3 sm:p-4 lg:p-6 pt-0">
-            {currentQuiz.questions.map((q, qIndex) => (
-              <div key={q.id} className="space-y-2 sm:space-y-3">
-                <p className="font-medium text-xs sm:text-sm lg:text-base">
-                  {qIndex + 1}. {q.question}
-                </p>
-                <div className="grid gap-1.5 sm:gap-2">
-                  {q.options.map((option, oIndex) => {
-                    const isSelected = quizAnswers[q.id] === oIndex;
-                    const isCorrect = q.correct === oIndex;
-                    const showResult = isSubmitted;
-
-                    return (
-                      <button
-                        key={oIndex}
-                        onClick={() => {
-                          if (!isSubmitted) {
-                            setQuizAnswers({ ...quizAnswers, [q.id]: oIndex });
-                          }
-                        }}
-                        className={`p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl text-left transition-all border-2 ${
-                          showResult
-                            ? isCorrect
-                              ? "bg-green-500/20 border-green-500 text-green-700 dark:text-green-300"
-                              : isSelected
-                              ? "bg-red-500/20 border-red-500 text-red-700 dark:text-red-300"
-                              : "bg-muted/50 border-transparent"
-                            : isSelected
-                            ? "bg-primary/20 border-primary"
-                            : "bg-muted/50 border-transparent hover:bg-muted"
-                        }`}
-                        disabled={isSubmitted}
-                      >
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <span className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-background flex items-center justify-center text-[10px] sm:text-xs lg:text-sm font-bold shrink-0">
-                            {String.fromCharCode(65 + oIndex)}
-                          </span>
-                          <span className="text-[11px] sm:text-xs lg:text-sm">{option}</span>
-                          {showResult && isCorrect && (
-                            <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 ml-auto text-green-500 shrink-0" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-                {isSubmitted && (
-                  <div className="p-2 sm:p-3 lg:p-4 bg-primary/10 rounded-lg sm:rounded-xl mt-2">
-                    <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">
-                      <strong>Explanation:</strong> {q.explanation}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {!isSubmitted ? (
-              <Button
-                size="sm"
-                className="w-full text-xs sm:text-sm"
-                onClick={() => handleQuizSubmit(activeQuiz)}
-                disabled={
-                  Object.keys(quizAnswers).filter((k) =>
-                    currentQuiz.questions.some((q) => q.id === k)
-                  ).length < currentQuiz.questions.length
-                }
-              >
-                Submit Quiz
-              </Button>
-            ) : (
-              <Card className="bg-gradient-to-r from-primary/10 to-secondary/10">
-                <CardContent className="py-4 sm:py-6 text-center px-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white" />
-                  </div>
-                  <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-1">
-                    {score >= 70 ? "Great Job! 🎉" : "Keep Learning! 💪"}
-                  </h3>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary mb-1">
-                    {score}%
-                  </p>
-                  <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground mb-3">
-                    {currentQuiz.questions.filter((q) => quizAnswers[q.id] === q.correct).length}/
-                    {currentQuiz.questions.length} correct!
-                  </p>
-                  <Button
-                    size="sm"
-                    onClick={() => setActiveQuiz(null)}
-                    className="gap-1.5 text-xs sm:text-sm"
-                  >
-                    <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                    Back to Course
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <GamifiedQuizView
+        quiz={currentQuiz}
+        onBack={() => setActiveQuiz(null)}
+        onComplete={(score) => {
+          handleQuizSubmit(activeQuiz);
+        }}
+      />
     );
   }
 
