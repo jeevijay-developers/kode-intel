@@ -76,38 +76,37 @@ export default function StudentMyCourses() {
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground font-display flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            My Courses
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-bold text-foreground font-display flex items-center gap-2">
+            <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
+            <span className="truncate">My Courses</span>
           </h1>
-          <p className="text-muted-foreground">
-            {isTrial
-              ? "Trial: First chapter unlocked in each course"
-              : "Continue your learning journey"}
+          <p className="text-xs sm:text-sm text-muted-foreground truncate">
+            {isTrial ? "Trial: Ch.1 unlocked" : "Continue learning"}
           </p>
         </div>
         <Button
           variant="outline"
+          size="sm"
           onClick={() => navigate("/public-courses")}
-          className="gap-2"
+          className="gap-1 sm:gap-2 shrink-0 h-8 sm:h-9 text-xs sm:text-sm px-2 sm:px-3"
         >
-          <ShoppingBag className="h-4 w-4" />
-          Browse More
+          <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Browse</span>
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="animate-pulse">
               <CardContent className="p-0">
-                <div className="h-36 bg-muted rounded-t-xl" />
-                <div className="p-4 space-y-3">
-                  <div className="h-5 bg-muted rounded w-3/4" />
-                  <div className="h-4 bg-muted rounded w-1/2" />
+                <div className="h-24 sm:h-36 bg-muted rounded-t-xl" />
+                <div className="p-2 sm:p-4 space-y-2 sm:space-y-3">
+                  <div className="h-4 sm:h-5 bg-muted rounded w-3/4" />
+                  <div className="h-3 sm:h-4 bg-muted rounded w-1/2" />
                 </div>
               </CardContent>
             </Card>
@@ -115,24 +114,23 @@ export default function StudentMyCourses() {
         </div>
       ) : enrolledCourses.length === 0 ? (
         <Card className="bg-gradient-to-br from-muted/30 to-muted/10 border-dashed border-2">
-          <CardContent className="py-16 text-center">
-            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="h-12 w-12 text-primary" />
+          <CardContent className="py-10 sm:py-16 text-center px-3">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <Sparkles className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-3">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2 sm:mb-3">
               No Courses Yet!
             </h3>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Start your coding adventure by enrolling in a course. We have
-              amazing content waiting for you!
+            <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-md mx-auto">
+              Start your coding adventure by enrolling in a course!
             </p>
 
             {/* Suggested Course */}
             {suggestedCourse && (
-              <div className="max-w-sm mx-auto mb-6">
-                <p className="text-sm text-muted-foreground mb-3 flex items-center justify-center gap-2">
-                  <Star className="h-4 w-4 text-sunny fill-sunny" />
-                  Recommended for Class {student.class}
+              <div className="max-w-xs sm:max-w-sm mx-auto mb-4 sm:mb-6">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 flex items-center justify-center gap-2">
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4 text-sunny fill-sunny" />
+                  For Class {student.class}
                 </p>
                 <CourseCard
                   course={suggestedCourse}
@@ -146,18 +144,18 @@ export default function StudentMyCourses() {
             )}
 
             <Button
-              size="lg"
+              size="sm"
               className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
               onClick={() => navigate("/public-courses")}
             >
-              <BookOpen className="h-5 w-5 mr-2" />
-              Browse All Courses
+              <BookOpen className="h-4 w-4 mr-1.5" />
+              Browse All
             </Button>
           </CardContent>
         </Card>
       ) : (
         <>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
             {enrolledCourses.map((course: any) => (
               <CourseCard
                 key={course.id}
@@ -171,12 +169,12 @@ export default function StudentMyCourses() {
 
           {/* Suggested Course if not enrolled */}
           {suggestedCourse && !isEnrolledInSuggested && (
-            <div className="mt-8">
-              <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <Star className="h-5 w-5 text-sunny fill-sunny" />
-                Recommended for You
+            <div className="mt-6 sm:mt-8">
+              <h2 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+                <Star className="h-4 w-4 sm:h-5 sm:w-5 text-sunny fill-sunny" />
+                Recommended
               </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                 <CourseCard
                   course={suggestedCourse}
                   isEnrolled={false}

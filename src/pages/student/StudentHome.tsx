@@ -159,7 +159,7 @@ export default function StudentHome() {
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Trial Banners */}
       {isTrial && !isTrialExpired() && (
         <Card className="bg-gradient-to-r from-sunny/20 via-coral/10 to-sunny/20 border-sunny/30 overflow-hidden animate-fade-in">
@@ -207,31 +207,30 @@ export default function StudentHome() {
       )}
 
       {/* Welcome + Level */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-3 sm:gap-6">
         <Card className="bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 border-primary/20 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full" />
-          <CardContent className="pt-6 pb-6 relative">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl">
-                <Brain className="h-10 w-10 text-white" />
+          <div className="absolute top-0 right-0 w-20 sm:w-32 h-20 sm:h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full" />
+          <CardContent className="p-3 sm:pt-6 sm:pb-6 relative">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl shrink-0">
+                <Brain className="h-6 w-6 sm:h-10 sm:w-10 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground font-display flex items-center gap-2">
-                  Welcome back, {student.student_name.split(" ")[0]}!
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground font-display truncate">
+                  Hi, {student.student_name.split(" ")[0]}! 👋
                 </h1>
-                <p className="text-muted-foreground text-lg flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5" />
-                  Class {student.class}
-                  {student.section && ` • Section ${student.section}`}
+                <p className="text-muted-foreground text-sm sm:text-lg flex items-center gap-1 sm:gap-2">
+                  <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+                  <span className="truncate">Class {student.class}{student.section && ` • ${student.section}`}</span>
                 </p>
-                <div className="flex items-center gap-2 mt-3">
-                  <Badge variant="outline" className="bg-primary/10 border-primary/30">
-                    <Rocket className="h-3 w-3 mr-1" />
-                    Level {points.current_level}
+                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 flex-wrap">
+                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-xs sm:text-sm px-1.5 sm:px-2.5 py-0.5">
+                    <Rocket className="h-3 w-3 mr-0.5 sm:mr-1" />
+                    Lv.{points.current_level}
                   </Badge>
-                  <Badge variant="outline" className="bg-sunny/10 text-sunny border-sunny/30">
-                    <Award className="h-3 w-3 mr-1" />
-                    {earnedBadgesCount} Badges
+                  <Badge variant="outline" className="bg-sunny/10 text-sunny border-sunny/30 text-xs sm:text-sm px-1.5 sm:px-2.5 py-0.5">
+                    <Award className="h-3 w-3 mr-0.5 sm:mr-1" />
+                    {earnedBadgesCount}
                   </Badge>
                 </div>
               </div>
@@ -247,72 +246,68 @@ export default function StudentHome() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="pt-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <BookOpen className="h-7 w-7 text-white" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <Card className="hover:shadow-lg transition-all bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardContent className="p-2 sm:pt-4 sm:p-4 text-center">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg">
+              <BookOpen className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
             </div>
-            <p className="text-3xl font-bold text-foreground">{enrolledCourses.length}</p>
-            <p className="text-sm text-muted-foreground">My Courses</p>
+            <p className="text-xl sm:text-3xl font-bold text-foreground">{enrolledCourses.length}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Courses</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-turquoise/5 to-turquoise/10">
-          <CardContent className="pt-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-turquoise to-lime flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <Video className="h-7 w-7 text-white" />
+        <Card className="hover:shadow-lg transition-all bg-gradient-to-br from-turquoise/5 to-turquoise/10">
+          <CardContent className="p-2 sm:pt-4 sm:p-4 text-center">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-turquoise to-lime flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg">
+              <Video className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
-              {videoStats?.completed || 0}
-            </p>
-            <p className="text-sm text-muted-foreground">Videos Watched</p>
+            <p className="text-xl sm:text-3xl font-bold text-foreground">{videoStats?.completed || 0}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Videos</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-sunny/5 to-sunny/10">
-          <CardContent className="pt-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sunny to-coral flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <HelpCircle className="h-7 w-7 text-white" />
+        <Card className="hover:shadow-lg transition-all bg-gradient-to-br from-sunny/5 to-sunny/10">
+          <CardContent className="p-2 sm:pt-4 sm:p-4 text-center">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-sunny to-coral flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg">
+              <HelpCircle className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
-              {quizStats?.passed || 0}
-            </p>
-            <p className="text-sm text-muted-foreground">Quizzes Passed</p>
+            <p className="text-xl sm:text-3xl font-bold text-foreground">{quizStats?.passed || 0}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Quizzes</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-purple/5 to-purple/10">
-          <CardContent className="pt-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple to-pink flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <Trophy className="h-7 w-7 text-white" />
+        <Card className="hover:shadow-lg transition-all bg-gradient-to-br from-purple/5 to-purple/10">
+          <CardContent className="p-2 sm:pt-4 sm:p-4 text-center">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple to-pink flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg">
+              <Trophy className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
             </div>
-            <p className="text-3xl font-bold text-foreground">{earnedBadgesCount}</p>
-            <p className="text-sm text-muted-foreground">Badges Earned</p>
+            <p className="text-xl sm:text-3xl font-bold text-foreground">{earnedBadgesCount}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Badges</p>
           </CardContent>
         </Card>
       </div>
 
       {/* My Courses Section */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2 font-display">
-            <BookOpen className="h-5 w-5 text-primary" />
-            My Learning Journey
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <h2 className="text-base sm:text-xl font-bold text-foreground flex items-center gap-2 font-display">
+            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            My Courses
           </h2>
           {enrolledCourses.length > 0 && (
-            <Button variant="ghost" size="sm" onClick={() => navigate("/student/my-courses")}>
-              View All <ArrowRight className="h-4 w-4 ml-1" />
+            <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8" onClick={() => navigate("/student/my-courses")}>
+              All <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
             </Button>
           )}
         </div>
 
         {enrolledLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
             {[1, 2, 3].map((i) => (
               <Card key={i} className="animate-pulse">
                 <CardContent className="p-0">
-                  <div className="h-36 bg-muted rounded-t-xl" />
-                  <div className="p-4 space-y-3">
-                    <div className="h-5 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-1/2" />
+                  <div className="h-24 sm:h-36 bg-muted rounded-t-xl" />
+                  <div className="p-2 sm:p-4 space-y-2 sm:space-y-3">
+                    <div className="h-4 sm:h-5 bg-muted rounded w-3/4" />
+                    <div className="h-3 sm:h-4 bg-muted rounded w-1/2" />
                   </div>
                 </CardContent>
               </Card>
@@ -320,28 +315,28 @@ export default function StudentHome() {
           </div>
         ) : enrolledCourses.length === 0 ? (
           <Card className="bg-gradient-to-br from-muted/30 to-muted/10 border-dashed border-2">
-            <CardContent className="py-12 text-center">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="h-10 w-10 text-primary" />
+            <CardContent className="py-8 sm:py-12 text-center px-3">
+              <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Sparkles className="h-7 w-7 sm:h-10 sm:w-10 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                Start Your Learning Adventure!
+              <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
+                Start Learning!
               </h3>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                You haven't enrolled in any courses yet. Browse our amazing courses and start learning today!
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-md mx-auto">
+                Browse courses and start your journey!
               </p>
               <Button
-                size="lg"
+                size="sm"
                 className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                 onClick={() => navigate("/public-courses")}
               >
-                <BookOpen className="h-5 w-5 mr-2" />
-                Browse Courses
+                <BookOpen className="h-4 w-4 mr-1.5" />
+                Browse
               </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
             {enrolledCourses.slice(0, 3).map((course: any) => (
               <CourseCard
                 key={course.id}
@@ -358,11 +353,11 @@ export default function StudentHome() {
       {/* Suggested Course */}
       {suggestedCourse && !isEnrolledInSuggested && (
         <div>
-          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2 font-display">
-            <Star className="h-5 w-5 text-sunny fill-sunny" />
-            Recommended for You
+          <h2 className="text-base sm:text-xl font-bold text-foreground mb-3 sm:mb-4 flex items-center gap-2 font-display">
+            <Star className="h-4 w-4 sm:h-5 sm:w-5 text-sunny fill-sunny" />
+            Recommended
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
             <CourseCard
               course={suggestedCourse}
               isEnrolled={false}
@@ -378,25 +373,27 @@ export default function StudentHome() {
       {/* Progress Circles */}
       {enrolledCourses.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Target className="h-5 w-5 text-primary" />
-              My Progress
+          <CardHeader className="p-3 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+              <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              Progress
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center gap-16 flex-wrap">
+          <CardContent className="p-3 sm:p-6 pt-0">
+            <div className="flex items-center justify-center gap-8 sm:gap-16">
               <div className="flex flex-col items-center">
-                <span className="text-sm font-medium flex items-center gap-2 mb-3">
-                  <Video className="h-4 w-4 text-turquoise" /> Videos
+                <span className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                  <Video className="h-3 w-3 sm:h-4 sm:w-4 text-turquoise" /> Videos
                 </span>
-                <CircularProgress value={videoProgress} size={110} strokeWidth={10} />
+                <CircularProgress value={videoProgress} size={70} strokeWidth={8} className="sm:hidden" />
+                <CircularProgress value={videoProgress} size={110} strokeWidth={10} className="hidden sm:block" />
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-sm font-medium flex items-center gap-2 mb-3">
-                  <Target className="h-4 w-4 text-coral" /> Quizzes
+                <span className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                  <Target className="h-3 w-3 sm:h-4 sm:w-4 text-coral" /> Quizzes
                 </span>
-                <CircularProgress value={quizProgress} size={110} strokeWidth={10} />
+                <CircularProgress value={quizProgress} size={70} strokeWidth={8} className="sm:hidden" />
+                <CircularProgress value={quizProgress} size={110} strokeWidth={10} className="hidden sm:block" />
               </div>
             </div>
           </CardContent>
@@ -405,18 +402,18 @@ export default function StudentHome() {
 
       {/* Badges Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="p-3 sm:p-6">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Award className="h-5 w-5 text-sunny" /> My Badges
+            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+              <Award className="h-4 w-4 sm:h-5 sm:w-5 text-sunny" /> Badges
             </CardTitle>
-            <Badge variant="outline">
+            <Badge variant="outline" className="text-xs sm:text-sm">
               {earnedBadgesCount}/{totalBadges}
             </Badge>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-10 gap-4">
+        <CardContent className="p-3 sm:p-6 pt-0">
+          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-10 gap-2 sm:gap-4">
             {badges.slice(0, 10).map((badge) => (
               <BadgeCard
                 key={badge.id}
@@ -425,7 +422,7 @@ export default function StudentHome() {
                 icon={badge.icon}
                 color={badge.color}
                 earned={badge.earned}
-                size="md"
+                size="sm"
                 showName={false}
               />
             ))}
