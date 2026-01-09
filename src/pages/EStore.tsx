@@ -688,8 +688,9 @@ export default function EStore() {
             {books.map((book, index) => (
               <Card 
                 key={book.id}
-                className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary/20 animate-slide-up"
+                className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary/20 animate-slide-up cursor-pointer"
                 style={{ animationDelay: `${index * 0.05}s` }}
+                onClick={() => handleQuickView(book.id)}
               >
                 <div className={`h-28 sm:h-36 bg-gradient-to-br ${book.color} relative flex items-center justify-center overflow-hidden`}>
                   <div className="absolute inset-0 opacity-20">
@@ -705,13 +706,11 @@ export default function EStore() {
                     {Math.round((1 - book.price / book.originalPrice) * 100)}% OFF
                   </Badge>
                   
-                  {/* Quick View Button */}
-                  <button 
-                    onClick={() => handleQuickView(book.id)}
-                    className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/40"
-                  >
-                    <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
-                  </button>
+                  {/* Quick View Indicator */}
+                  <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Eye className="h-3 w-3 text-white" />
+                    <span className="text-[10px] sm:text-xs text-white font-medium">Quick View</span>
+                  </div>
                 </div>
                 <CardContent className="p-3 sm:p-5">
                   <div className="flex items-center gap-1.5 sm:gap-2 mb-2 flex-wrap">
@@ -742,7 +741,10 @@ export default function EStore() {
                   <div className="flex gap-2">
                     <Button 
                       className="flex-1 rounded-full gap-1.5 sm:gap-2 text-xs sm:text-sm group-hover:shadow-md transition-shadow"
-                      onClick={() => addToCart(book)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(book);
+                      }}
                     >
                       <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
                       Add to Cart
@@ -751,7 +753,10 @@ export default function EStore() {
                       variant="outline"
                       size="icon"
                       className="rounded-full h-8 w-8 sm:h-10 sm:w-10"
-                      onClick={() => handleViewDetails(book.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDetails(book.id);
+                      }}
                     >
                       <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>

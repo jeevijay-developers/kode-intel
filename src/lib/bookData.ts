@@ -66,395 +66,413 @@ export interface BookData {
 }
 
 // Helper function to create subtopic with exercises
-const createSubTopic = (id: string, title: string, description: string): SubTopic => ({
+const createSubTopic = (id: string, title: string): SubTopic => ({
   id,
   title,
-  description,
+  description: `Learn about ${title.toLowerCase()} with engaging activities and worksheets`,
   exercises: [
-    { id: `${id}-ex1`, title: `${title} Worksheet`, type: 'worksheet', difficulty: 'easy' },
-    { id: `${id}-ex2`, title: `${title} Activity`, type: 'activity', difficulty: 'medium' },
+    { id: `${id}-ex1`, title: `${title} - Practice Worksheet`, type: 'worksheet', difficulty: 'easy' },
+    { id: `${id}-ex2`, title: `${title} - Activity`, type: 'activity', difficulty: 'medium' },
   ],
   funFacts: [
-    { id: `${id}-ff1`, fact: `AI systems learn patterns just like you do - through practice and examples!`, category: 'ai' },
+    { id: `${id}-ff1`, fact: `This concept helps build foundational AI and computational thinking skills!`, category: 'ai' },
   ],
   didYouKnow: [
-    { id: `${id}-dyk1`, content: `This concept is used in real-world AI applications every day!`, icon: 'lightbulb' },
+    { id: `${id}-dyk1`, content: `Real-world AI systems use this concept every day!`, icon: 'lightbulb' },
   ],
 });
 
-// Helper to create mind map
-const createMindMap = (id: string, title: string, children: string[]): MindMapNode => ({
-  id,
+// Helper to create chapter
+const createChapter = (
+  classNum: number,
+  chapterNum: number,
+  title: string,
+  subTopicTitles: string[]
+): Chapter => ({
+  id: `ch-${classNum}-${chapterNum}`,
+  number: chapterNum,
   title,
-  children: children.map((child, i) => ({
-    id: `${id}-${i}`,
-    title: child,
-  })),
+  description: `Explore ${title.toLowerCase()} with hands-on activities and worksheets`,
+  learningObjectives: subTopicTitles.slice(0, 3).map(st => `Understand ${st.toLowerCase()}`),
+  pageCount: 12 + subTopicTitles.length * 2,
+  subTopics: subTopicTitles.map((st, i) => 
+    createSubTopic(`st-${classNum}-${chapterNum}-${i + 1}`, st)
+  ),
+  mindMap: {
+    id: `mm-${classNum}-${chapterNum}`,
+    title,
+    children: subTopicTitles.map((st, i) => ({
+      id: `mm-${classNum}-${chapterNum}-${i + 1}`,
+      title: st,
+    })),
+  },
 });
 
-// Real curriculum data - CLASS 3: THINKING & SMART MACHINES
+// CLASS 3 – THINKING & SMART MACHINES
 const class3Chapters: Chapter[] = [
-  {
-    id: "ch-3-1",
-    number: 1,
-    title: "Smart Things Around Us",
-    description: "Exploring smart things we see every day and how machines help people",
-    learningObjectives: [
-      "Identify smart things in daily life",
-      "Understand how machines help people",
-      "Differentiate smart machines from normal machines",
-      "Recognize AI as a friendly helper"
-    ],
-    pageCount: 16,
-    subTopics: [
-      createSubTopic("st-3-1-1", "Smart things we see every day", "Discovering AI-powered devices around us"),
-      createSubTopic("st-3-1-2", "How machines help people", "Understanding the role of machines in our lives"),
-      createSubTopic("st-3-1-3", "Smart machines vs normal machines", "Learning the difference between smart and regular devices"),
-      createSubTopic("st-3-1-4", "AI as a friendly helper", "Introduction to AI as our helpful companion"),
-    ],
-    mindMap: createMindMap("mm-3-1", "Smart Things", ["Daily Devices", "Helping Humans", "Smart vs Normal", "AI Helper"]),
-  },
-  {
-    id: "ch-3-2",
-    number: 2,
-    title: "Thinking Skills",
-    description: "Developing thinking skills like a smart brain",
-    learningObjectives: [
-      "Think like a smart brain",
-      "Practice step-by-step thinking",
-      "Find patterns around us",
-      "Choose the best answer",
-      "Give clear instructions"
-    ],
-    pageCount: 18,
-    subTopics: [
-      createSubTopic("st-3-2-1", "Thinking like a smart brain", "Developing computational thinking skills"),
-      createSubTopic("st-3-2-2", "Step-by-step thinking", "Learning sequential problem solving"),
-      createSubTopic("st-3-2-3", "Finding patterns around us", "Pattern recognition in nature and daily life"),
-      createSubTopic("st-3-2-4", "Choosing the best answer", "Decision making skills"),
-      createSubTopic("st-3-2-5", "Giving clear instructions", "Learning to communicate clearly"),
-    ],
-    mindMap: createMindMap("mm-3-2", "Thinking Skills", ["Smart Brain", "Step-by-Step", "Patterns", "Best Answer", "Instructions"]),
-  },
+  createChapter(3, 1, "Smart Things Around Us", [
+    "Smart things we see every day",
+    "How machines help people",
+    "Smart machines vs normal machines",
+    "AI as a friendly helper"
+  ]),
+  createChapter(3, 2, "Thinking Skills", [
+    "Thinking like a smart brain",
+    "Step-by-step thinking",
+    "Finding patterns around us",
+    "Choosing the best answer",
+    "Giving clear instructions"
+  ]),
+  createChapter(3, 3, "Instructions & Actions", [
+    "What are instructions",
+    "Following instructions correctly",
+    "Order of instructions",
+    "Mistakes in instructions",
+    "Why machines need clear instructions"
+  ]),
+  createChapter(3, 4, "Fun with Patterns", [
+    "Patterns in shapes and colours",
+    "Number patterns",
+    "Sound and movement patterns",
+    "Guessing what comes next",
+    "Making our own patterns"
+  ]),
+  createChapter(3, 5, "Smart Decisions", [
+    "Making choices in daily life",
+    "Good choice vs bad choice",
+    "Thinking before acting",
+    "Simple decision making",
+    "Smart choices with examples"
+  ]),
+  createChapter(3, 6, "AI as Our Friend", [
+    "What AI means for us",
+    "AI in games and toys",
+    "AI in phones and TV",
+    "AI helps people",
+    "Using AI safely"
+  ]),
 ];
 
-// CLASS 4: THINKING & SMART MACHINES
+// CLASS 4 – LOGIC & PROBLEM SOLVING
 const class4Chapters: Chapter[] = [
-  {
-    id: "ch-4-1",
-    number: 1,
-    title: "Recognizing AI",
-    description: "Learning to recognize AI in our daily lives",
-    learningObjectives: [
-      "Spot AI around you",
-      "Understand how AI listens and responds",
-      "See how AI learns from us",
-      "Explore simple AI actions",
-      "Learn about AI in games and apps"
-    ],
-    pageCount: 18,
-    subTopics: [
-      createSubTopic("st-4-1-1", "Spotting AI around you", "Identifying AI in everyday life"),
-      createSubTopic("st-4-1-2", "How AI listens and responds", "Understanding voice assistants"),
-      createSubTopic("st-4-1-3", "How AI learns from us", "Introduction to machine learning"),
-      createSubTopic("st-4-1-4", "Simple AI actions", "Exploring basic AI behaviors"),
-      createSubTopic("st-4-1-5", "AI in games and apps", "AI in entertainment"),
-    ],
-    mindMap: createMindMap("mm-4-1", "Recognizing AI", ["Spotting AI", "Listen & Respond", "Learning", "Actions", "Games"]),
-  },
-  {
-    id: "ch-4-2",
-    number: 2,
-    title: "Logical Thinking",
-    description: "Building logical thinking and sequencing skills",
-    learningObjectives: [
-      "Follow sequences in daily tasks",
-      "Think in steps",
-      "Spot and continue patterns",
-      "Solve basic logic puzzles",
-      "Sort and group objects logically"
-    ],
-    pageCount: 20,
-    subTopics: [
-      createSubTopic("st-4-2-1", "Sequences in daily tasks", "Understanding order and sequences"),
-      createSubTopic("st-4-2-2", "Thinking in steps", "Breaking down problems"),
-      createSubTopic("st-4-2-3", "Spotting and continuing patterns", "Pattern recognition and extension"),
-      createSubTopic("st-4-2-4", "Solving basic logic puzzles", "Introduction to logical reasoning"),
-      createSubTopic("st-4-2-5", "Sorting and grouping objects", "Classification skills"),
-    ],
-    mindMap: createMindMap("mm-4-2", "Logical Thinking", ["Sequences", "Steps", "Patterns", "Puzzles", "Sorting"]),
-  },
+  createChapter(4, 1, "Smart Thinking", [
+    "Logical thinking explained",
+    "Thinking clearly",
+    "Solving simple problems",
+    "Thinking before acting",
+    "Using logic daily"
+  ]),
+  createChapter(4, 2, "Logical Skills", [
+    "Thinking logically",
+    "Breaking big problems into parts",
+    "Arranging steps in order",
+    "Finding and correcting mistakes",
+    "Using rules to decide"
+  ]),
+  createChapter(4, 3, "Patterns & Sequences", [
+    "Repeating patterns",
+    "Growing patterns",
+    "Ordering steps",
+    "Patterns in numbers",
+    "Patterns in daily life"
+  ]),
+  createChapter(4, 4, "Instructions & Flow", [
+    "Writing clear instructions",
+    "Order matters",
+    "Following steps correctly",
+    "Simple flow ideas",
+    "Fixing wrong steps"
+  ]),
+  createChapter(4, 5, "Decisions & Rules", [
+    "What are rules",
+    "Following conditions",
+    "If-then thinking",
+    "Choosing best options",
+    "Rules in machines"
+  ]),
+  createChapter(4, 6, "AI in Daily Life", [
+    "AI at home",
+    "AI in school",
+    "AI in travel",
+    "AI helping humans",
+    "Safe use of AI"
+  ]),
 ];
 
-// CLASS 5: UNDERSTANDING & INTERACTING WITH AI
+// CLASS 5 – COMPUTATIONAL THINKING
 const class5Chapters: Chapter[] = [
-  {
-    id: "ch-5-1",
-    number: 1,
-    title: "How AI Works",
-    description: "Understanding the basics of how AI functions",
-    learningObjectives: [
-      "Understand basics of AI",
-      "Learn about data and AI",
-      "Explore training and learning in AI",
-      "Understand AI predictions"
-    ],
-    pageCount: 20,
-    subTopics: [
-      createSubTopic("st-5-1-1", "Basics of AI", "Foundation of artificial intelligence"),
-      createSubTopic("st-5-1-2", "Data and AI", "How data powers AI systems"),
-      createSubTopic("st-5-1-3", "Training and learning", "How AI learns from examples"),
-      createSubTopic("st-5-1-4", "AI predictions", "How AI makes predictions"),
-    ],
-    mindMap: createMindMap("mm-5-1", "How AI Works", ["Basics", "Data", "Training", "Predictions"]),
-  },
-  {
-    id: "ch-5-2",
-    number: 2,
-    title: "Simple Coding Logic",
-    description: "Introduction to coding concepts and logic",
-    learningObjectives: [
-      "Understand instructions for computers",
-      "Learn order of operations",
-      "Explore repeating patterns",
-      "Make simple choices with conditions"
-    ],
-    pageCount: 22,
-    subTopics: [
-      createSubTopic("st-5-2-1", "Instructions for computers", "Understanding how computers follow commands"),
-      createSubTopic("st-5-2-2", "Order of operations", "Learning sequence in programming"),
-      createSubTopic("st-5-2-3", "Repeating patterns", "Introduction to loops"),
-      createSubTopic("st-5-2-4", "Simple choices", "Basic conditional logic"),
-    ],
-    mindMap: createMindMap("mm-5-2", "Coding Logic", ["Instructions", "Order", "Repeating", "Choices"]),
-  },
+  createChapter(5, 1, "Logical Thinking", [
+    "What is logical thinking",
+    "Cause and effect",
+    "Thinking with reasons",
+    "Logic in daily life",
+    "Logic in machines"
+  ]),
+  createChapter(5, 2, "Problem Solving Skills", [
+    "Breaking problems into steps",
+    "Planning solutions",
+    "Arranging steps correctly",
+    "Finding errors",
+    "Using rules and conditions"
+  ]),
+  createChapter(5, 3, "Algorithms Basics", [
+    "What is an algorithm",
+    "Writing simple algorithms",
+    "Step-by-step solutions",
+    "Algorithms in daily life",
+    "Correct vs wrong algorithms"
+  ]),
+  createChapter(5, 4, "Flow of Steps", [
+    "Understanding sequence",
+    "Order of instructions",
+    "Simple flow ideas",
+    "Fixing wrong flows",
+    "Planning solutions"
+  ]),
+  createChapter(5, 5, "Decision Making", [
+    "Using conditions",
+    "If-else thinking",
+    "Logical choices",
+    "Machine decisions",
+    "Human vs machine thinking"
+  ]),
+  createChapter(5, 6, "AI Introduction", [
+    "What AI is",
+    "AI around us",
+    "AI in apps",
+    "AI helps humans",
+    "Responsible use"
+  ]),
 ];
 
-// CLASS 6: UNDERSTANDING & INTERACTING WITH AI
+// CLASS 6 – COMPUTATIONAL THINKING CORE
 const class6Chapters: Chapter[] = [
-  {
-    id: "ch-6-1",
-    number: 1,
-    title: "AI Capabilities",
-    description: "Exploring what AI can and cannot do",
-    learningObjectives: [
-      "Understand what AI can do",
-      "Learn what AI cannot do",
-      "Explore speech and vision recognition",
-      "Understand AI in translation"
-    ],
-    pageCount: 22,
-    subTopics: [
-      createSubTopic("st-6-1-1", "What AI can do", "Exploring AI capabilities"),
-      createSubTopic("st-6-1-2", "What AI cannot do", "Understanding AI limitations"),
-      createSubTopic("st-6-1-3", "Speech recognition", "How AI understands voice"),
-      createSubTopic("st-6-1-4", "Vision recognition", "How AI sees and interprets images"),
-      createSubTopic("st-6-1-5", "AI in translation", "Language processing by AI"),
-    ],
-    mindMap: createMindMap("mm-6-1", "AI Capabilities", ["Can Do", "Cannot Do", "Speech", "Vision", "Translation"]),
-  },
-  {
-    id: "ch-6-2",
-    number: 2,
-    title: "Coding Basics",
-    description: "Foundation of programming with Scratch",
-    learningObjectives: [
-      "Understand algorithms",
-      "Learn variables and data",
-      "Explore conditions",
-      "Master loops",
-      "Get introduced to Scratch"
-    ],
-    pageCount: 24,
-    subTopics: [
-      createSubTopic("st-6-2-1", "Algorithms", "Step-by-step problem solving"),
-      createSubTopic("st-6-2-2", "Variables and data", "Storing and using information"),
-      createSubTopic("st-6-2-3", "Conditions", "Making decisions in code"),
-      createSubTopic("st-6-2-4", "Loops", "Repeating actions efficiently"),
-      createSubTopic("st-6-2-5", "Introduction to Scratch", "Visual programming platform"),
-    ],
-    mindMap: createMindMap("mm-6-2", "Coding Basics", ["Algorithms", "Variables", "Conditions", "Loops", "Scratch"]),
-  },
+  createChapter(6, 1, "Computational Thinking", [
+    "What is computational thinking",
+    "Thinking like a computer",
+    "Problem understanding",
+    "Step-wise solutions",
+    "Real life examples"
+  ]),
+  createChapter(6, 2, "Core Thinking Skills", [
+    "Decomposition",
+    "Pattern recognition",
+    "Abstraction",
+    "Designing algorithms",
+    "Applying logic"
+  ]),
+  createChapter(6, 3, "Algorithms", [
+    "Meaning of algorithms",
+    "Writing algorithms",
+    "Correct steps",
+    "Improving algorithms",
+    "Testing logic"
+  ]),
+  createChapter(6, 4, "Flowcharts", [
+    "What is a flowchart",
+    "Flowchart symbols",
+    "Drawing simple flowcharts",
+    "Decision making in flowcharts",
+    "Fixing flowchart errors"
+  ]),
+  createChapter(6, 5, "Problem Solving", [
+    "Logical planning",
+    "Error checking",
+    "Improving solutions",
+    "Smart problem solving",
+    "Preparing for coding"
+  ]),
+  createChapter(6, 6, "AI Basics", [
+    "AI meaning",
+    "AI systems",
+    "AI examples",
+    "AI limitations",
+    "Ethical use"
+  ]),
 ];
 
-// CLASS 7: CORE AI & PYTHON BASICS
+// CLASS 7 – ALGORITHMS & FLOWCHARTS
 const class7Chapters: Chapter[] = [
-  {
-    id: "ch-7-1",
-    number: 1,
-    title: "AI Core Concepts",
-    description: "Deep dive into machine learning and AI fundamentals",
-    learningObjectives: [
-      "Understand machine learning basics",
-      "Learn about data sets",
-      "Explore AI training process",
-      "Understand AI testing"
-    ],
-    pageCount: 24,
-    subTopics: [
-      createSubTopic("st-7-1-1", "Machine learning basics", "Foundation of ML"),
-      createSubTopic("st-7-1-2", "Data sets", "Understanding training data"),
-      createSubTopic("st-7-1-3", "Training AI", "How AI models are trained"),
-      createSubTopic("st-7-1-4", "Testing AI", "Evaluating AI performance"),
-    ],
-    mindMap: createMindMap("mm-7-1", "AI Core", ["ML Basics", "Data Sets", "Training", "Testing"]),
-  },
-  {
-    id: "ch-7-2",
-    number: 2,
-    title: "Python Basics",
-    description: "Introduction to Python programming language",
-    learningObjectives: [
-      "Learn what Python is",
-      "Write first program",
-      "Understand input/output",
-      "Work with variables and types"
-    ],
-    pageCount: 26,
-    subTopics: [
-      createSubTopic("st-7-2-1", "What is Python", "Introduction to Python language"),
-      createSubTopic("st-7-2-2", "First program", "Writing Hello World"),
-      createSubTopic("st-7-2-3", "Input/Output", "Reading and displaying data"),
-      createSubTopic("st-7-2-4", "Variables & types", "Data storage in Python"),
-    ],
-    mindMap: createMindMap("mm-7-2", "Python Basics", ["What is Python", "First Program", "I/O", "Variables"]),
-  },
+  createChapter(7, 1, "Introduction to AI", [
+    "What is AI",
+    "History of AI",
+    "AI vs human intelligence",
+    "Examples of AI",
+    "Where AI is used"
+  ]),
+  createChapter(7, 2, "Algorithms & Flowcharts", [
+    "What is an algorithm",
+    "Writing algorithms",
+    "Understanding flowcharts",
+    "Creating flowcharts",
+    "Improving algorithms"
+  ]),
+  createChapter(7, 3, "Logical Structures", [
+    "Sequence logic",
+    "Decision logic",
+    "Conditions",
+    "Rules in machines",
+    "Logical problem solving"
+  ]),
+  createChapter(7, 4, "Data & Patterns", [
+    "Understanding data",
+    "Types of data",
+    "Pattern recognition",
+    "Using patterns",
+    "Data in AI"
+  ]),
+  createChapter(7, 5, "Problem Solving", [
+    "Breaking complex problems",
+    "Designing solutions",
+    "Testing logic",
+    "Improving output",
+    "Thinking efficiently"
+  ]),
+  createChapter(7, 6, "AI in Society", [
+    "AI benefits",
+    "AI challenges",
+    "AI ethics",
+    "Responsible AI",
+    "Future of AI"
+  ]),
 ];
 
-// CLASS 8: CORE AI & PYTHON BASICS
+// CLASS 8 – PROGRAMMING FOUNDATIONS
 const class8Chapters: Chapter[] = [
-  {
-    id: "ch-8-1",
-    number: 1,
-    title: "AI Applications",
-    description: "Exploring real-world AI applications",
-    learningObjectives: [
-      "Understand AI in healthcare",
-      "Learn about AI in transport",
-      "Explore AI in entertainment",
-      "Discuss AI safety and ethics"
-    ],
-    pageCount: 26,
-    subTopics: [
-      createSubTopic("st-8-1-1", "AI in healthcare", "Medical AI applications"),
-      createSubTopic("st-8-1-2", "AI in transport", "Autonomous vehicles and logistics"),
-      createSubTopic("st-8-1-3", "AI in entertainment", "AI in games and media"),
-      createSubTopic("st-8-1-4", "AI safety and ethics", "Responsible AI use"),
-    ],
-    mindMap: createMindMap("mm-8-1", "AI Applications", ["Healthcare", "Transport", "Entertainment", "Ethics"]),
-  },
-  {
-    id: "ch-8-2",
-    number: 2,
-    title: "Python Intermediate",
-    description: "Building on Python fundamentals",
-    learningObjectives: [
-      "Master operators",
-      "Learn conditionals",
-      "Work with loops",
-      "Create simple functions"
-    ],
-    pageCount: 28,
-    subTopics: [
-      createSubTopic("st-8-2-1", "Operators", "Mathematical and logical operators"),
-      createSubTopic("st-8-2-2", "Conditionals", "If-else statements"),
-      createSubTopic("st-8-2-3", "Loops", "For and while loops"),
-      createSubTopic("st-8-2-4", "Simple functions", "Creating reusable code"),
-    ],
-    mindMap: createMindMap("mm-8-2", "Python Intermediate", ["Operators", "Conditionals", "Loops", "Functions"]),
-  },
+  createChapter(8, 1, "Programming Basics", [
+    "What is programming",
+    "Why programming is needed",
+    "Programming languages",
+    "Coding vs thinking",
+    "Real world programs"
+  ]),
+  createChapter(8, 2, "Programming Concepts", [
+    "Variables",
+    "Data types",
+    "Conditions",
+    "Loops",
+    "Program flow"
+  ]),
+  createChapter(8, 3, "Python Introduction", [
+    "What is Python",
+    "Python syntax basics",
+    "Writing first program",
+    "Input and output",
+    "Simple logic"
+  ]),
+  createChapter(8, 4, "Control Structures", [
+    "If conditions",
+    "If-else",
+    "Nested conditions",
+    "Loops concept",
+    "Repeating tasks"
+  ]),
+  createChapter(8, 5, "AI & Data", [
+    "Data and AI",
+    "Patterns in data",
+    "Decisions using data",
+    "AI examples",
+    "Limitations"
+  ]),
+  createChapter(8, 6, "Problem Solving with Code", [
+    "Logical coding",
+    "Debugging basics",
+    "Improving code",
+    "Practice problems",
+    "Mini projects"
+  ]),
 ];
 
-// CLASS 9: APPLIED AI & CODING
+// CLASS 9 – AI & PYTHON
 const class9Chapters: Chapter[] = [
-  {
-    id: "ch-9-1",
-    number: 1,
-    title: "AI Techniques",
-    description: "Understanding supervised and unsupervised learning",
-    learningObjectives: [
-      "Understand supervised learning",
-      "Learn unsupervised learning",
-      "Explore classification",
-      "Study clustering techniques"
-    ],
-    pageCount: 28,
-    subTopics: [
-      createSubTopic("st-9-1-1", "Supervised learning", "Learning with labeled data"),
-      createSubTopic("st-9-1-2", "Unsupervised learning", "Finding patterns in unlabeled data"),
-      createSubTopic("st-9-1-3", "Classification", "Categorizing data"),
-      createSubTopic("st-9-1-4", "Clustering", "Grouping similar items"),
-    ],
-    mindMap: createMindMap("mm-9-1", "AI Techniques", ["Supervised", "Unsupervised", "Classification", "Clustering"]),
-  },
-  {
-    id: "ch-9-2",
-    number: 2,
-    title: "Python Projects",
-    description: "Practical Python programming projects",
-    learningObjectives: [
-      "Work with strings",
-      "Master lists",
-      "Understand dictionaries",
-      "Complete mini projects"
-    ],
-    pageCount: 30,
-    subTopics: [
-      createSubTopic("st-9-2-1", "Strings", "Text manipulation in Python"),
-      createSubTopic("st-9-2-2", "Lists", "Working with collections"),
-      createSubTopic("st-9-2-3", "Dictionaries", "Key-value data structures"),
-      createSubTopic("st-9-2-4", "Mini projects", "Hands-on coding projects"),
-    ],
-    mindMap: createMindMap("mm-9-2", "Python Projects", ["Strings", "Lists", "Dictionaries", "Projects"]),
-  },
+  createChapter(9, 1, "Artificial Intelligence", [
+    "AI definition",
+    "Types of AI",
+    "AI applications",
+    "AI advantages",
+    "AI risks"
+  ]),
+  createChapter(9, 2, "Python Programming", [
+    "Python basics",
+    "Variables and data",
+    "Conditions",
+    "Loops",
+    "Functions"
+  ]),
+  createChapter(9, 3, "Data Handling", [
+    "Data types",
+    "Lists and dictionaries",
+    "Data processing",
+    "Patterns in data",
+    "Real examples"
+  ]),
+  createChapter(9, 4, "AI Logic", [
+    "Decision making",
+    "Rules based systems",
+    "Simple AI logic",
+    "Human vs AI thinking",
+    "Ethical AI"
+  ]),
+  createChapter(9, 5, "Problem Solving", [
+    "Algorithm design",
+    "Flowchart logic",
+    "Debugging",
+    "Code optimization",
+    "Practice projects"
+  ]),
+  createChapter(9, 6, "AI Applications", [
+    "AI in health",
+    "AI in education",
+    "AI in business",
+    "AI in daily life",
+    "Future careers"
+  ]),
 ];
 
-// CLASS 10: ADVANCED AI & CODING
+// CLASS 10 – ADVANCED AI & CODING
 const class10Chapters: Chapter[] = [
-  {
-    id: "ch-10-1",
-    number: 1,
-    title: "AI Systems",
-    description: "Understanding complex AI systems and their limitations",
-    learningObjectives: [
-      "Understand what AI systems are",
-      "Learn how AI systems work",
-      "Explore data-driven decisions",
-      "Study learning from data",
-      "Understand AI limitations"
-    ],
-    pageCount: 30,
-    subTopics: [
-      createSubTopic("st-10-1-1", "What are AI systems", "Complex AI architectures"),
-      createSubTopic("st-10-1-2", "How AI systems work", "System integration and flow"),
-      createSubTopic("st-10-1-3", "Data driven decisions", "Decision-making with data"),
-      createSubTopic("st-10-1-4", "Learning from data", "Advanced ML concepts"),
-      createSubTopic("st-10-1-5", "AI limitations", "Current constraints of AI"),
-    ],
-    mindMap: createMindMap("mm-10-1", "AI Systems", ["What", "How", "Decisions", "Learning", "Limitations"]),
-  },
-  {
-    id: "ch-10-2",
-    number: 2,
-    title: "Python Advanced",
-    description: "Advanced Python programming concepts",
-    learningObjectives: [
-      "Master functions",
-      "Advanced loops and conditions",
-      "Work with lists and dictionaries",
-      "Learn file basics",
-      "Handle errors"
-    ],
-    pageCount: 32,
-    subTopics: [
-      createSubTopic("st-10-2-1", "Functions", "Advanced function concepts"),
-      createSubTopic("st-10-2-2", "Loops & conditions", "Complex control flow"),
-      createSubTopic("st-10-2-3", "Lists and dictionaries", "Advanced data structures"),
-      createSubTopic("st-10-2-4", "File basics", "Reading and writing files"),
-      createSubTopic("st-10-2-5", "Error handling", "Try-except blocks"),
-    ],
-    mindMap: createMindMap("mm-10-2", "Python Advanced", ["Functions", "Control Flow", "Data Structures", "Files", "Errors"]),
-  },
+  createChapter(10, 1, "AI Systems", [
+    "What are AI systems",
+    "How AI systems work",
+    "Data driven decisions",
+    "Learning from data",
+    "AI limitations"
+  ]),
+  createChapter(10, 2, "Python Advanced", [
+    "Functions",
+    "Loops & conditions",
+    "Lists and dictionaries",
+    "File basics",
+    "Error handling"
+  ]),
+  createChapter(10, 3, "Introduction to Java", [
+    "What is Java",
+    "Java basics",
+    "Variables",
+    "Conditions",
+    "Simple programs"
+  ]),
+  createChapter(10, 4, "AI & Machine Learning", [
+    "What is machine learning",
+    "Learning from examples",
+    "AI models",
+    "Real world examples",
+    "Responsible AI"
+  ]),
+  createChapter(10, 5, "Projects & Practice", [
+    "Problem identification",
+    "Solution planning",
+    "Coding projects",
+    "Testing solutions",
+    "Improving output"
+  ]),
+  createChapter(10, 6, "Future Readiness", [
+    "AI careers",
+    "Skill roadmap",
+    "Coding pathways",
+    "Ethics & safety",
+    "Lifelong learning"
+  ]),
 ];
 
 // Seed data for books
@@ -464,12 +482,12 @@ export const booksData: BookData[] = [
     class: "Class 3",
     title: "Thinking & Smart Machines",
     subtitle: "Worksheet + Theory",
-    description: "Smart things around us, how machines help people, and developing thinking skills",
-    longDescription: "Begin your AI journey with fun activities exploring smart things around us. This workbook introduces young learners to the exciting world of artificial intelligence through age-appropriate concepts, step-by-step thinking, and engaging worksheets.",
+    description: "Smart things around us, thinking skills, patterns, and AI as our friend",
+    longDescription: "Begin your AI journey with fun activities exploring smart things around us. This workbook introduces young learners to the exciting world of artificial intelligence through patterns, instructions, smart decisions, and understanding AI as a friendly helper.",
     price: 999,
     originalPrice: 1299,
     totalPages: 180,
-    worksheets: 24,
+    worksheets: 48,
     color: "from-emerald-500 to-teal-600",
     features: ["Colorful illustrations", "Interactive activities", "Parent guide included", "Sticker rewards"],
     isbn: "978-93-XXXXX-01-3",
@@ -481,16 +499,16 @@ export const booksData: BookData[] = [
   {
     id: "book-4",
     class: "Class 4",
-    title: "Thinking & Smart Machines",
+    title: "Logic & Problem Solving",
     subtitle: "Worksheet + Theory",
-    description: "Recognizing AI in daily life, logical thinking, and sequencing skills",
-    longDescription: "Expand your understanding of AI by learning to recognize it around you. This workbook builds on foundational knowledge with logical thinking, pattern recognition, and problem-solving activities.",
+    description: "Smart thinking, logical skills, patterns, decisions, and AI in daily life",
+    longDescription: "Develop logical thinking and problem-solving skills through engaging activities. Learn to break problems into parts, recognize patterns, follow instructions, and understand how AI is used in our daily lives.",
     price: 999,
     originalPrice: 1299,
     totalPages: 200,
-    worksheets: 28,
+    worksheets: 52,
     color: "from-blue-500 to-cyan-600",
-    features: ["Step-by-step guides", "Logic puzzles", "Real-world examples", "Assessment tests"],
+    features: ["Logic puzzles", "Problem-solving activities", "Real-world examples", "Assessment tests"],
     isbn: "978-93-XXXXX-02-0",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -500,16 +518,16 @@ export const booksData: BookData[] = [
   {
     id: "book-5",
     class: "Class 5",
-    title: "Understanding & Interacting with AI",
+    title: "Computational Thinking",
     subtitle: "Worksheet + Theory",
-    description: "How AI works, data and predictions, simple coding logic with conditions",
-    longDescription: "Dive deeper into AI concepts understanding how it works, learns, and makes predictions. Students begin their coding journey with simple logic concepts and algorithms.",
+    description: "Logical thinking, algorithms basics, decision making, and AI introduction",
+    longDescription: "Master computational thinking skills with hands-on activities. Learn logical reasoning, problem-solving steps, algorithm basics, decision making, and get introduced to AI concepts and responsible use.",
     price: 999,
     originalPrice: 1299,
     totalPages: 220,
-    worksheets: 30,
+    worksheets: 56,
     color: "from-violet-500 to-purple-600",
-    features: ["Coding challenges", "AI concept maps", "Critical thinking exercises", "Online resources"],
+    features: ["Algorithm exercises", "Critical thinking", "Step-by-step guides", "Online resources"],
     isbn: "978-93-XXXXX-03-7",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -519,16 +537,16 @@ export const booksData: BookData[] = [
   {
     id: "book-6",
     class: "Class 6",
-    title: "Understanding & Interacting with AI",
+    title: "Computational Thinking Core",
     subtitle: "Worksheet + Theory",
-    description: "AI capabilities, speech & vision recognition, coding basics with Scratch",
-    longDescription: "Master AI capabilities and limitations while exploring speech and vision recognition. Begin hands-on programming with Scratch and learn fundamental coding concepts.",
+    description: "Core thinking skills, algorithms, flowcharts, problem solving, and AI basics",
+    longDescription: "Deep dive into computational thinking core concepts including decomposition, pattern recognition, abstraction, algorithms, flowcharts, and AI fundamentals with ethical considerations.",
     price: 999,
     originalPrice: 1299,
     totalPages: 240,
-    worksheets: 32,
+    worksheets: 60,
     color: "from-pink-500 to-rose-600",
-    features: ["Scratch projects", "AI exploration", "Hands-on coding", "Video tutorials"],
+    features: ["Flowchart activities", "Decomposition exercises", "AI exploration", "Video tutorials"],
     isbn: "978-93-XXXXX-04-4",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -538,16 +556,16 @@ export const booksData: BookData[] = [
   {
     id: "book-7",
     class: "Class 7",
-    title: "Core AI & Python Basics",
+    title: "Algorithms & Flowcharts",
     subtitle: "Worksheet + Theory",
-    description: "Machine learning basics, data sets, Python introduction and first programs",
-    longDescription: "Deep dive into core AI concepts including machine learning and data sets. Begin your Python programming journey with variables, input/output, and your first programs.",
+    description: "AI introduction, algorithms, logical structures, data patterns, and AI in society",
+    longDescription: "Explore the world of algorithms and flowcharts while understanding AI history and its role in society. Learn logical structures, data patterns, problem-solving techniques, and responsible AI use.",
     price: 1099,
     originalPrice: 1399,
     totalPages: 260,
-    worksheets: 36,
+    worksheets: 64,
     color: "from-orange-500 to-amber-600",
-    features: ["Python exercises", "ML concepts", "Hands-on projects", "Code examples"],
+    features: ["Algorithm design", "Flowchart creation", "AI history", "Ethics discussions"],
     isbn: "978-93-XXXXX-05-1",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -557,16 +575,16 @@ export const booksData: BookData[] = [
   {
     id: "book-8",
     class: "Class 8",
-    title: "Core AI & Python Basics",
+    title: "Programming Foundations",
     subtitle: "Worksheet + Theory",
-    description: "AI in healthcare, transport & entertainment, Python operators, loops, and functions",
-    longDescription: "Explore real-world AI applications in healthcare, transport, and entertainment. Advance your Python skills with operators, conditionals, loops, and functions.",
+    description: "Programming basics, Python introduction, control structures, AI & data",
+    longDescription: "Begin your programming journey with foundational concepts. Learn variables, data types, conditions, loops, Python basics, and understand the relationship between AI and data through hands-on coding exercises.",
     price: 1099,
     originalPrice: 1399,
     totalPages: 280,
-    worksheets: 36,
+    worksheets: 68,
     color: "from-red-500 to-orange-600",
-    features: ["Real-world AI cases", "Ethics discussions", "Python projects", "Assessment tests"],
+    features: ["Python exercises", "Coding activities", "Mini projects", "Debugging practice"],
     isbn: "978-93-XXXXX-06-8",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -576,16 +594,16 @@ export const booksData: BookData[] = [
   {
     id: "book-9",
     class: "Class 9",
-    title: "Applied AI & Coding",
+    title: "AI & Python",
     subtitle: "Worksheet + Theory",
-    description: "Supervised & unsupervised learning, classification, Python strings, lists & projects",
-    longDescription: "Master AI techniques including supervised and unsupervised learning. Work with Python strings, lists, dictionaries and complete hands-on mini projects.",
+    description: "Artificial Intelligence, Python programming, data handling, AI applications",
+    longDescription: "Master AI concepts and Python programming together. Learn about different types of AI, data handling with lists and dictionaries, AI logic systems, and explore real-world AI applications in health, education, and business.",
     price: 1199,
     originalPrice: 1499,
     totalPages: 300,
-    worksheets: 40,
+    worksheets: 72,
     color: "from-indigo-500 to-blue-600",
-    features: ["AI techniques", "Mini projects", "Data structures", "Practical applications"],
+    features: ["AI projects", "Python coding", "Data structures", "Career guidance"],
     isbn: "978-93-XXXXX-07-5",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
@@ -597,14 +615,14 @@ export const booksData: BookData[] = [
     class: "Class 10",
     title: "Advanced AI & Coding",
     subtitle: "Worksheet + Theory",
-    description: "AI systems, data-driven decisions, advanced Python with files and error handling",
-    longDescription: "Understand complex AI systems and data-driven decision making. Master advanced Python with functions, file handling, and error management for real-world applications.",
+    description: "AI systems, advanced Python, Java introduction, machine learning, future readiness",
+    longDescription: "Prepare for the future with advanced AI and coding skills. Learn about AI systems, advanced Python with file handling, Java introduction, machine learning concepts, and develop skills for future AI careers.",
     price: 1199,
     originalPrice: 1499,
     totalPages: 320,
-    worksheets: 44,
+    worksheets: 76,
     color: "from-cyan-500 to-teal-600",
-    features: ["Advanced AI", "File handling", "Error management", "Capstone project"],
+    features: ["Java basics", "ML introduction", "Capstone projects", "Career roadmap"],
     isbn: "978-93-XXXXX-08-2",
     publisher: "KodeIntel Publications",
     edition: "2024 Edition",
