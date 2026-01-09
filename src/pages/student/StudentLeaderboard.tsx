@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
-import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { PageLoader } from "@/components/ui/page-loader";
+import { toast } from "@/hooks/use-toast";
 import {
   Trophy,
   Star,
@@ -46,9 +47,10 @@ export default function StudentLeaderboard() {
   const { student } = useOutletContext<OutletContext>();
   const [activeTab, setActiveTab] = useState("xp");
   const [classFilter, setClassFilter] = useState<string | null>(null);
+  const [toastShown, setToastShown] = useState(false);
 
   // Fetch leaderboard data
-  const { data: leaderboardData, isLoading } = useQuery({
+  const { data: leaderboardData, isLoading, isFetching } = useQuery({
     queryKey: ["leaderboard", activeTab, classFilter],
     queryFn: async () => {
       // Get all students with their points
@@ -111,6 +113,17 @@ export default function StudentLeaderboard() {
       return result.slice(0, 50); // Top 50
     },
   });
+
+  // Show loading toast
+  useEffect(() => {
+    if (isLoading && !toastShown) {
+      toast({
+        title: "🏆 Loading Leaderboard...",
+        description: "Fetching top performers data.",
+      });
+      setToastShown(true);
+    }
+  }, [isLoading, toastShown]);
 
   // Get unique classes for filter
   const classes = [...new Set(leaderboardData?.map((s) => s.class) || [])].sort();
@@ -313,11 +326,7 @@ export default function StudentLeaderboard() {
             </CardHeader>
             <CardContent className="p-2 sm:p-4">
               {isLoading ? (
-                <div className="space-y-2">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-16 bg-muted/30 rounded-lg animate-pulse" />
-                  ))}
-                </div>
+                <PageLoader message="Loading rankings..." />
               ) : leaderboardData?.length === 0 ? (
                 <div className="text-center py-12">
                   <Trophy className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />

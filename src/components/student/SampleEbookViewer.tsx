@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BookOpen, Eye, Sparkles, GraduationCap, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -89,12 +90,20 @@ export function SampleEbookViewer() {
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
     setIsLoading(false);
+    toast({
+      title: "📖 E-Book Ready!",
+      description: `${selectedEbook?.title} loaded successfully.`,
+    });
   };
 
   const handleOpenEbook = (ebook: SampleEbook) => {
     setSelectedEbook(ebook);
     setPageNumber(1);
     setIsLoading(true);
+    toast({
+      title: "⏳ Opening E-Book...",
+      description: "Please wait while we load your preview.",
+    });
   };
 
   const handleClose = () => {
