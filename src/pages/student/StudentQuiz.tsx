@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Brain, User, CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
+import { ArrowLeft, Brain, User, CheckCircle, XCircle, Trophy, RotateCcw, Sparkles } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Confetti } from "@/components/ui/confetti";
 
 interface QuizQuestion {
   id: string;
@@ -37,6 +38,7 @@ export default function StudentQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState<{ score: number; passed: boolean; total: number } | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!loading && !student) {
@@ -161,6 +163,7 @@ export default function StudentQuiz() {
         setQuizSubmitted(true);
         queryClient.invalidateQueries({ queryKey: ["quiz-attempts"] });
         if (result.passed) {
+          setShowConfetti(true);
           toast({ title: "Congratulations! You passed! 🎉" });
         } else {
           toast({ title: "Keep trying! You can do it! 💪", variant: "destructive" });
@@ -257,6 +260,13 @@ export default function StudentQuiz() {
   if (quizSubmitted && quizResult) {
     return (
       <div className="min-h-screen bg-background">
+        {/* Confetti for passing */}
+        <Confetti 
+          isActive={showConfetti} 
+          duration={4000} 
+          pieceCount={100}
+          onComplete={() => setShowConfetti(false)}
+        />
         <header className="bg-card border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-4">

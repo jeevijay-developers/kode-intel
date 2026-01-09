@@ -38,6 +38,8 @@ import Compiler from "./pages/student/Compiler";
 import GuestDashboard from "./pages/student/GuestDashboard";
 import GuestCourses from "./pages/student/GuestCourses";
 import GuestAchievements from "./pages/student/GuestAchievements";
+import GuestLeaderboard from "./pages/student/GuestLeaderboard";
+import StudentLeaderboard from "./pages/student/StudentLeaderboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +75,7 @@ function App() {
               <Route index element={<GuestDashboard />} />
               <Route path="courses" element={<GuestCourses />} />
               <Route path="achievements" element={<GuestAchievements />} />
+              <Route path="leaderboard" element={<GuestLeaderboard />} />
             </Route>
 
             {/* Student routes with sidebar layout */}
@@ -81,6 +84,7 @@ function App() {
               <Route path="my-courses" element={<StudentMyCourses />} />
               <Route path="profile" element={<StudentProfile />} />
               <Route path="achievements" element={<StudentHome />} />
+              <Route path="leaderboard" element={<StudentLeaderboard />} />
             </Route>
 
             {/* Student content routes (full screen, no sidebar) */}

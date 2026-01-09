@@ -214,10 +214,12 @@ export default function GuestDashboard() {
           <FunFactCarousel />
 
           {/* Leaderboard */}
-          <LeaderboardMini
-            entries={mockLeaderboard}
-            title="Top Learners This Week"
-          />
+          <div onClick={() => navigate("/guest/leaderboard")} className="cursor-pointer">
+            <LeaderboardMini
+              entries={mockLeaderboard}
+              title="Top Learners This Week"
+            />
+          </div>
         </div>
       </div>
 
