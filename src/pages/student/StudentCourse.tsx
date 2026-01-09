@@ -178,11 +178,11 @@ export default function StudentCourse() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Course Header */}
-        <Card className="mb-6 overflow-hidden">
-          <div className="flex flex-col md:flex-row">
-            <div className="w-full md:w-48 h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
+        <Card className="mb-4 sm:mb-6 overflow-hidden">
+          <div className="flex flex-col sm:flex-row">
+            <div className="w-full sm:w-48 h-28 sm:h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
               {course.thumbnail_url ? (
                 <img
                   src={course.thumbnail_url}
@@ -190,29 +190,29 @@ export default function StudentCourse() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <BookOpen className="h-16 w-16 text-primary/50" />
+                <BookOpen className="h-10 w-10 sm:h-16 sm:w-16 text-primary/50" />
               )}
             </div>
-            <div className="p-6 flex-1">
-              <h1 className="text-2xl font-bold text-foreground mb-2">
+            <div className="p-3 sm:p-6 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">
                 {course.title}
               </h1>
-              <p className="text-muted-foreground mb-4">{course.description}</p>
-              <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-4 line-clamp-2">{course.description}</p>
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <Badge
                   variant="outline"
-                  className="text-base py-1 px-3 flex items-center gap-1.5"
+                  className="text-xs sm:text-base py-0.5 sm:py-1 px-2 sm:px-3 flex items-center gap-1"
                 >
-                  <BookOpen className="h-4 w-4" /> {publishedChapters.length} Chapters
+                  <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" /> {publishedChapters.length} Ch.
                 </Badge>
                 {isTrial && (
-                  <Badge className="bg-sunny/20 text-sunny border-sunny/30 text-base py-1 px-3">
-                    <Lock className="h-4 w-4 mr-1" /> Chapter 1 Free
+                  <Badge className="bg-sunny/20 text-sunny border-sunny/30 text-xs sm:text-base py-0.5 sm:py-1 px-2 sm:px-3">
+                    <Lock className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" /> Ch.1 Free
                   </Badge>
                 )}
                 {courseProgress?.completed_at && (
-                  <Badge className="bg-primary/20 text-primary text-base py-1 px-3 flex items-center gap-1.5">
-                    <CheckCircle className="h-4 w-4" /> Completed
+                  <Badge className="bg-primary/20 text-primary text-xs sm:text-base py-0.5 sm:py-1 px-2 sm:px-3 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" /> Done
                   </Badge>
                 )}
               </div>
@@ -222,23 +222,23 @@ export default function StudentCourse() {
 
         {/* Trial Banner */}
         {isTrial && (
-          <Card className="mb-6 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
-            <CardContent className="py-4 px-5">
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <Lock className="h-6 w-6 text-sunny" />
+          <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
+            <CardContent className="py-3 sm:py-4 px-3 sm:px-5">
+              <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Lock className="h-5 w-5 sm:h-6 sm:w-6 text-sunny shrink-0" />
                   <div>
-                    <p className="font-semibold text-foreground flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4" />
-                      Trial Mode: Chapter 1 Unlocked
+                    <p className="font-semibold text-sm sm:text-base text-foreground flex items-center gap-1 sm:gap-2">
+                      <GraduationCap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      Trial: Ch.1 Unlocked
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      Subscribe to unlock all chapters, quizzes, and ebooks
+                    <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
+                      Subscribe to unlock all chapters
                     </p>
                   </div>
                 </div>
-                <Button className="bg-gradient-to-r from-sunny to-coral text-foreground">
-                  Upgrade Now
+                <Button size="sm" className="bg-gradient-to-r from-sunny to-coral text-foreground h-8 sm:h-9 text-xs sm:text-sm">
+                  Upgrade
                 </Button>
               </div>
             </CardContent>
@@ -247,21 +247,21 @@ export default function StudentCourse() {
 
         {/* Chapters */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <BookOpen className="h-5 w-5" /> Course Content
+          <CardHeader className="p-3 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" /> Content
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-6 pt-0">
             {publishedChapters.length === 0 ? (
-              <div className="text-center py-12">
-                <Inbox className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground text-lg">
-                  No content available yet. Check back soon!
+              <div className="text-center py-8 sm:py-12">
+                <Inbox className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+                <p className="text-sm sm:text-lg text-muted-foreground">
+                  No content yet. Check back soon!
                 </p>
               </div>
             ) : (
-              <Accordion type="multiple" className="space-y-3">
+              <Accordion type="multiple" className="space-y-2 sm:space-y-3">
                 {publishedChapters.map((chapter, index) => (
                   <ChapterAccordion
                     key={chapter.id}
@@ -410,14 +410,14 @@ function ChapterAccordion({
   return (
     <AccordionItem
       value={chapter.id}
-      className={`border-2 rounded-xl px-4 overflow-hidden ${
+      className={`border rounded-xl px-2 sm:px-4 overflow-hidden ${
         isLocked ? "opacity-75 bg-muted/20" : ""
       }`}
     >
-      <AccordionTrigger className="hover:no-underline py-4">
-        <div className="flex items-center gap-3 text-left">
+      <AccordionTrigger className="hover:no-underline py-3 sm:py-4">
+        <div className="flex items-center gap-2 sm:gap-3 text-left">
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
+            className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${
               isLocked
                 ? "bg-muted"
                 : allVideosCompleted
@@ -426,72 +426,67 @@ function ChapterAccordion({
             }`}
           >
             {isLocked ? (
-              <Lock className="h-6 w-6 text-muted-foreground" />
+              <Lock className="h-4 w-4 sm:h-6 sm:w-6 text-muted-foreground" />
             ) : allVideosCompleted ? (
-              <CheckCircle className="h-6 w-6 text-primary" />
+              <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
             ) : (
-              <ChapterIcon className="h-6 w-6 text-primary" />
+              <ChapterIcon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
             )}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-lg">Chapter {index + 1}</span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <span className="font-semibold text-sm sm:text-lg">Ch. {index + 1}</span>
               {isLocked && (
-                <Badge variant="outline" className="text-xs">
-                  <Lock className="h-3 w-3 mr-1" /> Locked
+                <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0">
+                  <Lock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" /> Locked
                 </Badge>
               )}
               {!isLocked && totalContent > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  {totalContent} items
+                <Badge variant="secondary" className="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0">
+                  {totalContent}
                 </Badge>
               )}
             </div>
-            <span className="text-muted-foreground">{chapter.title}</span>
-            {chapter.description && (
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                {chapter.description}
-              </p>
-            )}
+            <span className="text-xs sm:text-base text-muted-foreground line-clamp-1">{chapter.title}</span>
           </div>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="pb-4">
+      <AccordionContent className="pb-3 sm:pb-4">
         {isLocked ? (
-          <div className="text-center py-8 bg-muted/30 rounded-xl">
-            <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground font-medium mb-2">
-              This chapter is locked
+          <div className="text-center py-6 sm:py-8 bg-muted/30 rounded-xl">
+            <Lock className="h-8 w-8 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-2 sm:mb-3" />
+            <p className="text-sm sm:text-base text-muted-foreground font-medium mb-1 sm:mb-2">
+              Locked
             </p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Subscribe to unlock all content
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
+              Subscribe to unlock
             </p>
-            <Button className="bg-gradient-to-r from-primary to-secondary">
-              Upgrade Now
+            <Button size="sm" className="bg-gradient-to-r from-primary to-secondary h-8 text-xs sm:text-sm">
+              Upgrade
             </Button>
           </div>
         ) : (
           <Tabs defaultValue="videos" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4">
-              <TabsTrigger value="videos" className="flex items-center gap-2">
-                <Video className="h-4 w-4" />
-                Videos ({videos.length})
+            <TabsList className="grid w-full grid-cols-3 mb-3 sm:mb-4 h-9 sm:h-10">
+              <TabsTrigger value="videos" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
+                <Video className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Videos</span> ({videos.length})
               </TabsTrigger>
-              <TabsTrigger value="ebooks" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Ebooks ({ebooks.length})
+              <TabsTrigger value="ebooks" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
+                <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Ebooks</span> ({ebooks.length})
               </TabsTrigger>
-              <TabsTrigger value="quizzes" className="flex items-center gap-2">
-                <HelpCircle className="h-4 w-4" />
-                Quizzes ({quizzes.length})
+              <TabsTrigger value="quizzes" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
+                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Quiz</span> ({quizzes.length})
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="videos" className="space-y-3 mt-0">
+            <TabsContent value="videos" className="space-y-2 sm:space-y-3 mt-0">
               {videos.length === 0 ? (
-                <div className="text-center py-8 rounded-xl">
-                  <Video className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">No videos in this chapter</p>
+                <div className="text-center py-6 sm:py-8 rounded-xl border border-border">
+                  <Video className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">No videos</p>
                 </div>
               ) : (
                 videos.map((video: any) => {
@@ -503,9 +498,9 @@ function ChapterAccordion({
                   return (
                     <div
                       key={video.id}
-                      className="flex items-center gap-4 border border-border p-4 rounded-xl hover:border-primary/30 transition-colors"
+                      className="flex items-center gap-2 sm:gap-4 border border-border p-2 sm:p-4 rounded-xl hover:border-primary/30 transition-colors"
                     >
-                      <div className="w-24 h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
+                      <div className="w-16 h-12 sm:w-24 sm:h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
                         {youtubeId && (
                           <img
                             src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
@@ -514,41 +509,39 @@ function ChapterAccordion({
                           />
                         )}
                         <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                            <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
+                          <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-primary flex items-center justify-center">
+                            <Play className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-primary-foreground ml-0.5" />
                           </div>
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium truncate">{video.title}</p>
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <p className="font-medium text-xs sm:text-base truncate">{video.title}</p>
                           {isCompleted && (
-                            <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                            <CheckCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-primary shrink-0" />
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          {video.duration_minutes
-                            ? `${video.duration_minutes} min`
-                            : "Video"}
+                        <p className="text-[10px] sm:text-sm text-muted-foreground">
+                          {video.duration_minutes ? `${video.duration_minutes}m` : "Video"}
                         </p>
                       </div>
-                      <div className="flex gap-2 shrink-0">
+                      <div className="flex gap-1 sm:gap-2 shrink-0">
                         <Button
-                          size="lg"
+                          size="sm"
                           onClick={() => navigate(`/student/video/${video.id}`)}
-                          className="h-12 px-6"
+                          className="h-7 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
                         >
-                          <Play className="h-5 w-5 mr-2" />
-                          Watch
+                          <Play className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
+                          <span className="hidden sm:inline">Watch</span>
                         </Button>
                         {!isCompleted && (
                           <Button
                             variant="outline"
-                            size="lg"
+                            size="sm"
                             onClick={() => markVideoComplete.mutate(video.id)}
-                            className="h-12"
+                            className="h-7 sm:h-10 px-2 sm:px-3"
                           >
-                            <CheckCircle className="h-5 w-5" />
+                            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
                           </Button>
                         )}
                       </div>
@@ -558,69 +551,69 @@ function ChapterAccordion({
               )}
             </TabsContent>
 
-            <TabsContent value="ebooks" className="space-y-3 mt-0">
+            <TabsContent value="ebooks" className="space-y-2 sm:space-y-3 mt-0">
               {ebooks.length === 0 ? (
-                <div className="text-center py-8 border border-border rounded-xl">
-                  <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">No ebooks in this chapter</p>
+                <div className="text-center py-6 sm:py-8 border border-border rounded-xl">
+                  <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">No ebooks</p>
                 </div>
               ) : (
                 ebooks.map((ebook: any) => (
                   <div
                     key={ebook.id}
-                    className="flex items-center gap-4 p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
+                    className="flex items-center gap-2 sm:gap-4 p-2 sm:p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
                   >
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="h-7 w-7 text-primary" />
+                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{ebook.title}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {ebook.description || "PDF Ebook"}
+                      <p className="font-medium text-xs sm:text-base truncate">{ebook.title}</p>
+                      <p className="text-[10px] sm:text-sm text-muted-foreground line-clamp-1">
+                        {ebook.description || "PDF"}
                       </p>
                     </div>
                     <Button
-                      size="lg"
+                      size="sm"
                       variant="outline"
                       onClick={() => navigate(`/student/ebook/${ebook.id}`)}
-                      className="h-12 px-6"
+                      className="h-7 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
                     >
-                      <FileText className="h-5 w-5 mr-2" />
-                      Read
+                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
+                      <span className="hidden sm:inline">Read</span>
                     </Button>
                   </div>
                 ))
               )}
             </TabsContent>
 
-            <TabsContent value="quizzes" className="space-y-3 mt-0">
+            <TabsContent value="quizzes" className="space-y-2 sm:space-y-3 mt-0">
               {quizzes.length === 0 ? (
-                <div className="text-center py-8 border border-border rounded-xl">
-                  <HelpCircle className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">No quizzes in this chapter</p>
+                <div className="text-center py-6 sm:py-8 border border-border rounded-xl">
+                  <HelpCircle className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">No quizzes</p>
                 </div>
               ) : (
                 quizzes.map((quiz: any) => (
                   <div
                     key={quiz.id}
-                    className="flex items-center gap-4 p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
+                    className="flex items-center gap-2 sm:gap-4 p-2 sm:p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
                   >
-                    <div className="w-14 h-14 rounded-xl bg-sunny/20 flex items-center justify-center shrink-0">
-                      <HelpCircle className="h-7 w-7 text-sunny" />
+                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-sunny/20 flex items-center justify-center shrink-0">
+                      <HelpCircle className="h-5 w-5 sm:h-7 sm:w-7 text-sunny" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{quiz.title}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-xs sm:text-base truncate">{quiz.title}</p>
+                      <p className="text-[10px] sm:text-sm text-muted-foreground">
                         {quiz.passing_score}% to pass
                       </p>
                     </div>
                     <Button
-                      size="lg"
-                      className="h-12 px-6 bg-gradient-to-r from-sunny to-coral text-foreground"
+                      size="sm"
+                      className="h-7 sm:h-10 px-2 sm:px-4 bg-gradient-to-r from-sunny to-coral text-foreground text-xs sm:text-sm"
                       onClick={() => navigate(`/student/quiz/${quiz.id}`)}
                     >
-                      <Zap className="h-5 w-5 mr-2" />
-                      Take Quiz
+                      <Zap className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
+                      <span className="hidden sm:inline">Take</span>
                     </Button>
                   </div>
                 ))
