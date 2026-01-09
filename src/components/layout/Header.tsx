@@ -21,7 +21,7 @@ const navLinks = [
   { href: "/", label: "Home", icon: null },
   { href: "/courses", label: "Courses", icon: BookOpen },
   { href: "/schools", label: "For Schools", icon: Building2 },
-  { href: "/store", label: "E-Store", icon: ShoppingBag },
+  { href: "/store", label: "Book Store", icon: ShoppingBag },
   { href: "/compiler", label: "Compiler", icon: Code },
   { href: "/contact", label: "Contact", icon: Phone },
 ];
@@ -102,15 +102,16 @@ export default function Header() {
         </nav>
 
         {/* CTA Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile Login Button - Always Visible */}
           <Button
             onClick={() => navigate(student ? "/student" : "/student/login")}
-            className="gap-2 rounded-full px-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 hidden sm:flex"
-            size="lg"
+            className="gap-1.5 rounded-full px-3 sm:px-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+            size="sm"
           >
-            <GraduationCap className="h-5 w-5" />
-            {student ? "Dashboard" : "Login"}
-            <ChevronRight className="h-4 w-4" />
+            <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden xs:inline sm:inline">{student ? "Dashboard" : "Login"}</span>
+            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:block" />
           </Button>
 
           {/* Mobile Menu */}
