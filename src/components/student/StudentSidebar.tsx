@@ -34,11 +34,11 @@ interface StudentSidebarProps {
 }
 
 const menuItems = [
-  { title: "Dashboard", url: "/student", icon: Home, emoji: "🏠" },
-  { title: "My Courses", url: "/student/my-courses", icon: BookOpen, emoji: "📚" },
-  { title: "Code Lab", url: "/compiler", icon: Code, emoji: "💻" },
-  { title: "Achievements", url: "/student/achievements", icon: Trophy, emoji: "🏆" },
-  { title: "Profile", url: "/student/profile", icon: User, emoji: "👤" },
+  { title: "Dashboard", url: "/student", icon: Home },
+  { title: "My Courses", url: "/student/my-courses", icon: BookOpen },
+  { title: "Code Lab", url: "/compiler", icon: Code },
+  { title: "Achievements", url: "/student/achievements", icon: Trophy },
+  { title: "Profile", url: "/student/profile", icon: User },
 ];
 
 export function StudentSidebar({
@@ -82,7 +82,7 @@ export function StudentSidebar({
             <div className="bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-                  <GraduationCap className="h-6 w-6 text-white" />
+                  <GraduationCap className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground truncate max-w-[120px]">
@@ -120,6 +120,7 @@ export function StudentSidebar({
             <SidebarMenu className="space-y-1 px-2">
               {menuItems.map((item) => {
                 const isActive = location.pathname === item.url;
+                const IconComponent = item.icon;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
@@ -128,17 +129,14 @@ export function StudentSidebar({
                         end
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                           isActive
-                            ? "bg-primary/20 text-primary shadow-sm"
-                            : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+                            ? "bg-primary text-primary-foreground shadow-md"
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
-                        activeClassName="bg-primary/20 text-primary"
+                        activeClassName="bg-primary text-primary-foreground"
                       >
-                        <span className="text-lg">{item.emoji}</span>
+                        <IconComponent className={`h-5 w-5 ${isActive ? "text-primary-foreground" : ""}`} />
                         {!collapsed && (
                           <span className="font-medium">{item.title}</span>
-                        )}
-                        {isActive && !collapsed && (
-                          <Rocket className="h-4 w-4 ml-auto text-primary animate-bounce" />
                         )}
                       </NavLink>
                     </SidebarMenuButton>
