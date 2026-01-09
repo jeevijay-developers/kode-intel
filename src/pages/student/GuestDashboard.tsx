@@ -24,6 +24,7 @@ import { DailyChallenge } from "@/components/dashboard/DailyChallenge";
 import { LeaderboardMini } from "@/components/dashboard/LeaderboardMini";
 import { FunFactCarousel } from "@/components/dashboard/FunFactCarousel";
 import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
+import { QuizWidget } from "@/components/dashboard/QuizWidget";
 
 export default function GuestDashboard() {
   const navigate = useNavigate();
@@ -214,6 +215,9 @@ export default function GuestDashboard() {
 
         {/* Sidebar Content */}
         <div className="space-y-3 sm:space-y-4">
+          {/* Quiz Widget - Single Quiz at a time */}
+          <QuizWidget />
+
           {/* Fun Facts */}
           <FunFactCarousel />
 

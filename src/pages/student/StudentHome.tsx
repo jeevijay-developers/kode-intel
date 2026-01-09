@@ -10,6 +10,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { MascotWidget } from "@/components/dashboard/MascotWidget";
 import { DailyChallenge } from "@/components/dashboard/DailyChallenge";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { QuizWidget } from "@/components/dashboard/QuizWidget";
 import {
   BookOpen,
   Brain,
@@ -461,33 +462,42 @@ export default function StudentHome() {
         </Card>
       )}
 
-      {/* Badges Section */}
-      {badges.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="text-base sm:text-xl font-bold text-foreground flex items-center gap-2 font-display">
-              <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-sunny" />
-              Your Badges
-            </h2>
-            <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8">
-              All Badges <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-4">
-            {badges.slice(0, 6).map((badge: any) => (
-              <BadgeCard
-                key={badge.id}
-                name={badge.name}
-                description={badge.description}
-                icon={badge.icon}
-                color={badge.color}
-                earned={badge.earned}
-                size="sm"
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Quick Quiz Widget */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <QuizWidget />
+        
+        {/* Badges Section */}
+        {badges.length > 0 && (
+          <Card className="overflow-hidden">
+            <CardHeader className="p-3 sm:p-4">
+              <CardTitle className="flex items-center justify-between text-sm sm:text-base">
+                <span className="flex items-center gap-2 font-display">
+                  <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-sunny" />
+                  Your Badges
+                </span>
+                <Button variant="ghost" size="sm" className="text-xs h-7">
+                  All <ArrowRight className="h-3 w-3 ml-1" />
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 sm:p-4 pt-0">
+              <div className="grid grid-cols-3 gap-2">
+                {badges.slice(0, 6).map((badge: any) => (
+                  <BadgeCard
+                    key={badge.id}
+                    name={badge.name}
+                    description={badge.description}
+                    icon={badge.icon}
+                    color={badge.color}
+                    earned={badge.earned}
+                    size="sm"
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
