@@ -774,9 +774,10 @@ export type Database = {
           is_active: boolean
           is_trial_active: boolean | null
           mobile_number: string
-          school_id: string
+          school_id: string | null
           section: string | null
           student_name: string
+          student_type: string
           subscription_status: string | null
           temp_password: string
           trial_end_date: string | null
@@ -795,9 +796,10 @@ export type Database = {
           is_active?: boolean
           is_trial_active?: boolean | null
           mobile_number: string
-          school_id: string
+          school_id?: string | null
           section?: string | null
           student_name: string
+          student_type?: string
           subscription_status?: string | null
           temp_password: string
           trial_end_date?: string | null
@@ -816,9 +818,10 @@ export type Database = {
           is_active?: boolean
           is_trial_active?: boolean | null
           mobile_number?: string
-          school_id?: string
+          school_id?: string | null
           section?: string | null
           student_name?: string
+          student_type?: string
           subscription_status?: string | null
           temp_password?: string
           trial_end_date?: string | null
