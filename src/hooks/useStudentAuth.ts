@@ -9,12 +9,13 @@ interface Student {
   mobile_number: string;
   class: string;
   section: string | null;
-  school_id: string;
+  school_id: string | null;
   is_active: boolean;
   trial_start_date: string | null;
   trial_end_date: string | null;
   is_trial_active: boolean;
   subscription_status: string;
+  student_type: string;
 }
 
 export function useStudentAuth() {
@@ -48,13 +49,15 @@ export function useStudentAuth() {
     setLoading(false);
   }, []);
 
-  const signIn = async (username: string, password: string) => {
+  const signIn = async (username: string, password: string, studentType: string = "school_provided") => {
+    // Query for school-provided students by username
     const { data, error } = await supabase
       .from("students")
       .select("*")
       .eq("username", username)
       .eq("temp_password", password)
       .eq("is_active", true)
+      .eq("student_type", studentType)
       .maybeSingle();
 
     if (error) {
@@ -62,7 +65,7 @@ export function useStudentAuth() {
     }
 
     if (!data) {
-      return { error: { message: "Invalid username or password" } };
+      return { error: { message: "Invalid username or password. Please check your credentials." } };
     }
 
     // Store student session
@@ -71,13 +74,15 @@ export function useStudentAuth() {
     return { error: null };
   };
 
-  const signInWithMobile = async (mobileNumber: string, password: string) => {
+  const signInWithMobile = async (mobileNumber: string, password: string, studentType: string = "individual") => {
+    // Query for individual students by mobile number
     const { data, error } = await supabase
       .from("students")
       .select("*")
       .eq("mobile_number", mobileNumber)
       .eq("temp_password", password)
       .eq("is_active", true)
+      .eq("student_type", studentType)
       .maybeSingle();
 
     if (error) {
@@ -85,7 +90,7 @@ export function useStudentAuth() {
     }
 
     if (!data) {
-      return { error: { message: "Invalid mobile number or password" } };
+      return { error: { message: "Invalid mobile number or password. Please check your credentials." } };
     }
 
     // Store student session
