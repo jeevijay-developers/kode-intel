@@ -7,6 +7,7 @@ import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 
 export default function StudentVideo() {
   const { videoId } = useParams();
@@ -147,23 +148,25 @@ export default function StudentVideo() {
 
       <main className="container mx-auto px-4 py-6 max-w-5xl">
         {/* Video Player */}
-        <Card className="mb-6 overflow-hidden">
-          <div className="aspect-video bg-black">
-            {youtubeId ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`}
-                title={video.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-white">
+        <div className="mb-6">
+          {youtubeId ? (
+            <KodeIntelPlayer
+              videoId={youtubeId}
+              title={video.title}
+              onComplete={() => {
+                if (!isCompleted) {
+                  markComplete.mutate();
+                }
+              }}
+            />
+          ) : (
+            <Card className="overflow-hidden">
+              <div className="aspect-video bg-black flex items-center justify-center text-white">
                 <p>Video unavailable</p>
               </div>
-            )}
-          </div>
-        </Card>
+            </Card>
+          )}
+        </div>
 
         {/* Video Info */}
         <Card>
