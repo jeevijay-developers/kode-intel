@@ -23,6 +23,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { DailyChallenge } from "@/components/dashboard/DailyChallenge";
 import { LeaderboardMini } from "@/components/dashboard/LeaderboardMini";
 import { FunFactCarousel } from "@/components/dashboard/FunFactCarousel";
+import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
 
 export default function GuestDashboard() {
   const navigate = useNavigate();
@@ -206,6 +207,9 @@ export default function GuestDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Sample E-Books Section */}
+          <SampleEbookViewer />
         </div>
 
         {/* Sidebar Content */}
