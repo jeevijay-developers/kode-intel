@@ -23,6 +23,7 @@ import {
   Sparkles,
   GraduationCap,
   ChevronRight,
+  Crown,
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 
@@ -36,6 +37,7 @@ interface StudentSidebarProps {
 const menuItems = [
   { title: "Dashboard", url: "/student", icon: Home },
   { title: "My Courses", url: "/student/my-courses", icon: BookOpen },
+  { title: "Leaderboard", url: "/student/leaderboard", icon: Crown },
   { title: "Code Lab", url: "/compiler", icon: Code },
   { title: "Achievements", url: "/student/achievements", icon: Trophy },
   { title: "Profile", url: "/student/profile", icon: User },
