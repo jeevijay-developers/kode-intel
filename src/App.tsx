@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
 import PublicLayout from "@/components/layout/PublicLayout";
 import StudentLayout from "@/components/student/StudentLayout";
+import GuestLayout from "@/components/student/GuestLayout";
 import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
@@ -34,7 +35,9 @@ import StudentVideo from "./pages/student/StudentVideo";
 import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
 import Compiler from "./pages/student/Compiler";
-import GuestPreview from "./pages/student/GuestPreview";
+import GuestDashboard from "./pages/student/GuestDashboard";
+import GuestCourses from "./pages/student/GuestCourses";
+import GuestAchievements from "./pages/student/GuestAchievements";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,7 +67,13 @@ function App() {
             {/* Student auth routes (no sidebar) */}
             <Route path="/student/login" element={<StudentLogin />} />
             <Route path="/student/signup" element={<StudentSignup />} />
-            <Route path="/guest" element={<GuestPreview />} />
+
+            {/* Guest routes with full dashboard layout */}
+            <Route path="/guest" element={<GuestLayout />}>
+              <Route index element={<GuestDashboard />} />
+              <Route path="courses" element={<GuestCourses />} />
+              <Route path="achievements" element={<GuestAchievements />} />
+            </Route>
 
             {/* Student routes with sidebar layout */}
             <Route path="/student" element={<StudentLayout />}>
@@ -80,15 +89,8 @@ function App() {
             <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
             <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
 
-            {/* Compiler route */}
-            <Route
-              path="/compiler"
-              element={
-                <StudentProtectedRoute>
-                  <Compiler />
-                </StudentProtectedRoute>
-              }
-            />
+            {/* Compiler route - accessible to all */}
+            <Route path="/compiler" element={<Compiler />} />
 
             {/* Auth route (no header) */}
             <Route path="/auth" element={<Auth />} />
