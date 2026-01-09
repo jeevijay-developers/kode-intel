@@ -71,16 +71,22 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-16 px-4 gradient-mesh relative overflow-hidden">
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+        </div>
+        
         <div className="container mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6 border border-primary/20 animate-fade-in">
             <MessageSquare className="h-4 w-4 text-primary" />
             <span>Get in Touch</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display animate-fade-in leading-tight" style={{ animationDelay: "100ms" }}>
             We'd Love to <span className="text-gradient-primary">Hear From You</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in leading-relaxed" style={{ animationDelay: "200ms" }}>
             Have questions about our courses, school partnerships, or anything else? 
             Our team is ready to help!
           </p>
@@ -88,11 +94,11 @@ export default function Contact() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 md:py-20 px-4">
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12">
             {/* Contact Form */}
-            <Card className="card-playful overflow-hidden">
+            <Card className="overflow-hidden border-0 shadow-xl animate-fade-in">
               <div className="gradient-primary p-6">
                 <h2 className="text-2xl font-bold text-primary-foreground font-display flex items-center gap-3">
                   <Send className="h-6 w-6" />

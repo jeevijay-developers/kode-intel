@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
 import PublicLayout from "@/components/layout/PublicLayout";
@@ -51,6 +52,7 @@ function App() {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public routes with common header */}
             <Route element={<PublicLayout />}>

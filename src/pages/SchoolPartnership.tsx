@@ -152,13 +152,15 @@ export default function SchoolPartnership() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh opacity-50" />
-        <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-20 w-72 h-72 bg-turquoise/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+          <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "4s" }} />
+        </div>
         
         <div className="container mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="animate-fade-in">
               <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6 border border-primary/20">
                 <Building2 className="h-4 w-4 text-primary" />
@@ -170,7 +172,7 @@ export default function SchoolPartnership() {
                 Make Your School <span className="text-gradient-primary">Future-Ready</span> with AI Education
               </h1>
               
-              <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
                 Join 25+ progressive schools already teaching AI & Computational Thinking with KodeIntel. 
                 Complete curriculum, teacher training, and dedicated support included.
               </p>

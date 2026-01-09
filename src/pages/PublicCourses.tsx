@@ -125,66 +125,67 @@ export default function PublicCourses() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-16 px-4 overflow-hidden">
+      <section className="relative py-16 md:py-24 px-4 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/5 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/5 to-transparent rounded-full" />
         </div>
 
         <div className="container mx-auto relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6">
-              <Sparkles className="h-4 w-4 text-primary" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6 border border-primary/20">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               <span className="text-foreground">NEP 2020 Aligned Curriculum</span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display leading-tight">
               Explore Our <span className="text-gradient-primary">AI Curriculum</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
               From Class 3 to Class 10, discover our comprehensive AI & Computational Thinking courses 
               designed to build future innovators.
             </p>
 
             {/* Stats */}
-            <div className="flex flex-wrap justify-center gap-8 mb-8">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-foreground">8</p>
-                <p className="text-sm text-muted-foreground">Courses</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-foreground">48</p>
-                <p className="text-sm text-muted-foreground">Chapters</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-foreground">240+</p>
-                <p className="text-sm text-muted-foreground">Topics</p>
-              </div>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+              {[
+                { value: "8", label: "Courses" },
+                { value: "48", label: "Chapters" },
+                { value: "240+", label: "Topics" },
+              ].map((stat, index) => (
+                <div key={index} className="text-center p-4 glass rounded-2xl min-w-[100px] animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                  <p className="text-3xl md:text-4xl font-bold text-foreground font-display">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="py-6 px-4 border-y border-border sticky top-20 bg-background/95 backdrop-blur-sm z-40">
+      <section className="py-6 px-4 border-y border-border/50 sticky top-20 bg-background/80 backdrop-blur-xl z-40">
         <div className="container mx-auto">
-          <div className="flex flex-wrap gap-3 justify-center">
-            {levelFilters.map((filter) => (
+          <div className="flex flex-wrap gap-2 md:gap-3 justify-center">
+            {levelFilters.map((filter, index) => (
               <Button
                 key={filter.value}
                 variant={selectedLevel === filter.value ? "default" : "outline"}
                 size="lg"
                 onClick={() => setSelectedLevel(filter.value)}
-                className={`rounded-full gap-2 ${
+                className={`rounded-full gap-2 transition-all duration-300 animate-fade-in ${
                   selectedLevel === filter.value 
-                    ? "shadow-lg" 
-                    : "hover:bg-primary/5"
+                    ? "shadow-lg shadow-primary/20 scale-105" 
+                    : "hover:bg-primary/5 hover:border-primary/30"
                 }`}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 <filter.icon className="h-4 w-4" />
-                {filter.label}
+                <span className="hidden sm:inline">{filter.label}</span>
+                <span className="sm:hidden">{filter.label.split(' ')[0]}</span>
               </Button>
             ))}
           </div>
@@ -192,13 +193,13 @@ export default function PublicCourses() {
       </section>
 
       {/* Courses Grid */}
-      <section className="py-16 px-4">
+      <section className="py-16 md:py-20 px-4">
         <div className="container mx-auto">
           {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <div className="h-48 bg-muted rounded-t-xl" />
+                <Card key={i} className="animate-pulse overflow-hidden">
+                  <div className="h-48 bg-muted" />
                   <CardContent className="p-5 space-y-3">
                     <div className="h-6 bg-muted rounded w-3/4" />
                     <div className="h-4 bg-muted rounded w-full" />
@@ -208,13 +209,15 @@ export default function PublicCourses() {
               ))}
             </div>
           ) : filteredCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No courses found</h3>
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">No courses found</h3>
               <p className="text-muted-foreground">Try selecting a different class level</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {filteredCourses.map((course, index) => {
                 const classNum = getClassNumber(course.title);
                 const LevelIcon = levelIcons[classNum] || Lightbulb;
