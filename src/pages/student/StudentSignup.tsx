@@ -28,11 +28,9 @@ import {
   CheckCircle2,
   Clock,
   Trophy,
-  Star,
   Zap,
   Play,
   Brain,
-  Rocket
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 import mascotKodi from "@/assets/mascot-kodi.png";
@@ -41,11 +39,10 @@ const classes = ["3", "4", "5", "6", "7", "8", "9", "10"];
 
 export default function StudentSignup() {
   const navigate = useNavigate();
-  const { student, loading } = useStudentAuth();
+  const { student, loading, autoLogin } = useStudentAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [signupSuccess, setSignupSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     student_name: "",
@@ -101,23 +98,23 @@ export default function StudentSignup() {
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + 7);
 
-    const { error } = await supabase.from("students").insert({
+    const { data, error } = await supabase.from("students").insert({
       student_name: formData.student_name,
       email: formData.email || null,
       mobile_number: formData.mobile_number,
       class: formData.class,
       section: null,
-      school_id: null, // Individual students have no school
+      school_id: null,
       username,
       temp_password: formData.password,
-      is_active: false, // Requires admin activation
-      activation_status: "pending",
+      is_active: false,
+      activation_status: "trial",
       is_trial_active: true,
       subscription_status: "trial",
       trial_start_date: trialStartDate.toISOString(),
       trial_end_date: trialEndDate.toISOString(),
       student_type: "individual",
-    });
+    }).select().single();
 
     setIsSubmitting(false);
 
@@ -125,7 +122,7 @@ export default function StudentSignup() {
       if (error.message.includes("duplicate")) {
         toast({
           title: "Account already exists",
-          description: "A student with this mobile number already exists",
+          description: "A student with this mobile number already exists. Please login instead.",
           variant: "destructive",
         });
       } else {
@@ -135,8 +132,11 @@ export default function StudentSignup() {
           variant: "destructive",
         });
       }
-    } else {
-      setSignupSuccess(true);
+    } else if (data) {
+      // Auto-login the user after successful signup
+      autoLogin(data);
+      toast({ title: "Welcome to KodeIntel! 🎉", description: "Your 7-day free trial has started!" });
+      navigate("/student");
     }
   };
 
@@ -144,48 +144,6 @@ export default function StudentSignup() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (signupSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
-        <Card className="max-w-md w-full border-0 shadow-2xl rounded-3xl overflow-hidden">
-          <div className="gradient-primary p-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-              <Rocket className="h-10 w-10 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-white font-display">You're Almost There! 🎉</h2>
-          </div>
-          <CardContent className="p-6 text-center space-y-4">
-            <img src={mascotKodi} alt="Kodi" className="h-24 w-24 mx-auto animate-bounce-soft" />
-            <div className="space-y-2">
-              <p className="text-foreground font-medium text-lg">
-                Account Created Successfully!
-              </p>
-              <p className="text-muted-foreground">
-                Your account is pending activation. Once approved, you'll get 7 days of free access to explore all courses!
-              </p>
-            </div>
-            <div className="p-4 glass rounded-xl">
-              <div className="flex items-center justify-center gap-2 text-primary mb-2">
-                <Clock className="h-5 w-5" />
-                <span className="font-bold">7 Days Free Trial</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Unlock full access after activation!
-              </p>
-            </div>
-            <Button
-              onClick={() => navigate("/student/login")}
-              className="w-full h-12 rounded-xl gap-2"
-            >
-              Go to Login
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -234,7 +192,7 @@ export default function StudentSignup() {
             {/* Benefits */}
             <div className="space-y-4 mb-8">
               {[
-                { icon: Clock, title: "7 Days Free Trial", desc: "Full access to all courses" },
+                { icon: Clock, title: "7 Days Free Trial", desc: "Instant access to all courses" },
                 { icon: Trophy, title: "Earn Badges & XP", desc: "Gamified learning experience" },
                 { icon: Play, title: "Video Lessons", desc: "Interactive video content" },
                 { icon: Brain, title: "AI & Coding", desc: "NEP 2020 aligned curriculum" },
@@ -278,7 +236,7 @@ export default function StudentSignup() {
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
                 <h2 className="text-xl font-bold text-white font-display">Create Your Account</h2>
-                <p className="text-white/80 text-sm">Get 7 days free access</p>
+                <p className="text-white/80 text-sm">Start your 7-day free trial instantly</p>
               </div>
 
               <CardContent className="p-5">
@@ -337,7 +295,7 @@ export default function StudentSignup() {
                     <div className="space-y-1.5">
                       <Label className="text-foreground font-medium flex items-center gap-2 text-sm">
                         <Mail className="h-3.5 w-3.5 text-primary" />
-                        Email <span className="text-muted-foreground">(Optional)</span>
+                        Email <span className="text-muted-foreground text-xs">(Optional)</span>
                       </Label>
                       <Input
                         type="email"
@@ -399,7 +357,7 @@ export default function StudentSignup() {
                     ) : (
                       <>
                         <Zap className="h-5 w-5" />
-                        Create Account
+                        Start Free Trial
                         <ArrowRight className="h-5 w-5" />
                       </>
                     )}
@@ -409,7 +367,7 @@ export default function StudentSignup() {
                 {/* Info */}
                 <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <CheckCircle2 className="h-4 w-4 text-turquoise" />
-                  <span>Activation by admin after signup</span>
+                  <span>No payment required for trial</span>
                 </div>
               </CardContent>
             </Card>

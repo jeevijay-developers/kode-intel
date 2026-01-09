@@ -16,6 +16,7 @@ interface Student {
   is_trial_active: boolean;
   subscription_status: string;
   student_type: string;
+  activation_status: string;
 }
 
 export function useStudentAuth() {
@@ -49,15 +50,15 @@ export function useStudentAuth() {
     setLoading(false);
   }, []);
 
-  const signIn = async (username: string, password: string, studentType: string = "school_provided") => {
-    // Query for school-provided students by username
+  // Login for school-provided students (username + password)
+  const signIn = async (username: string, password: string) => {
     const { data, error } = await supabase
       .from("students")
       .select("*")
       .eq("username", username)
       .eq("temp_password", password)
+      .eq("student_type", "school_provided")
       .eq("is_active", true)
-      .eq("student_type", studentType)
       .maybeSingle();
 
     if (error) {
@@ -65,24 +66,23 @@ export function useStudentAuth() {
     }
 
     if (!data) {
-      return { error: { message: "Invalid username or password. Please check your credentials." } };
+      return { error: { message: "Invalid username or password. Please check your credentials or contact your school admin." } };
     }
 
-    // Store student session
     localStorage.setItem("student_session", JSON.stringify(data));
     setStudent(data as Student);
     return { error: null };
   };
 
-  const signInWithMobile = async (mobileNumber: string, password: string, studentType: string = "individual") => {
-    // Query for individual students by mobile number
+  // Login for individual students (mobile + password)
+  // Individual students can login if they have active trial OR are fully activated
+  const signInWithMobile = async (mobileNumber: string, password: string) => {
     const { data, error } = await supabase
       .from("students")
       .select("*")
       .eq("mobile_number", mobileNumber)
       .eq("temp_password", password)
-      .eq("is_active", true)
-      .eq("student_type", studentType)
+      .eq("student_type", "individual")
       .maybeSingle();
 
     if (error) {
@@ -93,10 +93,23 @@ export function useStudentAuth() {
       return { error: { message: "Invalid mobile number or password. Please check your credentials." } };
     }
 
-    // Store student session
+    // Check if individual student can access (either activated OR has active trial)
+    const hasActiveTrial = data.is_trial_active && data.trial_end_date && new Date(data.trial_end_date) > new Date();
+    const isActivated = data.is_active;
+
+    if (!hasActiveTrial && !isActivated) {
+      return { error: { message: "Your trial has expired. Please contact support to continue learning." } };
+    }
+
     localStorage.setItem("student_session", JSON.stringify(data));
     setStudent(data as Student);
     return { error: null };
+  };
+
+  // Auto-login after signup (for individual students)
+  const autoLogin = (studentData: Student) => {
+    localStorage.setItem("student_session", JSON.stringify(studentData));
+    setStudent(studentData);
   };
 
   const updatePassword = async (newPassword: string) => {
@@ -126,6 +139,7 @@ export function useStudentAuth() {
     loading,
     signIn,
     signInWithMobile,
+    autoLogin,
     updatePassword,
     signOut,
     getTrialDaysRemaining,
