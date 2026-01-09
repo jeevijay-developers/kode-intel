@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
 import PublicLayout from "@/components/layout/PublicLayout";
+import StudentLayout from "@/components/student/StudentLayout";
 import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
@@ -23,7 +24,8 @@ import SchoolPartnership from "./pages/SchoolPartnership";
 import Contact from "./pages/Contact";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentSignup from "./pages/student/StudentSignup";
-import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentHome from "./pages/student/StudentHome";
+import StudentMyCourses from "./pages/student/StudentMyCourses";
 import StudentCourse from "./pages/student/StudentCourse";
 import StudentProfile from "./pages/student/StudentProfile";
 import StudentVideo from "./pages/student/StudentVideo";
@@ -46,6 +48,7 @@ function App() {
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Landing />} />
               <Route path="/courses" element={<PublicCourses />} />
+              <Route path="/public-courses" element={<PublicCourses />} />
               <Route path="/course/:slug" element={<CourseDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/store" element={<EStore />} />
@@ -53,15 +56,25 @@ function App() {
               <Route path="/contact" element={<Contact />} />
             </Route>
 
-            {/* Student routes (separate, no public header) */}
+            {/* Student auth routes (no sidebar) */}
             <Route path="/student/login" element={<StudentLogin />} />
             <Route path="/student/signup" element={<StudentSignup />} />
-            <Route path="/student" element={<StudentDashboard />} />
-            <Route path="/student/profile" element={<StudentProfile />} />
-            <Route path="/student/courses/:id" element={<StudentCourse />} />
+
+            {/* Student routes with sidebar layout */}
+            <Route path="/student" element={<StudentLayout />}>
+              <Route index element={<StudentHome />} />
+              <Route path="my-courses" element={<StudentMyCourses />} />
+              <Route path="profile" element={<StudentProfile />} />
+              <Route path="achievements" element={<StudentHome />} />
+            </Route>
+
+            {/* Student content routes (full screen, no sidebar) */}
+            <Route path="/student/course/:id" element={<StudentCourse />} />
             <Route path="/student/video/:videoId" element={<StudentVideo />} />
             <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
             <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
+
+            {/* Compiler route */}
             <Route
               path="/compiler"
               element={
