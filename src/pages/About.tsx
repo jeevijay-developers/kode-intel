@@ -173,22 +173,24 @@ export default function About() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="pt-8 pb-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="gap-2 mb-6 -ml-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Button>
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+        </div>
+        
+        <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Empowering Young Minds with AI Education 🌟
+            <div className="animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6 border border-primary/20">
+                <Heart className="h-4 w-4 text-primary" />
+                <span className="text-foreground">Our Mission</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display leading-tight">
+                Empowering Young Minds with <span className="text-gradient-primary">AI Education</span>
               </h1>
-              <p className="text-lg text-muted-foreground mb-6">
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
                 Kode Intel is on a mission to prepare the next generation for an
                 AI-powered future. We make Artificial Intelligence and
                 Computational Thinking accessible, engaging, and fun for
@@ -200,13 +202,13 @@ export default function About() {
                 technology that will define their future.
               </p>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center animate-fade-in" style={{ animationDelay: "200ms" }}>
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-500/10 to-amber-500/20 rounded-full blur-3xl scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-turquoise/10 to-secondary/20 rounded-full blur-3xl scale-110 animate-pulse" />
                 <img
                   src={brainLogo}
                   alt="AI Brain"
-                  className="relative z-10 w-64 lg:w-80 h-auto drop-shadow-2xl"
+                  className="relative z-10 w-64 lg:w-80 h-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </div>
@@ -215,16 +217,16 @@ export default function About() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 px-4">
+      <section className="py-16 px-4 bg-muted/30">
         <div className="container mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {stats.map((stat, index) => (
-              <Card key={index} className="text-center">
-                <CardContent className="pt-6">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                    <stat.icon className="h-6 w-6 text-primary" />
+              <Card key={index} className="text-center overflow-hidden group hover:shadow-lg transition-all hover:-translate-y-1 animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                <CardContent className="pt-6 pb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <stat.icon className="h-7 w-7 text-primary-foreground" />
                   </div>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-3xl md:text-4xl font-bold text-foreground font-display">
                     {stat.value}
                   </p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -236,30 +238,35 @@ export default function About() {
       </section>
 
       {/* Our Values */}
-      <section className="py-16 px-4 bg-muted/30">
+      <section className="py-16 md:py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Our Values
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-4 border border-primary/20">
+              <Target className="h-4 w-4 text-primary" />
+              <span className="text-foreground">What We Stand For</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-display">
+              Our <span className="text-gradient-primary">Values</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               The principles that guide everything we do at Kode Intel
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {values.map((value, index) => (
               <Card
                 key={index}
-                className="hover:shadow-lg transition-all hover:-translate-y-1"
+                className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group overflow-hidden animate-fade-in"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CardContent className="pt-6">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                <CardContent className="pt-6 pb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <value.icon className="h-7 w-7 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                  <h3 className="text-lg font-bold text-foreground mb-2 font-display">
                     {value.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {value.description}
                   </p>
                 </CardContent>

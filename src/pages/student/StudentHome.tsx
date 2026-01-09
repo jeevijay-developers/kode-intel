@@ -172,7 +172,7 @@ export default function StudentHome() {
   const firstName = student.student_name.split(" ")[0];
 
   return (
-    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 max-w-7xl mx-auto animate-fade-in">
       {/* Trial Banners */}
       {isTrial && !isTrialExpired() && (
         <Card className="bg-gradient-to-r from-sunny/20 via-coral/10 to-sunny/20 border-sunny/30 overflow-hidden animate-fade-in">

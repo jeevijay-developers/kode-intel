@@ -36,14 +36,14 @@ export default function GuestDashboard() {
   ];
 
   return (
-    <div className="p-2 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in">
       {/* Welcome Banner with Mascot */}
       <Card className="bg-gradient-to-br from-turquoise/20 via-primary/10 to-secondary/20 border-turquoise/30 overflow-hidden relative">
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full animate-pulse" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-turquoise/10 to-transparent rounded-tr-full" />
         
-        <CardContent className="p-3 sm:p-4 lg:p-6 relative">
+        <CardContent className="p-4 sm:p-5 lg:p-6 relative">
           <div className="flex flex-col gap-4">
             {/* Mascot Widget */}
             <MascotWidget 
@@ -79,7 +79,7 @@ export default function GuestDashboard() {
       </Card>
 
       {/* Stats Grid - Using new StatCard */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
           title="XP"
           value={0}
@@ -121,7 +121,7 @@ export default function GuestDashboard() {
       />
 
       {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+      <div className="grid lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
         {/* Continue Learning - Takes 2 columns */}
         <div className="lg:col-span-2 space-y-3 sm:space-y-4">
           <Card className="overflow-hidden">
