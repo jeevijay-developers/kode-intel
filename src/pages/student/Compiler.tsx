@@ -32,23 +32,44 @@ import {
   Check,
   Trophy,
   Target,
+  Flame,
+  Settings,
+  Binary,
+  Coffee,
+  Globe,
+  Wand2,
+  Calculator,
+  Palette,
+  MousePointer,
+  MessageCircle,
+  Hand,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const languages = [
-  { id: "python", name: "Python", icon: "🐍", color: "from-green-500 to-emerald-600", description: "Easy & Fun!" },
-  { id: "javascript", name: "JavaScript", icon: "✨", color: "from-yellow-500 to-orange-500", description: "Web Magic!" },
-  { id: "c", name: "C", icon: "🔧", color: "from-blue-500 to-blue-600", description: "Classic Power" },
-  { id: "cpp", name: "C++", icon: "⚡", color: "from-purple-500 to-purple-600", description: "Super Fast!" },
-  { id: "java", name: "Java", icon: "☕", color: "from-orange-500 to-red-500", description: "Build Apps!" },
+type LanguageId = "python" | "javascript" | "c" | "cpp" | "java";
+
+interface LanguageConfig {
+  id: LanguageId;
+  name: string;
+  Icon: React.FC<{ className?: string }>;
+  color: string;
+  description: string;
+}
+
+const languages: LanguageConfig[] = [
+  { id: "python", name: "Python", Icon: Code, color: "from-green-500 to-emerald-600", description: "Easy & Fun!" },
+  { id: "javascript", name: "JavaScript", Icon: Globe, color: "from-yellow-500 to-orange-500", description: "Web Magic!" },
+  { id: "c", name: "C", Icon: Settings, color: "from-blue-500 to-blue-600", description: "Classic Power" },
+  { id: "cpp", name: "C++", Icon: Zap, color: "from-purple-500 to-purple-600", description: "Super Fast!" },
+  { id: "java", name: "Java", Icon: Coffee, color: "from-orange-500 to-red-500", description: "Build Apps!" },
 ];
 
 interface Project {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  Icon: React.FC<{ className?: string }>;
   difficulty: "Easy" | "Medium" | "Hard";
   language: string;
   code: string;
@@ -60,98 +81,98 @@ const projects: Project[] = [
     id: "hello",
     name: "Hello World",
     description: "Your first program! Say hello to the world of coding.",
-    icon: "👋",
+    Icon: Hand,
     difficulty: "Easy",
     language: "python",
-    code: `# 🌟 My First Program!
+    code: `# My First Program!
 # This is a comment - the computer ignores it
 
-print("Hello, World! 🌍")
+print("Hello, World!")
 print("I'm learning to code!")
-print("This is SO cool! 🚀")`,
+print("This is SO cool!")`,
     challenge: "Try changing the message to your name!",
   },
   {
     id: "calculator",
     name: "Fun Calculator",
     description: "Build a calculator that does magic with numbers!",
-    icon: "🧮",
+    Icon: Calculator,
     difficulty: "Easy",
     language: "python",
-    code: `# 🧮 My Fun Calculator!
+    code: `# My Fun Calculator!
 
 # Let's add two numbers
 num1 = 10
 num2 = 5
 
-print("🔢 Number 1:", num1)
-print("🔢 Number 2:", num2)
+print("Number 1:", num1)
+print("Number 2:", num2)
 print()
-print("➕ Addition:", num1 + num2)
-print("➖ Subtraction:", num1 - num2)
-print("✖️ Multiplication:", num1 * num2)
-print("➗ Division:", num1 / num2)`,
+print("Addition:", num1 + num2)
+print("Subtraction:", num1 - num2)
+print("Multiplication:", num1 * num2)
+print("Division:", num1 / num2)`,
     challenge: "Change the numbers and see what happens!",
   },
   {
     id: "pattern",
     name: "Star Pattern",
     description: "Create beautiful star patterns with loops!",
-    icon: "⭐",
+    Icon: Star,
     difficulty: "Medium",
     language: "python",
-    code: `# ⭐ Star Pattern Generator!
+    code: `# Star Pattern Generator!
 
 rows = 5
-print("✨ Here's your star pyramid! ✨")
+print("Here's your star pyramid!")
 print()
 
 for i in range(1, rows + 1):
     # Print spaces
     print(" " * (rows - i), end="")
     # Print stars
-    print("⭐ " * i)
+    print("* " * i)
 
 print()
-print("🎉 Amazing pattern!")`,
+print("Amazing pattern!")`,
     challenge: "Try making the pyramid bigger by changing 'rows'!",
   },
   {
     id: "guessing",
     name: "Number Guessing",
     description: "A fun guessing game with hints!",
-    icon: "🎯",
+    Icon: Target,
     difficulty: "Medium",
     language: "python",
-    code: `# 🎯 Number Guessing Game!
+    code: `# Number Guessing Game!
 
 secret = 7
-print("🎮 Let's play a guessing game!")
+print("Let's play a guessing game!")
 print()
 
 for guess in range(1, 11):
     if guess == secret:
-        print(f"🎉 {guess} is CORRECT! You found it!")
+        print(f"{guess} is CORRECT! You found it!")
     elif guess < secret:
-        print(f"🔍 {guess} is too small...")
+        print(f"{guess} is too small...")
     else:
-        print(f"🔍 {guess} is too big...")
+        print(f"{guess} is too big...")
 
 print()
-print("🏆 Game Over!")`,
+print("Game Over!")`,
     challenge: "Change the secret number and run again!",
   },
   {
     id: "art",
     name: "ASCII Art",
     description: "Draw pictures using text characters!",
-    icon: "🎨",
+    Icon: Palette,
     difficulty: "Easy",
     language: "python",
-    code: `# 🎨 ASCII Art Gallery!
+    code: `# ASCII Art Gallery!
 
 print("=" * 30)
-print("   🖼️  MY ART GALLERY  🖼️")
+print("   MY ART GALLERY")
 print("=" * 30)
 print()
 
@@ -161,34 +182,34 @@ print("      /  \\\\")
 print("     /    \\\\")
 print("    /______\\\\")
 print("    |      |")
-print("    |  🚪  |")
+print("    |  []  |")
 print("    |______|")
 print()
-print("🏠 Home Sweet Home!")
+print("Home Sweet Home!")
 print()
 
 # Draw a tree
-print("      🌟")
+print("      *")
 print("      /\\\\")
 print("     /  \\\\")
 print("    /    \\\\")
 print("   /______\\\\")
 print("      ||")
 print()
-print("🎄 Happy Holidays!")`,
+print("Happy Holidays!")`,
     challenge: "Create your own ASCII art picture!",
   },
   {
     id: "countdown",
     name: "Rocket Launch",
     description: "Build a countdown timer for a rocket launch!",
-    icon: "🚀",
+    Icon: Rocket,
     difficulty: "Easy",
     language: "python",
-    code: `# 🚀 Rocket Launch Countdown!
+    code: `# Rocket Launch Countdown!
 
 print("=" * 30)
-print("   🛸 SPACE MISSION 🛸")
+print("   SPACE MISSION")
 print("=" * 30)
 print()
 print("Initiating launch sequence...")
@@ -198,27 +219,36 @@ for i in range(10, 0, -1):
     print(f"   {i}...")
 
 print()
-print("🔥🔥🔥 BLAST OFF! 🔥🔥🔥")
+print("BLAST OFF!")
 print()
-print("🚀 Rocket is flying to space! ✨")
-print("🌟 Mission successful! 🌟")`,
+print("Rocket is flying to space!")
+print("Mission successful!")`,
     challenge: "Make it count down from 20 instead!",
   },
 ];
 
-const blockBasedExamples = [
+interface BlockExample {
+  id: string;
+  name: string;
+  description: string;
+  Icon: React.FC<{ className?: string }>;
+  blocks: string[];
+  code: string;
+}
+
+const blockBasedExamples: BlockExample[] = [
   {
     id: "motion",
     name: "Move & Dance",
     description: "Make things move on screen!",
-    icon: "💃",
+    Icon: Wand2,
     blocks: ["move 10 steps", "turn 90°", "repeat 4 times", "change color"],
-    code: `# 💃 Dance Moves!
+    code: `# Dance Moves!
 # Imagine a character dancing
 
-moves = ["Step Right →", "Step Left ←", "Spin! 🔄", "Jump! ⬆️"]
+moves = ["Step Right", "Step Left", "Spin!", "Jump!"]
 
-print("🎵 Let's dance! 🎵")
+print("Let's dance!")
 print()
 
 for i in range(3):  # Dance 3 times
@@ -227,19 +257,19 @@ for i in range(3):  # Dance 3 times
         print(f"  {move}")
     print()
 
-print("🌟 Great dancing! 🌟")`,
+print("Great dancing!")`,
   },
   {
     id: "looks",
     name: "Say & Think",
     description: "Make characters talk!",
-    icon: "💬",
+    Icon: MessageCircle,
     blocks: ["say 'Hello!'", "think 'Hmm...'", "change costume", "show/hide"],
-    code: `# 💬 Talking Characters!
+    code: `# Talking Characters!
 
-characters = ["🐱 Cat", "🐶 Dog", "🐰 Bunny"]
+characters = ["Cat", "Dog", "Bunny"]
 
-print("🎭 Character Chat 🎭")
+print("Character Chat")
 print()
 
 for char in characters:
@@ -247,32 +277,32 @@ for char in characters:
     print(f"{char} thinks: 'I love coding!'")
     print()
 
-print("💬 What a fun conversation!")`,
+print("What a fun conversation!")`,
   },
   {
     id: "events",
     name: "When Things Happen",
     description: "React to clicks and keys!",
-    icon: "🎮",
+    Icon: MousePointer,
     blocks: ["when clicked", "when key pressed", "when I receive", "broadcast"],
-    code: `# 🎮 Event Simulator!
+    code: `# Event Simulator!
 
-print("🎮 Game Controller Simulator 🎮")
+print("Game Controller Simulator")
 print()
 
 events = [
-    ("When SPACE pressed", "Jump! ⬆️"),
-    ("When LEFT pressed", "Move left ←"),
-    ("When RIGHT pressed", "Move right →"),
-    ("When clicked", "Attack! ⚔️"),
+    ("When SPACE pressed", "Jump!"),
+    ("When LEFT pressed", "Move left"),
+    ("When RIGHT pressed", "Move right"),
+    ("When clicked", "Attack!"),
 ]
 
 print("Controller mapping:")
 for event, action in events:
-    print(f"  {event} → {action}")
+    print(f"  {event} -> {action}")
 
 print()
-print("🎯 Ready to play!")`,
+print("Ready to play!")`,
   },
 ];
 
@@ -525,9 +555,9 @@ export default function Compiler() {
                       className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl group-hover:scale-110 transition-transform">
-                          {project.icon}
-                        </span>
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <project.Icon className="h-5 w-5 text-primary" />
+                        </div>
                         <div className="flex-1">
                           <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                             {project.name}
@@ -564,7 +594,7 @@ export default function Compiler() {
                     <h3 className="font-bold text-foreground">Block Ideas</h3>
                   </div>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Click to load block-based coding concepts! 🧩
+                    Click to load block-based coding concepts!
                   </p>
                   {blockBasedExamples.map((example) => (
                     <button
@@ -573,9 +603,9 @@ export default function Compiler() {
                       className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-secondary/50 hover:bg-secondary/5 transition-all duration-200 text-left group"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl group-hover:scale-110 transition-transform">
-                          {example.icon}
-                        </span>
+                        <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <example.Icon className="h-5 w-5 text-secondary" />
+                        </div>
                         <div className="flex-1">
                           <p className="font-medium text-foreground group-hover:text-secondary transition-colors">
                             {example.name}
@@ -626,7 +656,9 @@ export default function Compiler() {
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-xl">{lang.icon}</span>
+                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${lang.color} flex items-center justify-center`}>
+                              <lang.Icon className="h-4 w-4 text-white" />
+                            </div>
                             <div>
                               <p className="font-medium text-foreground">{lang.name}</p>
                               <p className="text-[10px] text-muted-foreground">
@@ -682,8 +714,9 @@ export default function Compiler() {
                     Your Code
                   </span>
                 </div>
-                <Badge className={`bg-gradient-to-r ${currentLang?.color} text-white`}>
-                  {currentLang?.icon} {currentLang?.name}
+                <Badge className={`bg-gradient-to-r ${currentLang?.color} text-white flex items-center gap-1`}>
+                  {currentLang && <currentLang.Icon className="h-3 w-3" />}
+                  {currentLang?.name}
                 </Badge>
               </CardTitle>
             </CardHeader>

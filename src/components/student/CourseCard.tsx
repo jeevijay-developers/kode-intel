@@ -40,36 +40,38 @@ export function CourseCard({
 
   return (
     <Card
-      className={`group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+      className={`group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 ${
         isLocked
           ? "opacity-75 bg-muted/30"
           : "bg-gradient-to-br from-card to-card/80"
       } ${isSuggested ? "ring-2 ring-sunny/50 shadow-sunny/20" : ""}`}
     >
       {/* Thumbnail */}
-      <div className="relative h-36 bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
+      <div className="relative h-40 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 overflow-hidden">
         {course.thumbnail_url ? (
           <img
             src={course.thumbnail_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <BookOpen className="h-16 w-16 text-primary/30" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
+            <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <BookOpen className="h-10 w-10 text-primary" />
+            </div>
           </div>
         )}
 
         {/* Overlay badges */}
-        <div className="absolute top-2 left-2 flex gap-2">
+        <div className="absolute top-3 left-3 flex gap-2">
           {isSuggested && (
-            <Badge className="bg-sunny text-foreground shadow-lg">
+            <Badge className="bg-sunny text-foreground shadow-lg animate-fade-in">
               <Star className="h-3 w-3 mr-1 fill-current" />
               Recommended
             </Badge>
           )}
           {isEnrolled && !isLocked && (
-            <Badge className="bg-primary shadow-lg">
+            <Badge className="bg-primary shadow-lg animate-fade-in">
               <Sparkles className="h-3 w-3 mr-1" />
               Enrolled
             </Badge>
@@ -78,7 +80,7 @@ export function CourseCard({
 
         {isLocked && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-center">
+            <div className="text-center animate-scale-in">
               <Lock className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground font-medium">
                 Unlock with Subscription

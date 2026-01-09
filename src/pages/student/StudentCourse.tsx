@@ -35,6 +35,7 @@ import {
   Rainbow,
   Lock,
   Sparkles,
+  GraduationCap,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useCourse, useChapters } from "@/hooks/useCourses";
@@ -227,8 +228,9 @@ export default function StudentCourse() {
                 <div className="flex items-center gap-3">
                   <Lock className="h-6 w-6 text-sunny" />
                   <div>
-                    <p className="font-semibold text-foreground">
-                      🎓 Trial Mode: Chapter 1 Unlocked
+                    <p className="font-semibold text-foreground flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4" />
+                      Trial Mode: Chapter 1 Unlocked
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Subscribe to unlock all chapters, quizzes, and ebooks
@@ -399,7 +401,7 @@ function ChapterAccordion({
 
   const handleLockedAction = () => {
     toast({
-      title: "🔒 Content Locked",
+      title: "Content Locked",
       description: "Subscribe to unlock this chapter!",
       variant: "destructive",
     });

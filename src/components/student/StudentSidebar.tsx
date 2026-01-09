@@ -22,7 +22,7 @@ import {
   Flame,
   Sparkles,
   GraduationCap,
-  Rocket,
+  ChevronRight,
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 
@@ -61,15 +61,15 @@ export function StudentSidebar({
         {/* Logo Section */}
         <div className="p-4 border-b border-border/50">
           <div
-            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 cursor-pointer group"
             onClick={() => navigate("/")}
           >
-            <div className="relative">
+            <div className="relative transition-transform duration-300 group-hover:scale-110">
               <img src={brainLogo} alt="Logo" className="h-10 w-10" />
               <Sparkles className="h-3 w-3 text-sunny absolute -top-1 -right-1 animate-pulse" />
             </div>
             {!collapsed && (
-              <span className="text-xl font-bold font-display">
+              <span className="text-xl font-bold font-display transition-colors duration-200 group-hover:text-primary">
                 Kode<span className="text-primary">Intel</span>
               </span>
             )}
@@ -79,9 +79,9 @@ export function StudentSidebar({
         {/* Student Stats Card */}
         {!collapsed && (
           <div className="p-4 border-b border-border/50">
-            <div className="bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl p-4">
+            <div className="bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg transition-transform duration-300 hover:rotate-6">
                   <GraduationCap className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <div>
@@ -92,14 +92,14 @@ export function StudentSidebar({
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-sunny/20 rounded-xl p-2 text-center">
+                <div className="bg-sunny/20 rounded-xl p-2 text-center transition-all duration-200 hover:bg-sunny/30 hover:scale-105 cursor-default">
                   <div className="flex items-center justify-center gap-1">
                     <Star className="h-4 w-4 text-sunny fill-sunny" />
                     <span className="text-sm font-bold text-sunny">{totalPoints}</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground">XP</p>
                 </div>
-                <div className="bg-coral/20 rounded-xl p-2 text-center">
+                <div className="bg-coral/20 rounded-xl p-2 text-center transition-all duration-200 hover:bg-coral/30 hover:scale-105 cursor-default">
                   <div className="flex items-center justify-center gap-1">
                     <Flame className="h-4 w-4 text-coral" />
                     <span className="text-sm font-bold text-coral">{streakDays}</span>
@@ -118,25 +118,42 @@ export function StudentSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1 px-2">
-              {menuItems.map((item) => {
+              {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.url;
                 const IconComponent = item.icon;
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem 
+                    key={item.title}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
                     <SidebarMenuButton asChild>
                       <NavLink
                         to={item.url}
                         end
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                        className={`group/item flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-md"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "hover:bg-muted/80 text-muted-foreground hover:text-foreground hover:translate-x-1"
                         }`}
                         activeClassName="bg-primary text-primary-foreground"
                       >
-                        <IconComponent className={`h-5 w-5 ${isActive ? "text-primary-foreground" : ""}`} />
+                        <IconComponent 
+                          className={`h-5 w-5 transition-transform duration-300 ${
+                            isActive ? "text-primary-foreground scale-110" : "group-hover/item:scale-110"
+                          }`} 
+                        />
                         {!collapsed && (
-                          <span className="font-medium">{item.title}</span>
+                          <>
+                            <span className="font-medium flex-1">{item.title}</span>
+                            <ChevronRight 
+                              className={`h-4 w-4 transition-all duration-300 ${
+                                isActive 
+                                  ? "opacity-100 translate-x-0" 
+                                  : "opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0"
+                              }`}
+                            />
+                          </>
                         )}
                       </NavLink>
                     </SidebarMenuButton>
@@ -149,7 +166,7 @@ export function StudentSidebar({
 
         {/* Trigger at bottom */}
         <div className="p-4 border-t border-border/50">
-          <SidebarTrigger className="w-full justify-center" />
+          <SidebarTrigger className="w-full justify-center transition-transform duration-200 hover:scale-105" />
         </div>
       </SidebarContent>
     </Sidebar>

@@ -162,7 +162,7 @@ export default function StudentHome() {
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Trial Banners */}
       {isTrial && !isTrialExpired() && (
-        <Card className="bg-gradient-to-r from-sunny/20 via-coral/10 to-sunny/20 border-sunny/30 overflow-hidden">
+        <Card className="bg-gradient-to-r from-sunny/20 via-coral/10 to-sunny/20 border-sunny/30 overflow-hidden animate-fade-in">
           <CardContent className="py-4 px-5">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-4">
@@ -170,8 +170,9 @@ export default function StudentHome() {
                   <Clock className="h-6 w-6 text-sunny" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground text-lg">
-                    🎉 Free Trial Active!
+                  <p className="font-bold text-foreground text-lg flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-sunny" />
+                    Free Trial Active
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {getTrialDaysRemaining()} days remaining • First chapter unlocked
@@ -215,8 +216,8 @@ export default function StudentHome() {
                 <Brain className="h-10 w-10 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground font-display">
-                  Welcome back, {student.student_name.split(" ")[0]}! 👋
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground font-display flex items-center gap-2">
+                  Welcome back, {student.student_name.split(" ")[0]}!
                 </h1>
                 <p className="text-muted-foreground text-lg flex items-center gap-2">
                   <GraduationCap className="h-5 w-5" />
@@ -293,7 +294,8 @@ export default function StudentHome() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2 font-display">
-            📚 My Learning Journey
+            <BookOpen className="h-5 w-5 text-primary" />
+            My Learning Journey
           </h2>
           {enrolledCourses.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => navigate("/student/my-courses")}>
@@ -378,7 +380,8 @@ export default function StudentHome() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
-              📊 My Progress
+              <Target className="h-5 w-5 text-primary" />
+              My Progress
             </CardTitle>
           </CardHeader>
           <CardContent>

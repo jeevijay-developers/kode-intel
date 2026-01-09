@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress";
-import { Star, Zap } from "lucide-react";
+import { Star, Zap, Flame } from "lucide-react";
 
 const levelThresholds = [
   { level: 1, points: 0, name: "Beginner" },
@@ -78,7 +78,7 @@ export function LevelProgress({
             <Zap className="h-4 w-4 text-white" />
           </div>
           <span className="font-bold text-foreground">{streakDays} Day Streak!</span>
-          <span className="text-2xl">🔥</span>
+          <Flame className="h-6 w-6 text-coral" />
         </div>
       )}
     </div>
