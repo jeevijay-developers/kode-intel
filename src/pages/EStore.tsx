@@ -46,6 +46,7 @@ import mascotKodi from "@/assets/mascot-kodi.png";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { BookQuickView } from "@/components/store/BookQuickView";
+import { booksData, getTotalSubTopics } from "@/lib/bookData";
 
 interface CartItem {
   id: string;
@@ -65,104 +66,20 @@ interface AddressForm {
   pincode: string;
 }
 
-const books = [
-  { 
-    id: "book-3", 
-    class: "Class 3", 
-    title: "AI Foundations", 
-    subtitle: "Worksheet + Theory",
-    description: "Introduction to logical thinking and basic AI concepts with hands-on activities", 
-    price: 999, 
-    originalPrice: 1299,
-    chapters: 12,
-    worksheets: 24,
-    color: "from-emerald-500 to-teal-600"
-  },
-  { 
-    id: "book-4", 
-    class: "Class 4", 
-    title: "AI Foundations", 
-    subtitle: "Worksheet + Theory",
-    description: "Building blocks of computational thinking with interactive exercises", 
-    price: 999, 
-    originalPrice: 1299,
-    chapters: 14,
-    worksheets: 28,
-    color: "from-blue-500 to-cyan-600"
-  },
-  { 
-    id: "book-5", 
-    class: "Class 5", 
-    title: "AI Explorer", 
-    subtitle: "Worksheet + Theory",
-    description: "Pattern recognition and algorithm basics with real-world examples", 
-    price: 999, 
-    originalPrice: 1299,
-    chapters: 15,
-    worksheets: 30,
-    color: "from-violet-500 to-purple-600"
-  },
-  { 
-    id: "book-6", 
-    class: "Class 6", 
-    title: "AI Explorer", 
-    subtitle: "Worksheet + Theory",
-    description: "Advanced patterns and logical operators with practice problems", 
-    price: 999, 
-    originalPrice: 1299,
-    chapters: 16,
-    worksheets: 32,
-    color: "from-pink-500 to-rose-600"
-  },
-  { 
-    id: "book-7", 
-    class: "Class 7", 
-    title: "AI Builder", 
-    subtitle: "Worksheet + Theory",
-    description: "Data structures and introductory programming with projects", 
-    price: 1099, 
-    originalPrice: 1399,
-    chapters: 18,
-    worksheets: 36,
-    color: "from-orange-500 to-amber-600"
-  },
-  { 
-    id: "book-8", 
-    class: "Class 8", 
-    title: "AI Builder", 
-    subtitle: "Worksheet + Theory",
-    description: "Machine learning fundamentals with hands-on experiments", 
-    price: 1099, 
-    originalPrice: 1399,
-    chapters: 18,
-    worksheets: 36,
-    color: "from-red-500 to-orange-600"
-  },
-  { 
-    id: "book-9", 
-    class: "Class 9", 
-    title: "AI Innovator", 
-    subtitle: "Worksheet + Theory",
-    description: "Real-world AI applications with case studies and projects", 
-    price: 1199, 
-    originalPrice: 1499,
-    chapters: 20,
-    worksheets: 40,
-    color: "from-indigo-500 to-blue-600"
-  },
-  { 
-    id: "book-10", 
-    class: "Class 10", 
-    title: "AI Innovator", 
-    subtitle: "Worksheet + Theory",
-    description: "Building AI projects with comprehensive theory and practice", 
-    price: 1199, 
-    originalPrice: 1499,
-    chapters: 22,
-    worksheets: 44,
-    color: "from-cyan-500 to-teal-600"
-  },
-];
+// Transform booksData for display
+const books = booksData.map(book => ({
+  id: book.id,
+  class: book.class,
+  title: book.title,
+  subtitle: book.subtitle,
+  description: book.description,
+  price: book.price,
+  originalPrice: book.originalPrice,
+  chapters: book.chapters.length,
+  subTopics: getTotalSubTopics(book),
+  worksheets: book.worksheets,
+  color: book.color,
+}));
 
 const benefits = [
   {
@@ -801,6 +718,10 @@ export default function EStore() {
                     <Badge variant="outline" className="text-[10px] sm:text-xs py-0.5">
                       <FileText className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                       {book.chapters} Chapters
+                    </Badge>
+                    <Badge variant="outline" className="text-[10px] sm:text-xs py-0.5">
+                      <Layers className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                      {book.subTopics} Topics
                     </Badge>
                     <Badge variant="outline" className="text-[10px] sm:text-xs py-0.5">
                       <PenTool className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
