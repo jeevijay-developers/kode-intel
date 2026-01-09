@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          achievement_type: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          points_reward: number
+          target_value: number
+        }
+        Insert: {
+          achievement_type: string
+          created_at?: string
+          description?: string | null
+          icon: string
+          id?: string
+          name: string
+          points_reward?: number
+          target_value?: number
+        }
+        Update: {
+          achievement_type?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          points_reward?: number
+          target_value?: number
+        }
+        Relationships: []
+      }
+      badges: {
+        Row: {
+          badge_type: string
+          color: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          points_required: number
+        }
+        Insert: {
+          badge_type?: string
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon: string
+          id?: string
+          name: string
+          points_required?: number
+        }
+        Update: {
+          badge_type?: string
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          points_required?: number
+        }
+        Relationships: []
+      }
       chapter_ebooks: {
         Row: {
           chapter_id: string
@@ -408,6 +474,84 @@ export type Database = {
         }
         Relationships: []
       }
+      student_achievements: {
+        Row: {
+          achievement_id: string
+          completed: boolean
+          completed_at: string | null
+          id: string
+          progress: number
+          student_id: string
+        }
+        Insert: {
+          achievement_id: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          progress?: number
+          student_id: string
+        }
+        Update: {
+          achievement_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          progress?: number
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          student_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          student_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_badges_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_course_progress: {
         Row: {
           completed_at: string | null
@@ -442,6 +586,44 @@ export type Database = {
             foreignKeyName: "student_course_progress_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_points: {
+        Row: {
+          current_level: number
+          id: string
+          last_activity_date: string | null
+          streak_days: number
+          student_id: string
+          total_points: number
+          updated_at: string
+        }
+        Insert: {
+          current_level?: number
+          id?: string
+          last_activity_date?: string | null
+          streak_days?: number
+          student_id: string
+          total_points?: number
+          updated_at?: string
+        }
+        Update: {
+          current_level?: number
+          id?: string
+          last_activity_date?: string | null
+          streak_days?: number
+          student_id?: string
+          total_points?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_points_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
             referencedRelation: "students"
             referencedColumns: ["id"]
           },
@@ -582,6 +764,9 @@ export type Database = {
       }
       students: {
         Row: {
+          activated_at: string | null
+          activated_by: string | null
+          activation_status: string
           class: string
           created_at: string
           email: string | null
@@ -600,6 +785,9 @@ export type Database = {
           username: string
         }
         Insert: {
+          activated_at?: string | null
+          activated_by?: string | null
+          activation_status?: string
           class: string
           created_at?: string
           email?: string | null
@@ -618,6 +806,9 @@ export type Database = {
           username: string
         }
         Update: {
+          activated_at?: string | null
+          activated_by?: string | null
+          activation_status?: string
           class?: string
           created_at?: string
           email?: string | null

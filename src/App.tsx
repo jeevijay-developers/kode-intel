@@ -22,6 +22,7 @@ import EStore from "./pages/EStore";
 import SchoolPartnership from "./pages/SchoolPartnership";
 import Contact from "./pages/Contact";
 import StudentLogin from "./pages/student/StudentLogin";
+import StudentSignup from "./pages/student/StudentSignup";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourse from "./pages/student/StudentCourse";
 import StudentProfile from "./pages/student/StudentProfile";
@@ -54,6 +55,7 @@ function App() {
 
             {/* Student routes (separate, no public header) */}
             <Route path="/student/login" element={<StudentLogin />} />
+            <Route path="/student/signup" element={<StudentSignup />} />
             <Route path="/student" element={<StudentDashboard />} />
             <Route path="/student/profile" element={<StudentProfile />} />
             <Route path="/student/courses/:id" element={<StudentCourse />} />
