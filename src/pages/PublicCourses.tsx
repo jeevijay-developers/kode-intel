@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   BookOpen,
   GraduationCap,
   Play,
-  FileText,
   Clock,
   Users,
   Star,
@@ -14,189 +14,176 @@ import {
   Rocket,
   Code,
   Cpu,
-  ArrowLeft,
+  Layers,
+  CheckCircle2,
+  Sparkles,
+  Brain,
+  ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+// Import course banners
+import courseBannerAiIntro from "@/assets/course-banner-ai-intro.png";
+import courseBannerComputational from "@/assets/course-banner-computational.png";
+import courseBannerPatterns from "@/assets/course-banner-patterns.png";
+import courseBannerAlgorithms from "@/assets/course-banner-algorithms.png";
+import courseBannerDataStructures from "@/assets/course-banner-data-structures.png";
+import courseBannerMl from "@/assets/course-banner-ml.png";
+import courseBannerAiWorld from "@/assets/course-banner-ai-world.png";
+import courseBannerAiProjects from "@/assets/course-banner-ai-projects.png";
+
+const courseBanners: Record<string, string> = {
+  "Class 3": courseBannerAiIntro,
+  "Class 4": courseBannerComputational,
+  "Class 5": courseBannerPatterns,
+  "Class 6": courseBannerAlgorithms,
+  "Class 7": courseBannerDataStructures,
+  "Class 8": courseBannerMl,
+  "Class 9": courseBannerAiWorld,
+  "Class 10": courseBannerAiProjects,
+};
+
+const levelIcons: Record<string, typeof Lightbulb> = {
+  "3": Lightbulb,
+  "4": Lightbulb,
+  "5": Rocket,
+  "6": Rocket,
+  "7": Code,
+  "8": Code,
+  "9": Cpu,
+  "10": Cpu,
+};
+
+const levelGradients: Record<string, string> = {
+  "3": "from-sunny/20 to-coral/10",
+  "4": "from-coral/20 to-pink/10",
+  "5": "from-primary/20 to-turquoise/10",
+  "6": "from-turquoise/20 to-lime/10",
+  "7": "from-secondary/20 to-pink/10",
+  "8": "from-pink/20 to-primary/10",
+  "9": "from-turquoise/20 to-primary/10",
+  "10": "from-primary/20 to-secondary/10",
+};
+
+const levelFilters = [
+  { label: "All Classes", value: "all", icon: Layers },
+  { label: "Class 3-4", value: "3-4", icon: Lightbulb, description: "Foundation" },
+  { label: "Class 5-6", value: "5-6", icon: Rocket, description: "Explorer" },
+  { label: "Class 7-8", value: "7-8", icon: Code, description: "Builder" },
+  { label: "Class 9-10", value: "9-10", icon: Cpu, description: "Innovator" },
+];
 
 export default function PublicCourses() {
   const navigate = useNavigate();
-
-  const courses = [
-    {
-      id: "1",
-      slug: "introduction-to-ai-for-kids",
-      title: "Introduction to AI for Kids",
-      description:
-        "Learn the basics of Artificial Intelligence through fun activities and games. Understand what AI is and how it's used in everyday life.",
-      level: "Classes 3-4",
-      levelIcon: Lightbulb,
-      duration: "8 weeks",
-      lessons: 24,
-      students: 450,
-      rating: 4.8,
-      thumbnail: "🤖",
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      id: "2",
-      slug: "computational-thinking-basics",
-      title: "Computational Thinking Basics",
-      description:
-        "Develop problem-solving skills through computational thinking. Learn to break down complex problems into simple steps.",
-      level: "Classes 3-4",
-      levelIcon: Lightbulb,
-      duration: "6 weeks",
-      lessons: 18,
-      students: 380,
-      rating: 4.9,
-      thumbnail: "🧠",
-      color: "from-blue-500/20 to-blue-500/5",
-    },
-    {
-      id: "3",
-      slug: "pattern-recognition-logic",
-      title: "Pattern Recognition & Logic",
-      description:
-        "Master pattern recognition and logical reasoning. Build a strong foundation for advanced programming concepts.",
-      level: "Classes 5-6",
-      levelIcon: Rocket,
-      duration: "10 weeks",
-      lessons: 30,
-      students: 320,
-      rating: 4.7,
-      thumbnail: "🔍",
-      color: "from-purple-500/20 to-purple-500/5",
-    },
-    {
-      id: "4",
-      slug: "introduction-to-algorithms",
-      title: "Introduction to Algorithms",
-      description:
-        "Discover how algorithms work and create your own step-by-step solutions. Learn sorting, searching, and more!",
-      level: "Classes 5-6",
-      levelIcon: Rocket,
-      duration: "8 weeks",
-      lessons: 24,
-      students: 290,
-      rating: 4.8,
-      thumbnail: "📊",
-      color: "from-amber-500/20 to-amber-500/5",
-    },
-    {
-      id: "5",
-      slug: "data-structures-for-young-coders",
-      title: "Data Structures for Young Coders",
-      description:
-        "Learn about arrays, lists, and trees through interactive examples. Build projects that use real data structures.",
-      level: "Classes 7-8",
-      levelIcon: Code,
-      duration: "12 weeks",
-      lessons: 36,
-      students: 210,
-      rating: 4.6,
-      thumbnail: "🗂️",
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      id: "6",
-      slug: "machine-learning-fundamentals",
-      title: "Machine Learning Fundamentals",
-      description:
-        "Understand how machines learn from data. Create simple ML models and see AI in action!",
-      level: "Classes 7-8",
-      levelIcon: Code,
-      duration: "10 weeks",
-      lessons: 30,
-      students: 180,
-      rating: 4.9,
-      thumbnail: "⚙️",
-      color: "from-blue-500/20 to-blue-500/5",
-    },
-    {
-      id: "7",
-      slug: "ai-in-the-real-world",
-      title: "AI in the Real World",
-      description:
-        "Explore how AI is used in healthcare, transportation, entertainment, and more. Analyze real case studies.",
-      level: "Classes 9-10",
-      levelIcon: Cpu,
-      duration: "12 weeks",
-      lessons: 36,
-      students: 150,
-      rating: 4.8,
-      thumbnail: "🌍",
-      color: "from-purple-500/20 to-purple-500/5",
-    },
-    {
-      id: "8",
-      slug: "building-ai-projects",
-      title: "Building AI Projects",
-      description:
-        "Apply everything you've learned to build real AI projects. Create chatbots, image classifiers, and more!",
-      level: "Classes 9-10",
-      levelIcon: Cpu,
-      duration: "14 weeks",
-      lessons: 42,
-      students: 120,
-      rating: 4.9,
-      thumbnail: "🚀",
-      color: "from-amber-500/20 to-amber-500/5",
-    },
-  ];
-
-  const levelFilters = [
-    { label: "All Levels", value: "all" },
-    { label: "Classes 3-4", value: "3-4" },
-    { label: "Classes 5-6", value: "5-6" },
-    { label: "Classes 7-8", value: "7-8" },
-    { label: "Classes 9-10", value: "9-10" },
-  ];
-
   const [selectedLevel, setSelectedLevel] = useState("all");
 
-  const filteredCourses =
-    selectedLevel === "all"
-      ? courses
-      : courses.filter((course) => course.level.includes(selectedLevel));
+  // Fetch courses from database
+  const { data: courses = [], isLoading } = useQuery({
+    queryKey: ["public-courses"],
+    queryFn: async () => {
+      const { data: coursesData, error } = await supabase
+        .from("courses")
+        .select(`
+          *,
+          chapters:chapters(id, title, description)
+        `)
+        .eq("is_published", true)
+        .like("title", "Class%")
+        .order("order_index");
+
+      if (error) throw error;
+      return coursesData;
+    },
+  });
+
+  const getClassNumber = (title: string): string => {
+    const match = title.match(/Class (\d+)/);
+    return match ? match[1] : "";
+  };
+
+  const getBanner = (title: string): string => {
+    const classMatch = title.match(/Class \d+/);
+    if (classMatch) {
+      return courseBanners[classMatch[0]] || courseBannerAiIntro;
+    }
+    return courseBannerAiIntro;
+  };
+
+  const filteredCourses = selectedLevel === "all"
+    ? courses
+    : courses.filter((course) => {
+        const classNum = getClassNumber(course.title);
+        if (selectedLevel === "3-4") return ["3", "4"].includes(classNum);
+        if (selectedLevel === "5-6") return ["5", "6"].includes(classNum);
+        if (selectedLevel === "7-8") return ["7", "8"].includes(classNum);
+        if (selectedLevel === "9-10") return ["9", "10"].includes(classNum);
+        return true;
+      });
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="pt-8 pb-12 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="gap-2 mb-6 -ml-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Button>
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Explore Our Courses 📚
+      <section className="relative py-16 px-4 overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-turquoise/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container mx-auto relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm font-semibold mb-6">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-foreground">NEP 2020 Aligned Curriculum</span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+              Explore Our <span className="text-gradient-primary">AI Curriculum</span>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Discover our comprehensive curriculum designed to teach AI and
-              Computational Thinking to students from Class 3 to Class 10. Each
-              course is packed with videos, ebooks, and fun quizzes!
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              From Class 3 to Class 10, discover our comprehensive AI & Computational Thinking courses 
+              designed to build future innovators.
             </p>
+
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-8 mb-8">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-foreground">8</p>
+                <p className="text-sm text-muted-foreground">Courses</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-foreground">48</p>
+                <p className="text-sm text-muted-foreground">Chapters</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-foreground">240+</p>
+                <p className="text-sm text-muted-foreground">Topics</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="py-6 px-4 border-b border-border sticky top-16 bg-background/95 backdrop-blur-sm z-40">
+      <section className="py-6 px-4 border-y border-border sticky top-20 bg-background/95 backdrop-blur-sm z-40">
         <div className="container mx-auto">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3 justify-center">
             {levelFilters.map((filter) => (
               <Button
                 key={filter.value}
                 variant={selectedLevel === filter.value ? "default" : "outline"}
-                size="sm"
+                size="lg"
                 onClick={() => setSelectedLevel(filter.value)}
-                className="rounded-full"
+                className={`rounded-full gap-2 ${
+                  selectedLevel === filter.value 
+                    ? "shadow-lg" 
+                    : "hover:bg-primary/5"
+                }`}
               >
+                <filter.icon className="h-4 w-4" />
                 {filter.label}
               </Button>
             ))}
@@ -205,91 +192,172 @@ export default function PublicCourses() {
       </section>
 
       {/* Courses Grid */}
-      <section className="py-12 px-4">
+      <section className="py-16 px-4">
         <div className="container mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCourses.map((course) => (
-              <Card
-                key={course.id}
-                className="overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group"
-                onClick={() => navigate(`/course/${course.slug}`)}
-              >
-                <div
-                  className={`h-32 bg-gradient-to-br ${course.color} flex items-center justify-center text-6xl`}
-                >
-                  {course.thumbnail}
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <course.levelIcon className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium text-primary">
-                      {course.level}
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                    {course.description}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                    <span className="flex items-center gap-1">
-                      <Play className="h-3 w-3" />
-                      {course.lessons} lessons
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {course.duration}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="text-sm font-medium">
-                        {course.rating}
-                      </span>
+          {isLoading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <div className="h-48 bg-muted rounded-t-xl" />
+                  <CardContent className="p-5 space-y-3">
+                    <div className="h-6 bg-muted rounded w-3/4" />
+                    <div className="h-4 bg-muted rounded w-full" />
+                    <div className="h-4 bg-muted rounded w-2/3" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : filteredCourses.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground">No courses found</h3>
+              <p className="text-muted-foreground">Try selecting a different class level</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredCourses.map((course, index) => {
+                const classNum = getClassNumber(course.title);
+                const LevelIcon = levelIcons[classNum] || Lightbulb;
+                const gradient = levelGradients[classNum] || "from-primary/20 to-primary/5";
+                const banner = getBanner(course.title);
+                const chapters = course.chapters || [];
+
+                return (
+                  <Card
+                    key={course.id}
+                    className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group animate-fade-in border-0 shadow-lg"
+                    onClick={() => navigate(`/course/${course.id}`)}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    {/* Banner Image */}
+                    <div className={`relative h-48 bg-gradient-to-br ${gradient} overflow-hidden`}>
+                      <img 
+                        src={banner} 
+                        alt={course.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      
+                      {/* Level Badge */}
+                      <Badge className="absolute top-4 left-4 bg-white/90 text-foreground shadow-lg gap-1">
+                        <LevelIcon className="h-3 w-3" />
+                        Class {classNum}
+                      </Badge>
+
+                      {/* Chapter Count */}
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                        <div className="bg-white/90 rounded-full px-3 py-1 flex items-center gap-1 text-sm font-medium text-foreground">
+                          <BookOpen className="h-3 w-3" />
+                          {chapters.length} Chapters
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {course.students} students
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
+                    <CardContent className="p-5">
+                      {/* Title */}
+                      <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
+                        {course.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2 min-h-[2.5rem]">
+                        {course.description}
+                      </p>
+
+                      {/* Chapter Preview */}
+                      {chapters.length > 0 && (
+                        <div className="space-y-2 mb-4">
+                          {chapters.slice(0, 3).map((chapter: { id: string; title: string }) => (
+                            <div key={chapter.id} className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <CheckCircle2 className="h-3 w-3 text-primary" />
+                              <span className="line-clamp-1">{chapter.title}</span>
+                            </div>
+                          ))}
+                          {chapters.length > 3 && (
+                            <p className="text-xs text-primary font-medium">
+                              +{chapters.length - 3} more chapters
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Stats Row */}
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-sm font-semibold">4.9</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Play className="h-3 w-3" />
+                            Videos
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <BookOpen className="h-3 w-3" />
+                            E-books
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <Button 
+                        className="w-full mt-4 rounded-full gap-2 group-hover:shadow-lg transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/course/${course.id}`);
+                        }}
+                      >
+                        View Course
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-primary to-primary/80">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold text-primary-foreground mb-4">
-            Ready to Start Learning? 🎉
-          </h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Log in with your school credentials to access all your assigned
-            courses and start your AI learning journey!
-          </p>
-          <Button
-            size="lg"
-            variant="secondary"
-            onClick={() => navigate("/student/login")}
-            className="gap-2 rounded-full px-8"
-          >
-            <GraduationCap className="h-5 w-5" />
-            Login
-            <ChevronRight className="h-5 w-5" />
-          </Button>
+      <section className="py-20 px-4 gradient-primary relative overflow-hidden">
+        <div className="absolute inset-0 pattern-dots opacity-20" />
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-2xl mx-auto">
+            <div className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Brain className="h-10 w-10 text-white" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-display">
+              Ready to Start Your AI Journey?
+            </h2>
+            <p className="text-white/80 mb-8 text-lg">
+              Login to access all your assigned courses, watch videos, take quizzes, and earn badges!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={() => navigate("/student/login")}
+                className="gap-2 rounded-full px-8 shadow-lg hover:shadow-xl"
+              >
+                <GraduationCap className="h-5 w-5" />
+                Student Login
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate("/schools")}
+                className="gap-2 rounded-full px-8 bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <Users className="h-5 w-5" />
+                For Schools
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
-        <div className="container mx-auto text-center text-sm text-muted-foreground">
-          <p>© 2024 Kode Intel. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
