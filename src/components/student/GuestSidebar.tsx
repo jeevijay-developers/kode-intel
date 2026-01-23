@@ -29,10 +29,38 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
 const menuItems = [
-  { title: "Dashboard", url: "/guest", icon: Home, color: "primary" },
-  { title: "All Courses", url: "/guest/courses", icon: BookOpen, color: "turquoise" },
-  { title: "Leaderboard", url: "/guest/leaderboard", icon: Trophy, color: "sunny" },
-  { title: "Code Lab", url: "/compiler", icon: Code, color: "lime" },
+  { 
+    title: "Dashboard", 
+    url: "/guest", 
+    icon: Home, 
+    iconBg: "bg-primary/10",
+    iconBgHover: "group-hover/item:bg-primary/20",
+    iconColor: "text-primary"
+  },
+  { 
+    title: "All Courses", 
+    url: "/guest/courses", 
+    icon: BookOpen, 
+    iconBg: "bg-turquoise/10",
+    iconBgHover: "group-hover/item:bg-turquoise/20",
+    iconColor: "text-turquoise"
+  },
+  { 
+    title: "Leaderboard", 
+    url: "/guest/leaderboard", 
+    icon: Trophy, 
+    iconBg: "bg-sunny/10",
+    iconBgHover: "group-hover/item:bg-sunny/20",
+    iconColor: "text-sunny"
+  },
+  { 
+    title: "Code Lab", 
+    url: "/compiler", 
+    icon: Code, 
+    iconBg: "bg-lime/10",
+    iconBgHover: "group-hover/item:bg-lime/20",
+    iconColor: "text-lime"
+  },
 ];
 
 export function GuestSidebar() {
@@ -170,11 +198,11 @@ export function GuestSidebar() {
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                           isActive 
                             ? 'bg-white/20' 
-                            : `bg-${item.color}/10 group-hover/item:bg-${item.color}/20`
+                            : `${item.iconBg} ${item.iconBgHover}`
                         }`}>
                           <IconComponent
                             className={`h-4 w-4 transition-transform duration-300 ${
-                              isActive ? "text-white scale-110" : `text-${item.color} group-hover/item:scale-110`
+                              isActive ? "text-white scale-110" : `${item.iconColor} group-hover/item:scale-110`
                             }`}
                           />
                         </div>
