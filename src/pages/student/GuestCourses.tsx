@@ -50,6 +50,28 @@ import { supabase } from "@/integrations/supabase/client";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import mascot from "@/assets/kodi-mascot-3d.png";
 
+// Course banner imports
+import bannerClass3 from "@/assets/course-banner-class3.png";
+import bannerPatterns from "@/assets/course-banner-patterns.png";
+import bannerComputational from "@/assets/course-banner-computational.png";
+import bannerAlgorithms from "@/assets/course-banner-algorithms.png";
+import bannerDataStructures from "@/assets/course-banner-data-structures.png";
+import bannerAIIntro from "@/assets/course-banner-ai-intro.png";
+import bannerML from "@/assets/course-banner-ml.png";
+import bannerAIProjects from "@/assets/course-banner-ai-projects.png";
+
+// Banner mapping by class number
+const courseBanners: Record<string, string> = {
+  "3": bannerClass3,
+  "4": bannerPatterns,
+  "5": bannerComputational,
+  "6": bannerAlgorithms,
+  "7": bannerDataStructures,
+  "8": bannerAIIntro,
+  "9": bannerML,
+  "10": bannerAIProjects,
+};
+
 const classes = ["Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"];
 
 interface GuestInfo {
@@ -271,33 +293,60 @@ export default function GuestCourses() {
 
   // Course Detail View
   if (selectedCourse) {
+    const classMatch = selectedCourse.title.match(/class\s*(\d+)/i);
+    const selectedClassNum = classMatch ? classMatch[1] : "3";
+    const selectedBanner = courseBanners[selectedClassNum] || bannerClass3;
+    const selectedGradient: Record<string, string> = {
+      "3": "from-coral to-sunny",
+      "4": "from-turquoise to-lime",
+      "5": "from-primary to-secondary",
+      "6": "from-purple to-primary",
+      "7": "from-sunny to-coral",
+      "8": "from-lime to-turquoise",
+      "9": "from-secondary to-purple",
+      "10": "from-primary to-turquoise",
+    };
+    const detailGradient = selectedGradient[selectedClassNum] || selectedGradient["3"];
+    
     return (
       <div className="p-3 sm:p-4 lg:p-6 animate-fade-in">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setSelectedCourse(null)}
-          className="mb-4 gap-2"
+          className="mb-3 gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Courses
         </Button>
 
-        {/* Course Header */}
-        <Card className="mb-4 overflow-hidden">
-          <div className="relative h-32 sm:h-40">
+        {/* Course Header with Banner */}
+        <Card className="mb-4 overflow-hidden shadow-xl">
+          <div className="relative h-36 sm:h-44 md:h-52">
+            {/* Gradient Background */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${detailGradient}`} />
+            {/* Banner Image */}
             <img
-              src={selectedCourse.thumbnail_url || "/placeholder.svg"}
+              src={selectedBanner}
               alt={selectedCourse.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover mix-blend-overlay opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
-              <Badge className="mb-2 bg-primary/90">
+            {/* Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            
+            {/* Content */}
+            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
+              <Badge className="mb-2 bg-white/95 text-foreground border-0 shadow-lg text-xs font-bold">
+                Class {selectedClassNum}
+              </Badge>
+              <Badge className="mb-2 ml-2 bg-gradient-to-r from-sunny to-coral text-white border-0 shadow-lg text-xs">
                 <Star className="h-3 w-3 mr-1 fill-current" />
                 Free Trial
               </Badge>
-              <h1 className="text-white font-bold text-lg sm:text-xl">{selectedCourse.title}</h1>
+              <h1 className="text-white font-bold text-base sm:text-lg md:text-xl leading-tight drop-shadow-lg">{selectedCourse.title}</h1>
+              {selectedCourse.description && (
+                <p className="text-white/80 text-xs sm:text-sm mt-1 line-clamp-2">{selectedCourse.description}</p>
+              )}
             </div>
           </div>
         </Card>
@@ -576,34 +625,34 @@ export default function GuestCourses() {
 
       {/* Header with Trial Timer */}
       {guestInfo && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/10 to-turquoise/15 border border-primary/20 shadow-lg mb-4">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-sunny/20 to-transparent rounded-full blur-2xl" />
+        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/10 to-turquoise/15 border border-primary/20 shadow-lg mb-3 sm:mb-4">
+          <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-bl from-sunny/20 to-transparent rounded-full blur-2xl" />
           
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="relative">
+          <CardContent className="p-3 sm:p-4 md:p-5">
+            <div className="flex items-center justify-between gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full blur-lg opacity-60" />
-                  <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-                    <GraduationCap className="h-6 w-6 text-white" />
+                  <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+                    <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   </div>
                 </div>
-                <div>
-                  <p className="font-bold text-sm sm:text-lg">
+                <div className="min-w-0">
+                  <p className="font-bold text-sm sm:text-lg truncate">
                     Welcome, {guestInfo.name}! 👋
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    Free Trial Active • All Courses Unlocked
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">
+                    Free Trial Active
                   </p>
                 </div>
               </div>
               
               {/* Timer */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 shadow-inner">
-                <Timer className="h-5 w-5 text-coral animate-pulse" />
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 shadow-inner shrink-0">
+                <Timer className="h-4 w-4 sm:h-5 sm:w-5 text-coral animate-pulse" />
                 <div className="text-right">
-                  <span className="font-bold text-primary font-mono">{getTimeRemaining()}</span>
-                  <p className="text-[9px] text-muted-foreground">remaining</p>
+                  <span className="font-bold text-xs sm:text-sm text-primary font-mono">{getTimeRemaining()}</span>
+                  <p className="text-[8px] sm:text-[9px] text-muted-foreground">left</p>
                 </div>
               </div>
             </div>
@@ -612,17 +661,17 @@ export default function GuestCourses() {
       )}
 
       {/* Page Title */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-            <Sparkles className="h-5 w-5 text-white" />
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shrink-0">
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg sm:text-xl font-bold font-display">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold font-display">
               All Courses
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Classes 3-10 • AI & Computational Thinking
+            <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
+              Classes 3-10 • AI & Coding
             </p>
           </div>
         </div>
@@ -630,19 +679,19 @@ export default function GuestCourses() {
 
       {/* Courses Grid - Enhanced Cards */}
       {coursesLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           {[...Array(8)].map((_, i) => (
             <Card key={i} className="animate-pulse overflow-hidden">
-              <div className="h-32 bg-gradient-to-br from-muted to-muted/50" />
-              <CardContent className="p-4">
-                <div className="h-5 bg-muted rounded w-3/4 mb-2" />
+              <div className="h-28 sm:h-32 bg-gradient-to-br from-muted to-muted/50" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="h-4 bg-muted rounded w-3/4 mb-2" />
                 <div className="h-3 bg-muted rounded w-1/2" />
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           {allCourses
             .filter((course) => course.is_published)
             .map((course, index) => {
@@ -659,79 +708,78 @@ export default function GuestCourses() {
                 "10": "from-primary to-turquoise",
               };
               const gradient = gradients[classNum] || gradients["3"];
+              const banner = courseBanners[classNum] || bannerClass3;
               
               return (
                 <Card
                   key={course.id}
-                  className="overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group border-2 border-transparent hover:border-primary/30"
+                  className="overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-2 group border-2 border-transparent hover:border-primary/30"
                   onClick={() => handleCourseClick(course)}
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
-                  {/* Course Banner with Gradient Overlay */}
-                  <div className="relative h-28 sm:h-32 overflow-hidden">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-90`} />
-                    {course.thumbnail_url && (
-                      <img
-                        src={course.thumbnail_url}
-                        alt={course.title}
-                        className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    )}
+                  {/* Course Banner with Actual Image */}
+                  <div className="relative h-24 sm:h-28 md:h-32 overflow-hidden">
+                    {/* Gradient Background */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+                    {/* Banner Image */}
+                    <img
+                      src={banner}
+                      alt={course.title}
+                      className="w-full h-full object-cover mix-blend-overlay opacity-70 group-hover:scale-110 transition-transform duration-700"
+                    />
+                    {/* Overlay Gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     
                     {/* Class Badge */}
-                    <Badge className="absolute top-2 left-2 bg-white/95 text-foreground border-0 shadow-lg backdrop-blur-sm text-[10px] font-bold">
+                    <Badge className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-white/95 text-foreground border-0 shadow-lg backdrop-blur-sm text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5">
                       Class {classNum}
                     </Badge>
                     
                     {/* Free Badge */}
-                    <Badge className="absolute top-2 right-2 bg-gradient-to-r from-sunny to-coral text-white border-0 shadow-lg text-[10px]">
-                      <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
+                    <Badge className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-gradient-to-r from-sunny to-coral text-white border-0 shadow-lg text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5">
+                      <Star className="h-2 sm:h-2.5 w-2 sm:w-2.5 mr-0.5 fill-current" />
                       Free
                     </Badge>
                     
                     {/* Course Icon */}
-                    <div className="absolute bottom-3 left-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/30">
-                        <BookOpen className="h-5 w-5 text-white" />
+                    <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/30">
+                        <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                       </div>
                     </div>
                     
                     {/* Play Button on Hover */}
-                    <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                      <div className="w-10 h-10 rounded-full bg-white/95 flex items-center justify-center shadow-xl">
-                        <Play className="h-4 w-4 text-primary fill-primary ml-0.5" />
+                    <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 flex items-center justify-center shadow-xl">
+                        <Play className="h-3 w-3 sm:h-4 sm:w-4 text-primary fill-primary ml-0.5" />
                       </div>
                     </div>
                   </div>
 
                   {/* Course Info */}
-                  <CardContent className="p-3 sm:p-4 bg-gradient-to-b from-background to-muted/30">
-                    <h3 className="font-bold text-sm sm:text-base line-clamp-2 leading-tight mb-2 group-hover:text-primary transition-colors">
+                  <CardContent className="p-2.5 sm:p-3 md:p-4 bg-gradient-to-b from-background to-muted/30">
+                    <h3 className="font-bold text-xs sm:text-sm md:text-base line-clamp-2 leading-tight mb-1.5 sm:mb-2 group-hover:text-primary transition-colors">
                       {course.title}
                     </h3>
                     {course.description && (
-                      <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2 mb-3">
+                      <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground line-clamp-2 mb-2 sm:mb-3 hidden sm:block">
                         {course.description}
                       </p>
                     )}
                     
                     {/* Course Content Indicators */}
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-coral/10">
-                        <Video className="h-3 w-3 text-coral" />
-                        Videos
+                    <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[8px] sm:text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-coral/10">
+                        <Video className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-coral" />
+                        <span className="hidden sm:inline">Videos</span>
                       </span>
-                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple/10">
-                        <HelpCircle className="h-3 w-3 text-purple" />
-                        Quizzes
+                      <span className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-purple/10">
+                        <HelpCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-purple" />
+                        <span className="hidden sm:inline">Quizzes</span>
                       </span>
-                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-turquoise/10">
-                        <FileText className="h-3 w-3 text-turquoise" />
-                        E-Books
+                      <span className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-turquoise/10">
+                        <FileText className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-turquoise" />
+                        <span className="hidden sm:inline">E-Books</span>
                       </span>
                     </div>
                   </CardContent>
