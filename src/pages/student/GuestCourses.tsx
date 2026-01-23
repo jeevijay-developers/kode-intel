@@ -114,39 +114,70 @@ export default function GuestCourses() {
     enabled: !!selectedCourse?.id,
   });
 
-  // Fetch videos for active chapter
-  const { data: chapterVideos = [] } = useQuery({
-    queryKey: ["guest-chapter-videos", activeChapter],
+  // Fetch all content for the selected course (videos, quizzes, ebooks per chapter)
+  const { data: allChapterVideos = [] } = useQuery({
+    queryKey: ["guest-all-chapter-videos", selectedCourse?.id],
     queryFn: async () => {
-      if (!activeChapter) return [];
+      if (!selectedCourse?.id) return [];
+      const chapterIds = chapters.map((c: any) => c.id);
+      if (chapterIds.length === 0) return [];
       const { data, error } = await supabase
         .from("chapter_videos")
         .select("*")
-        .eq("chapter_id", activeChapter)
+        .in("chapter_id", chapterIds)
         .eq("is_published", true)
         .order("order_index");
       if (error) throw error;
       return data || [];
     },
-    enabled: !!activeChapter,
+    enabled: !!selectedCourse?.id && chapters.length > 0,
   });
 
-  // Fetch ebooks for active chapter
-  const { data: chapterEbooks = [] } = useQuery({
-    queryKey: ["guest-chapter-ebooks", activeChapter],
+  const { data: allChapterQuizzes = [] } = useQuery({
+    queryKey: ["guest-all-chapter-quizzes", selectedCourse?.id],
     queryFn: async () => {
-      if (!activeChapter) return [];
+      if (!selectedCourse?.id) return [];
+      const chapterIds = chapters.map((c: any) => c.id);
+      if (chapterIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("chapter_quizzes")
+        .select("*")
+        .in("chapter_id", chapterIds)
+        .eq("is_published", true)
+        .order("order_index");
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedCourse?.id && chapters.length > 0,
+  });
+
+  const { data: allChapterEbooks = [] } = useQuery({
+    queryKey: ["guest-all-chapter-ebooks", selectedCourse?.id],
+    queryFn: async () => {
+      if (!selectedCourse?.id) return [];
+      const chapterIds = chapters.map((c: any) => c.id);
+      if (chapterIds.length === 0) return [];
       const { data, error } = await supabase
         .from("chapter_ebooks")
         .select("*")
-        .eq("chapter_id", activeChapter)
+        .in("chapter_id", chapterIds)
         .eq("is_published", true)
         .order("order_index");
       if (error) throw error;
       return data || [];
     },
-    enabled: !!activeChapter,
+    enabled: !!selectedCourse?.id && chapters.length > 0,
   });
+
+  // Helper functions to get content by chapter
+  const getChapterVideos = (chapterId: string) => 
+    allChapterVideos.filter((v: any) => v.chapter_id === chapterId);
+  
+  const getChapterQuizzes = (chapterId: string) => 
+    allChapterQuizzes.filter((q: any) => q.chapter_id === chapterId);
+  
+  const getChapterEbooks = (chapterId: string) => 
+    allChapterEbooks.filter((e: any) => e.chapter_id === chapterId);
 
   const handleRegistration = () => {
     if (!name.trim() || !mobile.trim() || !selectedClass) return;
@@ -255,113 +286,186 @@ export default function GuestCourses() {
           </div>
         </Card>
 
-        {/* Chapters Accordion */}
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-primary" />
-              Course Chapters
-            </h3>
+        {/* Course Modules */}
+        <div className="space-y-3">
+          {chapters.map((chapter: any, chapterIndex: number) => {
+            const videos = getChapterVideos(chapter.id);
+            const quizzes = getChapterQuizzes(chapter.id);
+            const ebooks = getChapterEbooks(chapter.id);
             
-            <Accordion
-              type="single"
-              collapsible
-              value={activeChapter || undefined}
-              onValueChange={(val) => setActiveChapter(val || null)}
-            >
-              {chapters.map((chapter: any, index: number) => (
-                <AccordionItem key={chapter.id} value={chapter.id} className="border-b last:border-0">
-                  <AccordionTrigger className="hover:no-underline py-3">
-                    <div className="flex items-center gap-3 text-left">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <span className="text-sm font-bold text-primary">{index + 1}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">{chapter.title}</p>
-                        {chapter.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-1">{chapter.description}</p>
-                        )}
-                      </div>
+            return (
+              <Card key={chapter.id} className="overflow-hidden">
+                {/* Chapter Header */}
+                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 sm:p-4 border-b border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-md">
+                      <span className="text-sm font-bold text-white">{chapterIndex + 1}</span>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pt-2 pb-4">
-                    <div className="space-y-2 pl-11">
-                      {/* Videos */}
-                      {chapterVideos.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                            <Video className="h-3 w-3" />
-                            Videos
-                          </p>
-                          {chapterVideos.map((video: any) => (
-                            <button
-                              key={video.id}
-                              onClick={() => setActiveVideo(video)}
-                              className="w-full flex items-center gap-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-left"
-                            >
-                              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-                                <Play className="h-4 w-4 text-primary" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{video.title}</p>
-                                {video.duration_minutes && (
-                                  <p className="text-xs text-muted-foreground">
-                                    {video.duration_minutes} min
-                                  </p>
-                                )}
-                              </div>
-                              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                            </button>
-                          ))}
-                        </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground font-medium">Chapter {chapterIndex + 1}</p>
+                      <h4 className="font-bold text-sm sm:text-base">{chapter.title}</h4>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      {videos.length > 0 && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                          <Video className="h-2.5 w-2.5 mr-0.5" />
+                          {videos.length}
+                        </Badge>
                       )}
-
-                      {/* Ebooks */}
-                      {chapterEbooks.length > 0 && (
-                        <div className="space-y-2 mt-3">
-                          <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                            <FileText className="h-3 w-3" />
-                            Study Materials
-                          </p>
-                          {chapterEbooks.map((ebook: any) => (
-                            <a
-                              key={ebook.id}
-                              href={ebook.file_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full flex items-center gap-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                            >
-                              <div className="w-8 h-8 rounded-lg bg-turquoise/20 flex items-center justify-center shrink-0">
-                                <FileText className="h-4 w-4 text-turquoise" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{ebook.title}</p>
-                              </div>
-                              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                            </a>
-                          ))}
-                        </div>
-                      )}
-
-                      {chapterVideos.length === 0 && chapterEbooks.length === 0 && (
-                        <p className="text-sm text-muted-foreground py-2">
-                          No content available yet
-                        </p>
+                      {quizzes.length > 0 && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                          <HelpCircle className="h-2.5 w-2.5 mr-0.5" />
+                          {quizzes.length}
+                        </Badge>
                       )}
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-
-              {chapters.length === 0 && (
-                <div className="text-center py-6 text-muted-foreground">
-                  <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No chapters available yet</p>
+                  </div>
                 </div>
-              )}
-            </Accordion>
-          </CardContent>
-        </Card>
+
+                <CardContent className="p-3 sm:p-4 space-y-4">
+                  {/* Video Lectures Section */}
+                  {videos.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 rounded-lg bg-coral/20 flex items-center justify-center">
+                          <Play className="h-3 w-3 text-coral" />
+                        </div>
+                        <h5 className="font-semibold text-sm">Video Lectures</h5>
+                        <Badge variant="outline" className="text-[10px] ml-auto">{videos.length} videos</Badge>
+                      </div>
+                      <div className="space-y-1.5 pl-8">
+                        {videos.map((video: any, videoIndex: number) => (
+                          <button
+                            key={video.id}
+                            onClick={() => setActiveVideo(video)}
+                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 text-left group"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                              <span className="text-xs font-medium text-primary">{videoIndex + 1}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">{video.title}</p>
+                              {video.duration_minutes && (
+                                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                  <Clock className="h-2.5 w-2.5" />
+                                  {video.duration_minutes} min
+                                </p>
+                              )}
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Quizzes Section */}
+                  {quizzes.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 rounded-lg bg-purple/20 flex items-center justify-center">
+                          <HelpCircle className="h-3 w-3 text-purple" />
+                        </div>
+                        <h5 className="font-semibold text-sm">Quizzes</h5>
+                        <Badge variant="outline" className="text-[10px] ml-auto">{quizzes.length} quiz{quizzes.length > 1 ? 'zes' : ''}</Badge>
+                      </div>
+                      <div className="space-y-1.5 pl-8">
+                        {quizzes.map((quiz: any, quizIndex: number) => (
+                          <div
+                            key={quiz.id}
+                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 text-left"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-purple/10 flex items-center justify-center shrink-0">
+                              <HelpCircle className="h-3.5 w-3.5 text-purple" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{quiz.title}</p>
+                              <p className="text-[10px] text-muted-foreground">Passing score: {quiz.passing_score}%</p>
+                            </div>
+                            <Badge className="bg-purple/20 text-purple border-purple/30 text-[10px]">
+                              Interactive
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* E-Books Section */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-lg bg-turquoise/20 flex items-center justify-center">
+                        <FileText className="h-3 w-3 text-turquoise" />
+                      </div>
+                      <h5 className="font-semibold text-sm">Study Materials</h5>
+                      {ebooks.length > 0 && (
+                        <Badge variant="outline" className="text-[10px] ml-auto">{ebooks.length} sample{ebooks.length > 1 ? 's' : ''}</Badge>
+                      )}
+                    </div>
+                    
+                    {ebooks.length > 0 ? (
+                      <div className="space-y-1.5 pl-8">
+                        {ebooks.map((ebook: any) => (
+                          <a
+                            key={ebook.id}
+                            href={ebook.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 group"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-turquoise/10 flex items-center justify-center shrink-0">
+                              <FileText className="h-3.5 w-3.5 text-turquoise" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">{ebook.title}</p>
+                              <p className="text-[10px] text-muted-foreground">Sample Preview</p>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {/* Physical Book Notice */}
+                    <div className="mt-2 pl-8">
+                      <div className="flex items-start gap-2 p-2.5 rounded-lg bg-sunny/10 border border-sunny/20">
+                        <BookOpen className="h-4 w-4 text-sunny shrink-0 mt-0.5" />
+                        <div className="text-xs">
+                          <p className="font-medium text-sunny-foreground">Theory + Worksheet Books</p>
+                          <p className="text-muted-foreground mt-0.5">
+                            Complete study materials with theory and worksheets are available as physical books.
+                            <button
+                              onClick={() => navigate("/store")}
+                              className="text-primary hover:underline ml-1 font-medium"
+                            >
+                              Visit Book Store →
+                            </button>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Empty State */}
+                  {videos.length === 0 && quizzes.length === 0 && ebooks.length === 0 && (
+                    <div className="text-center py-4 text-muted-foreground">
+                      <Sparkles className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">Content coming soon!</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+
+          {chapters.length === 0 && (
+            <Card className="p-8 text-center">
+              <BookOpen className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+              <h3 className="font-bold text-lg mb-1">No Chapters Yet</h3>
+              <p className="text-muted-foreground text-sm">Course content is being prepared</p>
+            </Card>
+          )}
+        </div>
       </div>
     );
   }
