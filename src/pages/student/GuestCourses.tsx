@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -27,11 +33,17 @@ import {
   Volume2,
   VolumeX,
   RotateCcw,
+  GraduationCap,
+  Rocket,
+  Clock,
+  Users,
 } from "lucide-react";
 import { Confetti } from "@/components/ui/confetti";
 import quizMascot from "@/assets/quiz-brain-mascot.png";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
-import courseBannerClass3 from "@/assets/course-banner-class3.png";
+import studentsLearning from "@/assets/students-learning-ai.png";
+import { useCourses, useChapters } from "@/hooks/useCourses";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Sound generator
 const playSound = (type: 'correct' | 'wrong' | 'tick' | 'timeout') => {
@@ -118,7 +130,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
   const totalQuestions = quiz.questions.length;
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
-  // Timer effect
   useEffect(() => {
     if (!showResult && !quizComplete && timeLeft > 0) {
       timerRef.current = setTimeout(() => {
@@ -130,7 +141,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
         });
       }, 1000);
     } else if (timeLeft === 0 && !showResult) {
-      // Time's up
       if (!isMuted) playSound('timeout');
       setShowResult(true);
       setStreak(0);
@@ -141,7 +151,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
     };
   }, [timeLeft, showResult, quizComplete, isMuted]);
 
-  // Reset timer for new question
   useEffect(() => {
     if (!showResult && !quizComplete) {
       setTimeLeft(20);
@@ -202,7 +211,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
     return "bg-red-500";
   };
 
-  // Quiz Complete View
   if (quizComplete) {
     const percentage = Math.round((score / totalQuestions) * 100);
     const isPassed = percentage >= 70;
@@ -262,10 +270,8 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
     );
   }
 
-  // Active Quiz View
   return (
     <div className="p-3 sm:p-4 lg:p-6 max-w-2xl mx-auto animate-fade-in">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <Button
           variant="ghost"
@@ -278,7 +284,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
         </Button>
         
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Mute Button */}
           <Button
             variant="ghost"
             size="icon"
@@ -288,7 +293,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
             {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </Button>
           
-          {/* Score */}
           <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
             <Zap className="h-4 w-4 text-amber-500" />
             <span className="font-bold text-sm">{xpEarned} XP</span>
@@ -297,7 +301,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
       </div>
 
       <Card className="overflow-hidden border-0 shadow-xl">
-        {/* Progress & Timer Bar */}
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-3 sm:p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -318,7 +321,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
             </div>
           </div>
           
-          {/* Combined Progress Bar */}
           <div className="relative h-2 bg-muted rounded-full overflow-hidden">
             <div 
               className="absolute left-0 top-0 h-full bg-primary/30 transition-all duration-300"
@@ -331,7 +333,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
           </div>
         </div>
 
-        {/* Mascot & Question */}
         <div className="p-4 sm:p-6">
           <div className="flex items-start gap-3 sm:gap-4 mb-6">
             <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 relative">
@@ -351,7 +352,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
             </div>
           </div>
 
-          {/* Options */}
           <div className="grid gap-2 sm:gap-3">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
@@ -399,7 +399,6 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
             })}
           </div>
 
-          {/* Explanation & Next */}
           {showResult && (
             <div className="mt-4 sm:mt-6 space-y-4 animate-fade-in">
               <div className={`p-3 sm:p-4 rounded-xl ${selectedAnswer === currentQuestion.correct ? 'bg-green-500/10 border border-green-500/30' : 'bg-amber-500/10 border border-amber-500/30'}`}>
@@ -433,177 +432,230 @@ function GamifiedQuizView({ quiz, onBack, onComplete }: GamifiedQuizViewProps) {
   );
 }
 
-// Guest quiz data based on Class 3 curriculum
-const guestQuizzes = [
-  {
-    id: "q1",
-    title: "Smart Things Around Us",
-    chapterId: 1,
-    questions: [
-      {
-        id: "q1-1",
-        question: "Which of these is a SMART device?",
-        options: ["A wooden chair", "A smart speaker like Alexa", "A regular book", "A pencil"],
-        correct: 1,
-        explanation: "A smart speaker like Alexa can listen, understand, and respond to your voice - that's what makes it smart!",
-      },
-      {
-        id: "q1-2",
-        question: "What helps a smart device 'think'?",
-        options: ["Batteries", "Artificial Intelligence (AI)", "Buttons", "Colors"],
-        correct: 1,
-        explanation: "Artificial Intelligence (AI) is like a brain for smart devices that helps them think and make decisions!",
-      },
-      {
-        id: "q1-3",
-        question: "Which animal has inspired smart robots?",
-        options: ["All of these", "Dogs", "Fish", "Birds"],
-        correct: 0,
-        explanation: "Scientists have made robots inspired by many animals - dogs, fish, birds, and more!",
-      },
-    ],
-  },
-  {
-    id: "q2",
-    title: "How Machines Help Us",
-    chapterId: 2,
-    questions: [
-      {
-        id: "q2-1",
-        question: "How does a washing machine help us?",
-        options: ["It cooks food", "It washes clothes automatically", "It plays music", "It draws pictures"],
-        correct: 1,
-        explanation: "A washing machine is a helpful machine that washes our clothes without us doing the hard work!",
-      },
-      {
-        id: "q2-2",
-        question: "What makes a machine 'smart'?",
-        options: ["It's very big", "It can learn and make decisions", "It has many buttons", "It's very colorful"],
-        correct: 1,
-        explanation: "Smart machines can learn from what they see and hear, and make decisions on their own!",
-      },
-      {
-        id: "q2-3",
-        question: "Which is an example of a helpful robot?",
-        options: ["A rock", "A robot vacuum cleaner", "A tree", "A cloud"],
-        correct: 1,
-        explanation: "Robot vacuum cleaners are helpful robots that clean our floors automatically!",
-      },
-    ],
-  },
-  {
-    id: "q3",
-    title: "Smart vs Normal Machines",
-    chapterId: 3,
-    questions: [
-      {
-        id: "q3-1",
-        question: "What is the difference between a normal fan and a smart fan?",
-        options: ["Smart fan has more blades", "Smart fan can understand voice commands", "Normal fan is smaller", "No difference"],
-        correct: 1,
-        explanation: "A smart fan can understand when you say 'turn on' or 'turn off' - that's smart technology!",
-      },
-      {
-        id: "q3-2",
-        question: "Can a smart TV learn what shows you like?",
-        options: ["Yes, it can recommend shows", "No, it cannot learn", "Only if you teach it manually", "TVs don't watch shows"],
-        correct: 0,
-        explanation: "Smart TVs use AI to learn your preferences and suggest shows you might enjoy!",
-      },
-    ],
-  },
-];
+// Demo quiz data for all classes
+const demoQuizzes: Record<string, QuizData[]> = {
+  "class-3": [
+    {
+      id: "q1",
+      title: "Smart Things Around Us",
+      chapterId: 1,
+      questions: [
+        { id: "q1-1", question: "Which of these is a SMART device?", options: ["A wooden chair", "A smart speaker like Alexa", "A regular book", "A pencil"], correct: 1, explanation: "A smart speaker like Alexa can listen, understand, and respond to your voice!" },
+        { id: "q1-2", question: "What helps a smart device 'think'?", options: ["Batteries", "Artificial Intelligence (AI)", "Buttons", "Colors"], correct: 1, explanation: "Artificial Intelligence (AI) is like a brain for smart devices!" },
+      ],
+    },
+    {
+      id: "q2",
+      title: "Thinking Skills",
+      chapterId: 2,
+      questions: [
+        { id: "q2-1", question: "What is the first step in solving any problem?", options: ["Give up", "Understand the problem", "Guess the answer", "Ask someone else"], correct: 1, explanation: "Understanding the problem helps us find the right solution!" },
+        { id: "q2-2", question: "Patterns help us to:", options: ["Confuse others", "Predict what comes next", "Make things harder", "Forget things"], correct: 1, explanation: "Patterns help us predict and understand sequences!" },
+      ],
+    },
+  ],
+  "class-4": [
+    {
+      id: "q1",
+      title: "Smart Thinking",
+      chapterId: 1,
+      questions: [
+        { id: "q1-1", question: "Logical thinking means:", options: ["Guessing randomly", "Thinking clearly with reasons", "Not thinking at all", "Copying others"], correct: 1, explanation: "Logical thinking uses clear reasoning to solve problems!" },
+        { id: "q1-2", question: "Which is an example of cause and effect?", options: ["Rain makes grass wet", "Fish can swim", "The sky is blue", "Numbers are fun"], correct: 0, explanation: "Rain (cause) makes grass wet (effect) - that's cause and effect!" },
+      ],
+    },
+    {
+      id: "q2",
+      title: "Logical Skills",
+      chapterId: 2,
+      questions: [
+        { id: "q2-1", question: "Breaking a big problem into smaller parts is called:", options: ["Confusion", "Decomposition", "Multiplication", "Running away"], correct: 1, explanation: "Decomposition means breaking big problems into smaller, manageable parts!" },
+      ],
+    },
+  ],
+  "class-5": [
+    {
+      id: "q1",
+      title: "Logical Thinking",
+      chapterId: 1,
+      questions: [
+        { id: "q1-1", question: "What is computational thinking?", options: ["Using computers only", "Solving problems step by step like a computer", "Playing games", "Writing stories"], correct: 1, explanation: "Computational thinking is solving problems systematically, like a computer would!" },
+      ],
+    },
+  ],
+};
 
-// Class 3 chapter videos
-const guestChapters = [
-  {
-    id: 1,
-    title: "Smart Things Around Us",
-    description: "Discover the amazing smart devices in our world",
-    videoUrl: "https://youtu.be/-pbhZQZJ52E",
-    videoTitle: "Smart Things Around Us",
-    quizId: "q1",
-  },
-  {
-    id: 2,
-    title: "How Machines Help Us",
-    description: "Learn how machines make our life easier",
-    videoUrl: "https://youtu.be/6M1X7VLChqA",
-    videoTitle: "How Machines Help Us",
-    quizId: "q2",
-  },
-  {
-    id: 3,
-    title: "Smart Machines vs Normal Machines",
-    description: "Understand what makes machines 'smart'",
-    videoUrl: "https://youtu.be/nkN_m5p2WNE",
-    videoTitle: "Smart Machines vs Normal Machines",
-    quizId: "q3",
-  },
-  {
-    id: 4,
-    title: "AI as a Friendly Helper",
-    description: "Meet AI - your friendly digital helper",
-    videoUrl: "https://youtu.be/cpK7c_DX1jk",
-    videoTitle: "AI as a Friendly Helper",
-    isLocked: true,
-  },
-  {
-    id: 5,
-    title: "Smart Things in Daily Life",
-    description: "Smart devices we use every day",
-    videoUrl: "https://youtu.be/cpK7c_DX1jk",
-    videoTitle: "Smart Things in Daily Life",
-    isLocked: true,
-  },
-  {
-    id: 6,
-    title: "Being Safe with Smart Things",
-    description: "Stay safe while using smart devices",
-    videoUrl: "https://youtu.be/J6saS7Gf-Xs",
-    videoTitle: "Being Safe with Smart Things",
-    isLocked: true,
-  },
-];
+// Class selection card component
+interface ClassCardProps {
+  classNum: number;
+  title: string;
+  description: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+function ClassCard({ classNum, title, description, isSelected, onClick }: ClassCardProps) {
+  const gradients = [
+    "from-coral/20 to-coral/5",
+    "from-turquoise/20 to-turquoise/5",
+    "from-sunny/20 to-sunny/5",
+    "from-primary/20 to-primary/5",
+    "from-lavender/20 to-lavender/5",
+    "from-coral/20 to-coral/5",
+    "from-turquoise/20 to-turquoise/5",
+    "from-primary/20 to-primary/5",
+  ];
+  
+  const iconColors = ["text-coral", "text-turquoise", "text-sunny", "text-primary", "text-lavender", "text-coral", "text-turquoise", "text-primary"];
+  const bgColors = ["bg-coral/10", "bg-turquoise/10", "bg-sunny/10", "bg-primary/10", "bg-lavender/10", "bg-coral/10", "bg-turquoise/10", "bg-primary/10"];
+  
+  const index = classNum - 3;
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        relative p-3 rounded-2xl text-left transition-all duration-300 border-2 w-full
+        bg-gradient-to-br ${gradients[index]}
+        ${isSelected ? 'border-primary scale-[1.02] shadow-lg' : 'border-transparent hover:border-primary/30 hover:scale-[1.01]'}
+        active:scale-[0.98]
+      `}
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-12 h-12 rounded-xl ${bgColors[index]} flex items-center justify-center shrink-0`}>
+          <span className={`text-lg font-bold ${iconColors[index]}`}>{classNum}</span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-bold text-sm text-foreground line-clamp-1">{title}</h3>
+          <p className="text-[10px] text-muted-foreground line-clamp-2">{description}</p>
+        </div>
+        {isSelected && (
+          <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+        )}
+      </div>
+    </button>
+  );
+}
+
+// Chapter card for compact view
+interface ChapterCardProps {
+  chapter: {
+    id: string;
+    title: string;
+    description: string | null;
+    order_index: number;
+  };
+  isLocked: boolean;
+  isCompleted: boolean;
+  onViewDetails: () => void;
+}
+
+function ChapterCard({ chapter, isLocked, isCompleted, onViewDetails }: ChapterCardProps) {
+  return (
+    <button
+      onClick={onViewDetails}
+      disabled={isLocked}
+      className={`
+        relative p-3 rounded-xl text-left transition-all duration-300 w-full
+        ${isLocked 
+          ? 'bg-muted/50 opacity-60' 
+          : isCompleted 
+            ? 'bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/30' 
+            : 'bg-card border border-border/50 hover:border-primary/30 hover:shadow-md'
+        }
+        active:scale-[0.98]
+      `}
+    >
+      <div className="flex items-start gap-2.5">
+        <div className={`
+          w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold
+          ${isLocked ? 'bg-muted text-muted-foreground' : isCompleted ? 'bg-green-500/20 text-green-600' : 'bg-primary/10 text-primary'}
+        `}>
+          {isLocked ? <Lock className="h-3.5 w-3.5" /> : isCompleted ? <CheckCircle className="h-4 w-4" /> : chapter.order_index}
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-xs text-foreground line-clamp-2 mb-0.5">
+            {chapter.title}
+          </h4>
+          {chapter.description && (
+            <p className="text-[10px] text-muted-foreground line-clamp-2">
+              {chapter.description}
+            </p>
+          )}
+        </div>
+        
+        {!isLocked && (
+          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+        )}
+      </div>
+      
+      {isLocked && (
+        <div className="absolute top-1 right-1">
+          <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/50 text-amber-600 bg-amber-500/10">
+            <Lock className="h-2 w-2 mr-0.5" />
+            Pro
+          </Badge>
+        </div>
+      )}
+    </button>
+  );
+}
 
 export default function GuestCourses() {
+  const isMobile = useIsMobile();
+  const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [activeQuiz, setActiveQuiz] = useState<string | null>(null);
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
-  const [quizSubmitted, setQuizSubmitted] = useState<Record<string, boolean>>({});
-  const [completedVideos, setCompletedVideos] = useState<number[]>([]);
+  const [completedVideos, setCompletedVideos] = useState<string[]>([]);
   const [completedQuizzes, setCompletedQuizzes] = useState<string[]>([]);
+  const [selectedChapter, setSelectedChapter] = useState<any>(null);
+  const [showChapterDialog, setShowChapterDialog] = useState(false);
+  
+  const { courses: allCourses = [], isLoading: coursesLoading } = useCourses();
+  
+  // Filter only Class 3-10 courses
+  const courses = allCourses.filter(course => 
+    course.is_published && 
+    course.title.toLowerCase().includes('class') &&
+    /class\s*([3-9]|10)/i.test(course.title)
+  ).sort((a, b) => a.order_index - b.order_index);
+  
+  const selectedCourse = courses.find(c => c.id === selectedClass);
+  const { chapters = [] } = useChapters(selectedClass || "");
+  
+  const publishedChapters = chapters.filter(ch => ch.is_published).sort((a, b) => a.order_index - b.order_index);
+  
+  // First 2 chapters are unlocked
+  const unlockedChapterIds = publishedChapters.slice(0, 2).map(ch => ch.id);
+  
+  const extractClassNum = (title: string): number => {
+    const match = title.match(/class\s*(\d+)/i);
+    return match ? parseInt(match[1]) : 0;
+  };
+  
+  const getQuizForChapter = (chapterIndex: number): QuizData | null => {
+    const classNum = selectedCourse ? extractClassNum(selectedCourse.title) : 3;
+    const quizKey = `class-${classNum}`;
+    const quizzes = demoQuizzes[quizKey] || demoQuizzes["class-3"];
+    return quizzes.find(q => q.chapterId === chapterIndex + 1) || null;
+  };
+  
+  const currentQuiz = activeQuiz ? 
+    Object.values(demoQuizzes).flat().find(q => q.id === activeQuiz) : 
+    null;
 
-  const currentQuiz = guestQuizzes.find((q) => q.id === activeQuiz);
-
-  const handleVideoComplete = (chapterId: number) => {
+  const handleVideoComplete = (chapterId: string) => {
     if (!completedVideos.includes(chapterId)) {
       setCompletedVideos([...completedVideos, chapterId]);
     }
   };
 
-  const handleQuizSubmit = (quizId: string) => {
-    setQuizSubmitted({ ...quizSubmitted, [quizId]: true });
+  const handleQuizComplete = (quizId: string) => {
     if (!completedQuizzes.includes(quizId)) {
       setCompletedQuizzes([...completedQuizzes, quizId]);
     }
   };
-
-  const getQuizScore = (quizId: string) => {
-    const quiz = guestQuizzes.find((q) => q.id === quizId);
-    if (!quiz) return 0;
-    let correct = 0;
-    quiz.questions.forEach((q) => {
-      if (quizAnswers[q.id] === q.correct) correct++;
-    });
-    return Math.round((correct / quiz.questions.length) * 100);
-  };
-
-  const totalProgress = Math.round(
-    ((completedVideos.length + completedQuizzes.length) /
-      (guestChapters.filter((c) => !c.isLocked).length * 2)) *
-      100
-  );
 
   const extractYouTubeId = (url: string): string => {
     const match = url.match(
@@ -614,10 +666,9 @@ export default function GuestCourses() {
 
   // Video Player View
   if (activeVideo) {
-    const chapter = guestChapters.find((c) => c.videoUrl === activeVideo);
-    const videoId = extractYouTubeId(activeVideo);
+    const chapter = publishedChapters.find(c => c.id === activeVideo);
     return (
-      <div className="p-2 sm:p-4 lg:p-6">
+      <div className="p-3 sm:p-4 lg:p-6 pb-20">
         <Button
           variant="ghost"
           size="sm"
@@ -631,15 +682,14 @@ export default function GuestCourses() {
           Back to Course
         </Button>
         <h1 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4">
-          {chapter?.videoTitle}
+          {chapter?.title}
         </h1>
-        <KodeIntelPlayer
-          videoId={videoId}
-          title={chapter?.videoTitle || "Video Lesson"}
-          onComplete={() => {
-            if (chapter) handleVideoComplete(chapter.id);
-          }}
-        />
+        <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
+          <div className="text-center p-6">
+            <Video className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">Video content will be loaded from database</p>
+          </div>
+        </div>
         <div className="mt-4 flex gap-2">
           <Button
             size="sm"
@@ -664,175 +714,304 @@ export default function GuestCourses() {
         quiz={currentQuiz}
         onBack={() => setActiveQuiz(null)}
         onComplete={(score) => {
-          handleQuizSubmit(activeQuiz);
+          handleQuizComplete(activeQuiz);
         }}
       />
     );
   }
 
-  // Main Course View
-  return (
-    <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in">
-      {/* Course Banner */}
-      <Card className="overflow-hidden">
-        <div className="relative">
-          <img
-            src={courseBannerClass3}
-            alt="Class 3 - Thinking & Smart Machines"
-            className="w-full h-28 sm:h-40 lg:h-56 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
-            <div className="p-3 sm:p-4 lg:p-6 text-white w-full">
-              <Badge className="mb-1.5 sm:mb-2 bg-turquoise/80 text-white text-xs">
-                <Star className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1 fill-current" />
-                Class 3
+  // Class Selection View
+  if (!selectedClass) {
+    return (
+      <div className="p-4 pb-24 space-y-5 animate-fade-in">
+        {/* Hero Section */}
+        <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 via-turquoise/10 to-sunny/10">
+          <div className="p-5 pb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Rocket className="h-5 w-5 text-primary" />
+              </div>
+              <Badge className="bg-sunny/20 text-sunny border-0 text-xs">
+                <Clock className="h-3 w-3 mr-1" />
+                1 Day Free Trial
               </Badge>
-              <h1 className="text-base sm:text-lg lg:text-2xl font-bold mb-1">
-                Thinking & Smart Machines
-              </h1>
-              <p className="text-white/80 text-xs sm:text-sm line-clamp-1 mb-2">
-                Learn about AI, smart devices, and how machines think!
-              </p>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Progress value={totalProgress} className="flex-1 h-1.5 sm:h-2" />
-                <span className="text-white/80 text-xs sm:text-sm font-medium">
-                  {totalProgress}%
-                </span>
+            </div>
+            <h1 className="text-xl font-bold text-foreground mb-1">
+              Start Your Learning Journey!
+            </h1>
+            <p className="text-sm text-muted-foreground mb-3">
+              Select your class to explore 2 free chapters with videos & quizzes
+            </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Video className="h-3.5 w-3.5 text-turquoise" />
+                HD Videos
+              </span>
+              <span className="flex items-center gap-1">
+                <Brain className="h-3.5 w-3.5 text-primary" />
+                Fun Quizzes
+              </span>
+              <span className="flex items-center gap-1">
+                <Trophy className="h-3.5 w-3.5 text-sunny" />
+                Earn XP
+              </span>
+            </div>
+          </div>
+          <img 
+            src={studentsLearning} 
+            alt="Students Learning" 
+            className="w-full h-24 object-cover object-top opacity-60"
+          />
+        </div>
+
+        {/* Class Selection */}
+        <div>
+          <h2 className="font-bold text-base mb-3 flex items-center gap-2">
+            <GraduationCap className="h-5 w-5 text-primary" />
+            Which class are you in?
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-2.5">
+            {courses.map(course => {
+              const classNum = extractClassNum(course.title);
+              return (
+                <ClassCard
+                  key={course.id}
+                  classNum={classNum}
+                  title={course.title.replace(/^Class\s*\d+\s*[–-]\s*/i, '')}
+                  description={course.description || "Explore AI and coding concepts"}
+                  isSelected={selectedClass === course.id}
+                  onClick={() => setSelectedClass(course.id)}
+                />
+              );
+            })}
+          </div>
+          
+          {courses.length === 0 && !coursesLoading && (
+            <div className="text-center py-8">
+              <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">Loading courses...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-2 gap-3">
+          <Card className="p-3 bg-gradient-to-br from-turquoise/10 to-turquoise/5 border-turquoise/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-turquoise/20 flex items-center justify-center">
+                <BookOpen className="h-4 w-4 text-turquoise" />
               </div>
             </div>
+            <h3 className="font-semibold text-xs mb-0.5">2 Free Chapters</h3>
+            <p className="text-[10px] text-muted-foreground">Full access to first 2 chapters</p>
+          </Card>
+          
+          <Card className="p-3 bg-gradient-to-br from-sunny/10 to-sunny/5 border-sunny/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-sunny/20 flex items-center justify-center">
+                <Star className="h-4 w-4 text-sunny" />
+              </div>
+            </div>
+            <h3 className="font-semibold text-xs mb-0.5">No Sign-up Needed</h3>
+            <p className="text-[10px] text-muted-foreground">Start learning instantly</p>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Course Content View
+  const totalProgress = Math.round(
+    ((completedVideos.length + completedQuizzes.length) /
+      (unlockedChapterIds.length * 2)) * 100
+  );
+
+  return (
+    <div className="p-3 sm:p-4 pb-24 space-y-4 animate-fade-in">
+      {/* Course Header */}
+      <div className="flex items-center gap-2 mb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSelectedClass(null)}
+          className="gap-1 text-xs h-8 px-2"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Classes
+        </Button>
+      </div>
+
+      {/* Course Banner */}
+      <Card className="overflow-hidden border-0 shadow-lg">
+        <div className="relative bg-gradient-to-br from-primary/20 via-turquoise/10 to-transparent p-4">
+          <Badge className="mb-2 bg-turquoise/20 text-turquoise border-0 text-xs">
+            <Star className="h-2.5 w-2.5 mr-1 fill-current" />
+            {selectedCourse ? extractClassNum(selectedCourse.title) : ''} Class
+          </Badge>
+          <h1 className="text-lg font-bold mb-1">
+            {selectedCourse?.title || "Course"}
+          </h1>
+          <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+            {selectedCourse?.description}
+          </p>
+          <div className="flex items-center gap-2">
+            <Progress value={totalProgress} className="flex-1 h-2" />
+            <span className="text-xs font-medium">{totalProgress}%</span>
+          </div>
+          
+          <div className="flex items-center gap-3 mt-3 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <BookOpen className="h-3 w-3" />
+              {publishedChapters.length} Chapters
+            </span>
+            <span className="flex items-center gap-1">
+              <Lock className="h-3 w-3 text-amber-500" />
+              {publishedChapters.length - 2} Locked
+            </span>
           </div>
         </div>
       </Card>
 
-      {/* Course Content */}
-      <Card>
-        <CardHeader className="p-3 sm:p-4 lg:p-6 pb-2">
-          <CardTitle className="flex items-center gap-2 text-sm sm:text-base lg:text-lg">
-            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            Course Content
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-2 sm:p-4 lg:p-6 pt-0">
-          <Accordion type="single" collapsible className="space-y-1.5 sm:space-y-2">
-            {guestChapters.map((chapter) => {
-              const isCompleted = completedVideos.includes(chapter.id);
-              const quizCompleted = chapter.quizId
-                ? completedQuizzes.includes(chapter.quizId)
-                : false;
+      {/* Chapters Grid */}
+      <div>
+        <h2 className="font-bold text-sm mb-3 flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-primary" />
+          Course Content
+        </h2>
+        
+        <div className="grid grid-cols-2 gap-2.5">
+          {publishedChapters.map((chapter, index) => {
+            const isLocked = !unlockedChapterIds.includes(chapter.id);
+            const isCompleted = completedVideos.includes(chapter.id);
+            
+            return (
+              <ChapterCard
+                key={chapter.id}
+                chapter={chapter}
+                isLocked={isLocked}
+                isCompleted={isCompleted}
+                onViewDetails={() => {
+                  if (!isLocked) {
+                    setSelectedChapter({ ...chapter, index });
+                    setShowChapterDialog(true);
+                  }
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
 
-              return (
-                <AccordionItem
-                  key={chapter.id}
-                  value={`chapter-${chapter.id}`}
-                  className={`border rounded-lg sm:rounded-xl overflow-hidden ${
-                    chapter.isLocked
-                      ? "opacity-60 bg-muted/30"
-                      : isCompleted && quizCompleted
-                      ? "border-green-500/30 bg-green-500/5"
-                      : "border-border"
-                  }`}
-                >
-                  <AccordionTrigger className="px-3 sm:px-4 py-2 sm:py-3 hover:no-underline">
-                    <div className="flex items-center gap-2 sm:gap-3 text-left flex-1">
-                      <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 ${
-                          chapter.isLocked
-                            ? "bg-muted"
-                            : isCompleted && quizCompleted
-                            ? "bg-green-500/20"
-                            : "bg-primary/20"
-                        }`}
-                      >
-                        {chapter.isLocked ? (
-                          <Lock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                        ) : isCompleted && quizCompleted ? (
-                          <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-green-500" />
-                        ) : (
-                          <span className="text-xs sm:text-sm font-bold text-primary">
-                            {chapter.id}
-                          </span>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-medium text-xs sm:text-sm lg:text-base truncate">
-                          {chapter.title}
-                        </h3>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                          {chapter.description}
-                        </p>
-                      </div>
-                      {chapter.isLocked && (
-                        <Badge
-                          variant="outline"
-                          className="shrink-0 text-[10px] sm:text-xs px-1.5 py-0.5"
-                        >
-                          <Lock className="h-2 w-2 sm:h-2.5 sm:w-2.5 mr-0.5" />
-                          Pro
-                        </Badge>
-                      )}
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2">
-                      {/* Video Button */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start gap-2 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm"
-                        onClick={() => !chapter.isLocked && setActiveVideo(chapter.videoUrl)}
-                        disabled={chapter.isLocked}
-                      >
-                        <div
-                          className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center shrink-0 ${
-                            isCompleted ? "bg-green-500/20" : "bg-primary/20"
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-green-500" />
-                          ) : (
-                            <Video className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary" />
-                          )}
-                        </div>
-                        <span className="flex-1 text-left truncate">{chapter.videoTitle}</span>
-                        {!chapter.isLocked && (
-                          <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                        )}
-                      </Button>
-
-                      {/* Quiz Button */}
-                      {chapter.quizId && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full justify-start gap-2 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm"
-                          onClick={() => !chapter.isLocked && setActiveQuiz(chapter.quizId!)}
-                          disabled={chapter.isLocked}
-                        >
-                          <div
-                            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center shrink-0 ${
-                              quizCompleted ? "bg-green-500/20" : "bg-sunny/20"
-                            }`}
-                          >
-                            {quizCompleted ? (
-                              <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-green-500" />
-                            ) : (
-                              <HelpCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-sunny" />
-                            )}
-                          </div>
-                          <span className="flex-1 text-left truncate">Quiz: {chapter.title}</span>
-                          {!chapter.isLocked && (
-                            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        </CardContent>
+      {/* Upgrade CTA */}
+      <Card className="p-4 bg-gradient-to-r from-primary/10 via-turquoise/10 to-sunny/10 border-primary/20">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+            <Rocket className="h-6 w-6 text-primary" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-sm mb-0.5">Unlock All Chapters</h3>
+            <p className="text-[10px] text-muted-foreground">
+              Sign up for a 7-day free trial to access the complete course
+            </p>
+          </div>
+          <Button size="sm" className="shrink-0 text-xs h-8">
+            Try Free
+          </Button>
+        </div>
       </Card>
+
+      {/* Chapter Details Dialog */}
+      <Dialog open={showChapterDialog} onOpenChange={setShowChapterDialog}>
+        <DialogContent className="max-w-md mx-auto p-0 gap-0 rounded-2xl">
+          <DialogHeader className="p-4 pb-2">
+            <DialogTitle className="text-base font-bold">
+              {selectedChapter?.title}
+            </DialogTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              {selectedChapter?.description}
+            </p>
+          </DialogHeader>
+          
+          <div className="p-4 pt-2 space-y-2.5">
+            {/* Watch Video */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start gap-3 h-12"
+              onClick={() => {
+                setActiveVideo(selectedChapter?.id);
+                setShowChapterDialog(false);
+              }}
+            >
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                completedVideos.includes(selectedChapter?.id) ? 'bg-green-500/20' : 'bg-primary/20'
+              }`}>
+                {completedVideos.includes(selectedChapter?.id) ? (
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Video className="h-4 w-4 text-primary" />
+                )}
+              </div>
+              <div className="flex-1 text-left">
+                <div className="font-medium text-sm">Watch Video Lesson</div>
+                <div className="text-[10px] text-muted-foreground">Learn the concepts</div>
+              </div>
+              <Play className="h-4 w-4 text-muted-foreground" />
+            </Button>
+
+            {/* Take Quiz */}
+            {getQuizForChapter(selectedChapter?.index || 0) && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full justify-start gap-3 h-12"
+                onClick={() => {
+                  const quiz = getQuizForChapter(selectedChapter?.index || 0);
+                  if (quiz) {
+                    setActiveQuiz(quiz.id);
+                    setShowChapterDialog(false);
+                  }
+                }}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  completedQuizzes.includes(getQuizForChapter(selectedChapter?.index || 0)?.id || '') 
+                    ? 'bg-green-500/20' 
+                    : 'bg-sunny/20'
+                }`}>
+                  {completedQuizzes.includes(getQuizForChapter(selectedChapter?.index || 0)?.id || '') ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <HelpCircle className="h-4 w-4 text-sunny" />
+                  )}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-sm">Take Quiz</div>
+                  <div className="text-[10px] text-muted-foreground">Test your knowledge</div>
+                </div>
+                <Zap className="h-4 w-4 text-amber-500" />
+              </Button>
+            )}
+
+            {/* E-Book */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start gap-3 h-12 opacity-50"
+              disabled
+            >
+              <div className="w-8 h-8 rounded-lg bg-lavender/20 flex items-center justify-center">
+                <BookOpen className="h-4 w-4 text-lavender" />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="font-medium text-sm">Read E-Book</div>
+                <div className="text-[10px] text-muted-foreground">Coming soon</div>
+              </div>
+              <Lock className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
