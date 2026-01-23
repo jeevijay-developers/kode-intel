@@ -32,6 +32,7 @@ import {
   Star,
   Sparkles,
   ChevronRight,
+  ChevronLeft,
   GraduationCap,
   Clock,
   FileText,
@@ -42,7 +43,19 @@ import {
   Phone,
   Code,
   Timer,
+  Eye,
+  Loader2,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+// Set up PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 import { useCourses, useChapters } from "@/hooks/useCourses";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
@@ -73,6 +86,13 @@ const courseBanners: Record<string, string> = {
   "10": bannerAIProjects,
 };
 
+// Sample PDF mapping for chapters that have sample PDFs
+const samplePdfMapping: Record<string, { classNum: string; pdfUrl: string }> = {
+  "4": { classNum: "4", pdfUrl: "/ebooks/class-4-chapter-1.pdf" },
+  "6": { classNum: "6", pdfUrl: "/ebooks/class-6-chapter-1.pdf" },
+  "7": { classNum: "7", pdfUrl: "/ebooks/class-7-chapter-1.pdf" },
+};
+
 const classes = ["Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"];
 
 interface GuestInfo {
@@ -92,6 +112,11 @@ export default function GuestCourses() {
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [activeVideo, setActiveVideo] = useState<any>(null);
+  const [activeQuiz, setActiveQuiz] = useState<any>(null);
+  const [activePdf, setActivePdf] = useState<{ title: string; pdfUrl: string; classNum: string } | null>(null);
+  const [pdfPageNumber, setPdfPageNumber] = useState(1);
+  const [pdfNumPages, setPdfNumPages] = useState(0);
+  const [pdfLoading, setPdfLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
 
   // Check for existing guest session
@@ -236,6 +261,8 @@ export default function GuestCourses() {
     setSelectedCourse(course);
     setActiveChapter(null);
     setActiveVideo(null);
+    setActiveQuiz(null);
+    setActivePdf(null);
   };
 
   const isTrialExpired = () => {
@@ -261,6 +288,140 @@ export default function GuestCourses() {
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : url;
   };
+
+  // Get class number from course title
+  const getClassNumFromCourse = (title: string): string => {
+    const match = title.match(/class\s*(\d+)/i);
+    return match ? match[1] : "3";
+  };
+
+  // Check if sample PDF is available for a class chapter 1
+  const hasSamplePdf = (classNum: string, chapterIndex: number): boolean => {
+    return chapterIndex === 0 && samplePdfMapping[classNum] !== undefined;
+  };
+
+  // Get sample PDF for a class
+  const getSamplePdf = (classNum: string): { pdfUrl: string; classNum: string } | null => {
+    return samplePdfMapping[classNum] || null;
+  };
+
+  // PDF Viewer View
+  if (activePdf) {
+    return (
+      <div className="p-3 sm:p-4 lg:p-6 animate-fade-in h-[calc(100vh-120px)] flex flex-col">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setActivePdf(null);
+            setPdfPageNumber(1);
+            setPdfNumPages(0);
+          }}
+          className="mb-3 gap-2 self-start"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Course
+        </Button>
+        
+        <Card className="flex-1 overflow-hidden flex flex-col">
+          {/* PDF Header */}
+          <div className="p-3 sm:p-4 border-b bg-gradient-to-r from-turquoise/10 to-turquoise/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-turquoise to-lime flex items-center justify-center shadow-lg">
+                <BookOpen className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-bold text-sm sm:text-base truncate">{activePdf.title}</h2>
+                <p className="text-xs text-muted-foreground">Class {activePdf.classNum} • Sample Preview (Non-downloadable)</p>
+              </div>
+              <Badge className="bg-sunny/20 text-sunny text-[10px] shrink-0">
+                <Eye className="h-3 w-3 mr-1" />
+                Preview Only
+              </Badge>
+            </div>
+          </div>
+          
+          {/* PDF Content */}
+          <div className="flex-1 overflow-hidden bg-muted/30">
+            <ScrollArea className="h-full">
+              <div className="flex justify-center p-4 min-h-full">
+                <Document
+                  file={activePdf.pdfUrl}
+                  onLoadSuccess={({ numPages }) => {
+                    setPdfNumPages(numPages);
+                    setPdfLoading(false);
+                  }}
+                  loading={
+                    <div className="flex items-center justify-center h-96">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  }
+                  error={
+                    <div className="flex flex-col items-center justify-center h-96 text-muted-foreground">
+                      <BookOpen className="h-12 w-12 mb-2 opacity-50" />
+                      <p>Failed to load PDF</p>
+                    </div>
+                  }
+                >
+                  <Page
+                    pageNumber={pdfPageNumber}
+                    renderTextLayer={true}
+                    renderAnnotationLayer={true}
+                    className="shadow-xl rounded-lg overflow-hidden"
+                    width={Math.min(window.innerWidth * 0.85, 600)}
+                  />
+                </Document>
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* PDF Navigation */}
+          {pdfNumPages > 0 && (
+            <div className="p-3 border-t bg-background/95 backdrop-blur shrink-0">
+              <div className="flex items-center justify-center gap-3 sm:gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPdfPageNumber((prev) => Math.max(prev - 1, 1))}
+                  disabled={pdfPageNumber <= 1}
+                  className="gap-1 text-xs"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Previous</span>
+                </Button>
+                <span className="text-xs sm:text-sm font-medium px-3 py-1.5 bg-muted rounded-full">
+                  {pdfPageNumber} / {pdfNumPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPdfPageNumber((prev) => Math.min(prev + 1, pdfNumPages))}
+                  disabled={pdfPageNumber >= pdfNumPages}
+                  className="gap-1 text-xs"
+                >
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {/* Physical Book Note */}
+              <div className="mt-3 p-2 rounded-lg bg-sunny/10 border border-sunny/20 text-center">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  📚 <span className="font-medium text-foreground">This is a sample preview only.</span> Complete Theory + Worksheet books available as physical copies.
+                  <button
+                    onClick={() => navigate("/store")}
+                    className="text-primary hover:underline ml-1 font-medium"
+                  >
+                    Buy Now →
+                  </button>
+                </p>
+              </div>
+            </div>
+          )}
+        </Card>
+      </div>
+    );
+  }
 
   // Video Player View
   if (activeVideo) {
@@ -437,76 +598,107 @@ export default function GuestCourses() {
                       </div>
                       <div className="space-y-1.5 pl-8">
                         {quizzes.map((quiz: any, quizIndex: number) => (
-                          <div
+                          <button
                             key={quiz.id}
-                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 text-left"
+                            onClick={() => navigate(`/guest/quiz/${quiz.id}`)}
+                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 text-left group"
                           >
-                            <div className="w-7 h-7 rounded-full bg-purple/10 flex items-center justify-center shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-purple/10 flex items-center justify-center shrink-0 group-hover:bg-purple/20 transition-colors">
                               <HelpCircle className="h-3.5 w-3.5 text-purple" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate">{quiz.title}</p>
+                              <p className="text-sm font-medium truncate group-hover:text-purple transition-colors">{quiz.title}</p>
                               <p className="text-[10px] text-muted-foreground">Passing score: {quiz.passing_score}%</p>
                             </div>
-                            <Badge className="bg-purple/20 text-purple border-purple/30 text-[10px]">
-                              Interactive
+                            <Badge className="bg-purple/20 text-purple border-purple/30 text-[10px] group-hover:bg-purple group-hover:text-white transition-colors">
+                              <Play className="h-2.5 w-2.5 mr-0.5" />
+                              Start
                             </Badge>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* E-Books Section */}
+                  {/* E-Books / Study Materials Section */}
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-6 h-6 rounded-lg bg-turquoise/20 flex items-center justify-center">
                         <FileText className="h-3 w-3 text-turquoise" />
                       </div>
                       <h5 className="font-semibold text-sm">Study Materials</h5>
-                      {ebooks.length > 0 && (
-                        <Badge variant="outline" className="text-[10px] ml-auto">{ebooks.length} sample{ebooks.length > 1 ? 's' : ''}</Badge>
-                      )}
                     </div>
                     
-                    {ebooks.length > 0 ? (
-                      <div className="space-y-1.5 pl-8">
-                        {ebooks.map((ebook: any) => (
-                          <a
-                            key={ebook.id}
-                            href={ebook.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 group"
-                          >
-                            <div className="w-7 h-7 rounded-full bg-turquoise/10 flex items-center justify-center shrink-0">
-                              <FileText className="h-3.5 w-3.5 text-turquoise" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">{ebook.title}</p>
-                              <p className="text-[10px] text-muted-foreground">Sample Preview</p>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
-                          </a>
-                        ))}
-                      </div>
-                    ) : null}
+                    <div className="space-y-1.5 pl-8">
+                      {/* Sample PDF Preview - only show for Chapter 1 of classes that have samples */}
+                      {chapterIndex === 0 && getSamplePdf(selectedClassNum) && (
+                        <button
+                          onClick={() => {
+                            const pdf = getSamplePdf(selectedClassNum);
+                            if (pdf) {
+                              setActivePdf({
+                                title: `${chapter.title} - Sample Preview`,
+                                pdfUrl: pdf.pdfUrl,
+                                classNum: pdf.classNum,
+                              });
+                              setPdfLoading(true);
+                              setPdfPageNumber(1);
+                            }
+                          }}
+                          className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-turquoise/10 to-lime/10 hover:from-turquoise/20 hover:to-lime/20 border border-turquoise/30 transition-all hover:translate-x-1 text-left group"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-turquoise/20 flex items-center justify-center shrink-0 group-hover:bg-turquoise/30 transition-colors">
+                            <BookOpen className="h-3.5 w-3.5 text-turquoise" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">
+                              📖 Chapter {chapterIndex + 1} - Sample Preview
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">Free soft copy preview (non-downloadable)</p>
+                          </div>
+                          <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 text-[10px] group-hover:bg-turquoise group-hover:text-white transition-colors shrink-0">
+                            <Eye className="h-2.5 w-2.5 mr-0.5" />
+                            View
+                          </Badge>
+                        </button>
+                      )}
+                      
+                      {/* No sample available message */}
+                      {(chapterIndex !== 0 || !getSamplePdf(selectedClassNum)) && (
+                        <div className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-dashed border-muted-foreground/20">
+                          <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                            <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-muted-foreground">Physical Book Only</p>
+                            <p className="text-[10px] text-muted-foreground">Sample preview available for Chapter 1 only</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     {/* Physical Book Notice */}
-                    <div className="mt-2 pl-8">
-                      <div className="flex items-start gap-2 p-2.5 rounded-lg bg-sunny/10 border border-sunny/20">
+                    <div className="mt-3 pl-8">
+                      <div className="flex items-start gap-2 p-2.5 rounded-lg bg-gradient-to-r from-sunny/10 to-coral/10 border border-sunny/30">
                         <BookOpen className="h-4 w-4 text-sunny shrink-0 mt-0.5" />
                         <div className="text-xs">
-                          <p className="font-medium text-sunny-foreground">Theory + Worksheet Books</p>
-                          <p className="text-muted-foreground mt-0.5">
-                            Complete study materials with theory and worksheets are available as physical books.
-                            <button
-                              onClick={() => navigate("/store")}
-                              className="text-primary hover:underline ml-1 font-medium"
-                            >
-                              Visit Book Store →
-                            </button>
+                          <p className="font-medium text-foreground flex items-center gap-1.5">
+                            📚 Theory + Worksheet Books
+                            <Badge className="bg-coral/20 text-coral text-[9px]">Hard Copy</Badge>
                           </p>
+                          <p className="text-muted-foreground mt-1">
+                            Our books are available as <span className="font-semibold text-foreground">physical copies only</span>. 
+                            The soft copy previews above are sample chapters for review purposes.
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate("/store")}
+                            className="mt-2 h-7 text-[10px] gap-1 border-coral/30 text-coral hover:bg-coral hover:text-white"
+                          >
+                            <BookOpen className="h-3 w-3" />
+                            Buy Physical Books →
+                          </Button>
                         </div>
                       </div>
                     </div>
