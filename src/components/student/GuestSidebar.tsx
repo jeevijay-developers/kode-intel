@@ -5,7 +5,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -16,20 +15,19 @@ import {
   Home,
   BookOpen,
   Code,
-  Trophy,
   Sparkles,
-  GraduationCap,
+  Clock,
   ChevronRight,
-  Star,
-  Flame,
+  Rocket,
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   { title: "Dashboard", url: "/guest", icon: Home },
-  { title: "My Courses", url: "/guest/courses", icon: BookOpen },
+  { title: "All Courses", url: "/guest/courses", icon: BookOpen },
   { title: "Code Lab", url: "/compiler", icon: Code },
-  { title: "Achievements", url: "/guest/achievements", icon: Trophy },
 ];
 
 export function GuestSidebar() {
@@ -37,76 +35,76 @@ export function GuestSidebar() {
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const location = useLocation();
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const stored = localStorage.getItem("guestInfo");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const registeredAt = new Date(parsed.registeredAt);
+        const now = new Date();
+        const hoursDiff = 24 - (now.getTime() - registeredAt.getTime()) / (1000 * 60 * 60);
+        
+        if (hoursDiff <= 0) {
+          setTimeRemaining("Expired");
+        } else {
+          setTimeRemaining(`${Math.floor(hoursDiff)}h ${Math.floor((hoursDiff % 1) * 60)}m`);
+        }
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-16" : "w-64"} transition-all duration-300 border-r border-border/50`}
+      className={`${collapsed ? "w-16" : "w-56"} transition-all duration-300 border-r border-border/50`}
       collapsible="icon"
     >
-      <SidebarContent className="bg-gradient-to-b from-card via-card to-primary/5">
+      <SidebarContent className="bg-gradient-to-b from-card to-muted/30">
         {/* Logo Section */}
-        <div className="p-3 sm:p-4 border-b border-border/50">
+        <div className="p-3 border-b border-border/30">
           <div
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group"
+            className="flex items-center gap-2 cursor-pointer group"
             onClick={() => navigate("/")}
           >
             <div className="relative transition-transform duration-300 group-hover:scale-110">
-              <img src={brainLogo} alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10" />
-              <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-sunny absolute -top-1 -right-1 animate-pulse" />
+              <img src={brainLogo} alt="Logo" className="h-8 w-8" />
+              <Sparkles className="h-2.5 w-2.5 text-sunny absolute -top-1 -right-1 animate-pulse" />
             </div>
             {!collapsed && (
-              <span className="text-lg sm:text-xl font-bold font-display transition-colors duration-200 group-hover:text-primary">
+              <span className="text-base font-bold font-display">
                 Kode<span className="text-primary">Intel</span>
               </span>
             )}
           </div>
         </div>
 
-        {/* Guest Stats Card */}
-        {!collapsed && (
-          <div className="p-3 sm:p-4 border-b border-border/50">
-            <div className="bg-gradient-to-br from-turquoise/20 via-secondary/10 to-accent/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
-              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-turquoise to-primary flex items-center justify-center shadow-lg transition-transform duration-300 hover:rotate-6">
-                  <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground text-sm sm:text-base">Guest</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Preview Mode</p>
-                </div>
+        {/* Trial Timer */}
+        {!collapsed && timeRemaining && (
+          <div className="p-3 border-b border-border/30">
+            <div className="bg-gradient-to-br from-primary/10 to-turquoise/10 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Clock className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-muted-foreground">Trial Time</span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                <div className="bg-sunny/20 rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-center transition-all duration-200 hover:bg-sunny/30 hover:scale-105 cursor-default">
-                  <div className="flex items-center justify-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 text-sunny fill-sunny" />
-                    <span className="text-xs sm:text-sm font-bold text-sunny">0</span>
-                  </div>
-                  <p className="text-[9px] sm:text-[10px] text-muted-foreground">XP</p>
-                </div>
-                <div className="bg-coral/20 rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-center transition-all duration-200 hover:bg-coral/30 hover:scale-105 cursor-default">
-                  <div className="flex items-center justify-center gap-1">
-                    <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-coral" />
-                    <span className="text-xs sm:text-sm font-bold text-coral">0</span>
-                  </div>
-                  <p className="text-[9px] sm:text-[10px] text-muted-foreground">Streak</p>
-                </div>
-              </div>
+              <p className="text-lg font-bold text-primary">{timeRemaining}</p>
             </div>
           </div>
         )}
 
         {/* Navigation Menu */}
-        <SidebarGroup className="flex-1">
-          <SidebarGroupLabel className="text-xs text-muted-foreground px-3 sm:px-4 py-2">
-            {!collapsed ? "Menu" : ""}
-          </SidebarGroupLabel>
+        <SidebarGroup className="flex-1 py-2">
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 px-1.5 sm:px-2">
+            <SidebarMenu className="space-y-1 px-2">
               {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.url;
                 const IconComponent = item.icon;
                 return (
-                  <SidebarMenuItem 
+                  <SidebarMenuItem
                     key={item.title}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 50}ms` }}
@@ -115,26 +113,26 @@ export function GuestSidebar() {
                       <NavLink
                         to={item.url}
                         end
-                        className={`group/item flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-all duration-300 ${
+                        className={`group/item flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                            : "hover:bg-muted/80 text-muted-foreground hover:text-foreground hover:translate-x-1"
+                            ? "bg-primary text-primary-foreground shadow-md"
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
                         activeClassName="bg-primary text-primary-foreground"
                       >
-                        <IconComponent 
-                          className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${
-                            isActive ? "text-primary-foreground scale-110" : "group-hover/item:scale-110"
-                          }`} 
+                        <IconComponent
+                          className={`h-4 w-4 transition-transform duration-300 ${
+                            isActive ? "scale-110" : "group-hover/item:scale-110"
+                          }`}
                         />
                         {!collapsed && (
                           <>
-                            <span className="font-medium flex-1 text-sm sm:text-base">{item.title}</span>
-                            <ChevronRight 
-                              className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-300 ${
-                                isActive 
-                                  ? "opacity-100 translate-x-0" 
-                                  : "opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0"
+                            <span className="font-medium flex-1 text-sm">{item.title}</span>
+                            <ChevronRight
+                              className={`h-3.5 w-3.5 transition-all duration-300 ${
+                                isActive
+                                  ? "opacity-100"
+                                  : "opacity-0 group-hover/item:opacity-100"
                               }`}
                             />
                           </>
@@ -148,9 +146,22 @@ export function GuestSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Sign Up CTA */}
+        {!collapsed && (
+          <div className="p-3 border-t border-border/30">
+            <Button
+              onClick={() => navigate("/student/signup")}
+              className="w-full gap-2 bg-gradient-to-r from-primary to-secondary text-sm h-10"
+            >
+              <Rocket className="h-4 w-4" />
+              Sign Up Free
+            </Button>
+          </div>
+        )}
+
         {/* Trigger at bottom */}
-        <div className="p-3 sm:p-4 border-t border-border/50">
-          <SidebarTrigger className="w-full justify-center transition-transform duration-200 hover:scale-105" />
+        <div className="p-2 border-t border-border/30">
+          <SidebarTrigger className="w-full justify-center" />
         </div>
       </SidebarContent>
     </Sidebar>
