@@ -65,6 +65,15 @@ import woman4 from "@/assets/testimonial/woman4.png";
 
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useState, useEffect, useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+// Mobile-optimized components
+import { MobileHeroSection } from "@/components/landing/MobileHeroSection";
+import { MobileCourseLevels } from "@/components/landing/MobileCourseLevels";
+import { MobileFeaturesGrid } from "@/components/landing/MobileFeaturesGrid";
+import { MobileTestimonials } from "@/components/landing/MobileTestimonials";
+import { MobilePricing } from "@/components/landing/MobilePricing";
+import { MobileCTASection } from "@/components/landing/MobileCTASection";
 
 // Animated counter with intersection observer
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number; duration?: number; suffix?: string }) => {
@@ -140,6 +149,7 @@ export default function Landing() {
   const { student } = useStudentAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setIsVisible(true);
@@ -154,6 +164,23 @@ export default function Landing() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  // Mobile-first rendering
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeroSection 
+          onGetStarted={() => navigate("/student/login")} 
+          onTryDemo={() => navigate("/student/guest")} 
+        />
+        <MobileCourseLevels />
+        <MobileFeaturesGrid />
+        <MobileTestimonials />
+        <MobilePricing />
+        <MobileCTASection />
+      </div>
+    );
+  }
 
   const products = [
     {
