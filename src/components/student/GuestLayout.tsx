@@ -9,6 +9,7 @@ import brainLogo from "@/assets/brain-logo.png";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GuestErrorBoundary } from "@/components/student/GuestErrorBoundary";
 
 export default function GuestLayout() {
   const navigate = useNavigate();
@@ -93,7 +94,9 @@ export default function GuestLayout() {
 
           {/* Main Content - add bottom padding on mobile for bottom nav */}
           <main className="flex-1 overflow-auto pb-20 lg:pb-0">
-            <Outlet />
+            <GuestErrorBoundary>
+              <Outlet />
+            </GuestErrorBoundary>
           </main>
         </div>
 
