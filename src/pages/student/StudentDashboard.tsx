@@ -12,6 +12,9 @@ import { MobileWelcomeCard } from "@/components/dashboard/MobileWelcomeCard";
 import { MobileProgressSection } from "@/components/dashboard/MobileProgressSection";
 import { MobileBadgesCarousel } from "@/components/dashboard/MobileBadgesCarousel";
 import { MobileCourseCard } from "@/components/dashboard/MobileCourseCard";
+import { MobileQuickActions } from "@/components/dashboard/MobileQuickActions";
+import { MobileAchievementsPreview } from "@/components/dashboard/MobileAchievementsPreview";
+import { MobileDailyStreak } from "@/components/dashboard/MobileDailyStreak";
 import { StudentBottomNav } from "@/components/student/StudentBottomNav";
 import {
   BookOpen,
@@ -34,6 +37,8 @@ import {
   LogOut,
   Sparkles,
   Zap,
+  GraduationCap,
+  Rocket,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useGamification } from "@/hooks/useGamification";
@@ -321,52 +326,40 @@ export default function StudentDashboard() {
           />
         </div>
 
-        {/* Mobile Quick Stats */}
-        <div className="lg:hidden grid grid-cols-4 gap-2">
-          <button
-            onClick={() => navigate("/student/my-courses")}
-            className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-primary to-secondary active:scale-95 transition-transform"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-1.5">
-              <BookOpen className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">{courses.length}</span>
-            <span className="text-[10px] text-white/80">Courses</span>
-          </button>
-          <button
-            onClick={() => navigate("/student/my-courses")}
-            className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-turquoise to-lime active:scale-95 transition-transform"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-1.5">
-              <Video className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">
-              {videoStats?.completed || 0}
-            </span>
-            <span className="text-[10px] text-white/80">Videos</span>
-          </button>
-          <button
-            onClick={() => navigate("/student/my-courses")}
-            className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-sunny to-coral active:scale-95 transition-transform"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-1.5">
-              <HelpCircle className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">
-              {quizStats?.passed || 0}
-            </span>
-            <span className="text-[10px] text-white/80">Quizzes</span>
-          </button>
-          <button
-            onClick={() => navigate("/student/achievements")}
-            className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-purple to-pink active:scale-95 transition-transform"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-1.5">
-              <Trophy className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">{earnedBadgesCount}</span>
-            <span className="text-[10px] text-white/80">Badges</span>
-          </button>
+        {/* Mobile Quick Actions */}
+        <div className="lg:hidden">
+          <MobileQuickActions
+            actions={[
+              {
+                icon: <BookOpen className="h-5 w-5 text-white" />,
+                label: "My Courses",
+                description: `${courses.length} available`,
+                gradient: "bg-gradient-to-br from-primary to-secondary",
+                onClick: () => navigate("/student/my-courses"),
+              },
+              {
+                icon: <Code className="h-5 w-5 text-white" />,
+                label: "Code Lab",
+                description: "Write & Run",
+                gradient: "bg-gradient-to-br from-turquoise to-lime",
+                onClick: () => navigate("/compiler"),
+              },
+              {
+                icon: <HelpCircle className="h-5 w-5 text-white" />,
+                label: "Take Quiz",
+                description: `${quizStats?.passed || 0} passed`,
+                gradient: "bg-gradient-to-br from-sunny to-coral",
+                onClick: () => navigate("/student/quiz"),
+              },
+              {
+                icon: <Trophy className="h-5 w-5 text-white" />,
+                label: "Achievements",
+                description: `${earnedBadgesCount} earned`,
+                gradient: "bg-gradient-to-br from-purple to-primary",
+                onClick: () => navigate("/student/achievements"),
+              },
+            ]}
+          />
         </div>
 
         {/* Desktop Quick Stats */}
@@ -413,6 +406,15 @@ export default function StudentDashboard() {
           </Card>
         </div>
 
+        {/* Mobile Daily Streak */}
+        <div className="lg:hidden">
+          <MobileDailyStreak
+            currentStreak={points.streak_days}
+            totalXP={points.total_points}
+            level={points.current_level}
+          />
+        </div>
+
         {/* Mobile Progress Section */}
         <div className="lg:hidden">
           <MobileProgressSection
@@ -456,6 +458,15 @@ export default function StudentDashboard() {
             badges={badges}
             earnedCount={earnedBadgesCount}
             totalCount={totalBadges}
+          />
+        </div>
+
+        {/* Mobile Achievements Preview */}
+        <div className="lg:hidden">
+          <MobileAchievementsPreview
+            achievements={achievements}
+            completedCount={achievements.filter(a => a.completed).length}
+            totalCount={achievements.length}
           />
         </div>
 
