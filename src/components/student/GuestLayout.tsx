@@ -31,9 +31,9 @@ export default function GuestLayout() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 text-xs px-2 py-0.5">
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs px-2 py-0.5">
                 <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
-                Guest
+                Free Trial
               </Badge>
               <Button
                 size="sm"
