@@ -49,6 +49,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import mascot from "@/assets/kodi-mascot-3d.png";
+import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
 
 // Course banner imports
 import bannerClass3 from "@/assets/course-banner-class3.png";
@@ -786,6 +787,43 @@ export default function GuestCourses() {
                 </Card>
               );
             })}
+        </div>
+      )}
+
+      {/* Sample E-Books Section */}
+      {guestInfo && !coursesLoading && (
+        <div className="mt-4 sm:mt-6">
+          <SampleEbookViewer />
+          
+          {/* Physical Books Note */}
+          <Card className="mt-3 sm:mt-4 overflow-hidden bg-gradient-to-r from-sunny/10 via-coral/5 to-sunny/10 border-sunny/30">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sunny to-coral flex items-center justify-center shadow-lg shrink-0">
+                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-sm sm:text-base text-foreground flex items-center gap-2 flex-wrap">
+                    📚 Physical Books Available!
+                    <Badge className="bg-coral/20 text-coral text-[10px]">Hard Copy Only</Badge>
+                  </h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                    Our curriculum includes <span className="font-semibold text-foreground">Theory + Worksheet Books</span> designed for hands-on learning. 
+                    The e-book samples above are <span className="text-primary font-medium">preview chapters only</span> - complete books are available as physical copies in our store.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate("/store")}
+                    className="mt-2 gap-2 text-xs border-coral/30 text-coral hover:bg-coral hover:text-white"
+                  >
+                    <BookOpen className="h-3.5 w-3.5" />
+                    Visit Book Store
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 

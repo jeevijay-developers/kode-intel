@@ -123,29 +123,29 @@ export function SampleEbookViewer() {
   return (
     <>
       {/* Sample Ebooks Section */}
-      <Card className="overflow-hidden relative">
+      <Card className="overflow-hidden relative border-2 border-primary/20">
         {/* Decorative sparkle */}
         <Sparkles className="absolute top-3 right-3 h-5 w-5 text-sunny animate-pulse" />
         
         <CardContent className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-              <BookOpen className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shrink-0">
+              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <div>
-              <h2 className="font-bold text-base sm:text-lg font-display flex items-center gap-2">
-                Visit Our E-Books
-                <Badge className="bg-sunny/20 text-sunny text-[10px] animate-pulse">
+            <div className="flex-1 min-w-0">
+              <h2 className="font-bold text-sm sm:text-base lg:text-lg font-display flex items-center gap-2 flex-wrap">
+                📖 Sample E-Book Previews
+                <Badge className="bg-sunny/20 text-sunny text-[9px] sm:text-[10px] animate-pulse">
                   FREE PREVIEW
                 </Badge>
               </h2>
-              <p className="text-xs text-muted-foreground">
-                Sample chapters from our curriculum
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
+                Preview sample chapters from our curriculum (non-downloadable)
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
             {sampleEbooks.map((ebook) => {
               const colors = colorClasses[ebook.color];
               return (
@@ -154,29 +154,30 @@ export function SampleEbookViewer() {
                   className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group bg-gradient-to-br ${colors.bg} ${colors.border}`}
                   onClick={() => handleOpenEbook(ebook)}
                 >
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="flex flex-col items-center text-center gap-3">
-                      <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${colors.icon} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                        <GraduationCap className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
+                  <CardContent className="p-2.5 sm:p-3 md:p-4">
+                    <div className="flex sm:flex-col items-center sm:text-center gap-3">
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${colors.icon} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0`}>
+                        <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
                       </div>
-                      <div>
-                        <Badge className={`${colors.badge} text-xs mb-1`}>
+                      <div className="flex-1 sm:flex-none min-w-0">
+                        <Badge className={`${colors.badge} text-[10px] sm:text-xs mb-0.5 sm:mb-1`}>
                           {ebook.className}
                         </Badge>
-                        <h3 className="font-bold text-sm sm:text-base line-clamp-2 min-h-[2.5rem]">
+                        <h3 className="font-bold text-xs sm:text-sm md:text-base line-clamp-2 sm:min-h-[2.5rem]">
                           {ebook.title}
                         </h3>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                          {ebook.chapter}
+                        <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-0.5 sm:mt-1">
+                          {ebook.chapter} • Sample Preview
                         </p>
                       </div>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="gap-1.5 text-xs group-hover:bg-primary group-hover:text-white transition-colors"
+                        className="gap-1 sm:gap-1.5 text-[10px] sm:text-xs group-hover:bg-primary group-hover:text-white transition-colors px-2 sm:px-3 h-7 sm:h-8 shrink-0"
                       >
                         <Eye className="h-3 w-3" />
-                        Preview
+                        <span className="hidden sm:inline">Preview</span>
+                        <span className="sm:hidden">View</span>
                       </Button>
                     </div>
                   </CardContent>
