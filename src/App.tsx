@@ -41,6 +41,7 @@ import GuestCourses from "./pages/student/GuestCourses";
 import GuestAchievements from "./pages/student/GuestAchievements";
 import GuestLeaderboard from "./pages/student/GuestLeaderboard";
 import StudentLeaderboard from "./pages/student/StudentLeaderboard";
+import GuestQuiz from "./pages/student/GuestQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +79,7 @@ function App() {
               <Route path="courses" element={<GuestCourses />} />
               <Route path="achievements" element={<GuestAchievements />} />
               <Route path="leaderboard" element={<GuestLeaderboard />} />
+              <Route path="quiz/:quizId" element={<GuestQuiz />} />
             </Route>
 
             {/* Student routes with sidebar layout */}
