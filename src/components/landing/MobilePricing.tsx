@@ -10,33 +10,37 @@ import {
   Blocks,
   CheckCircle2,
   Star,
-  ChevronRight
+  ChevronRight,
+  Sparkles,
+  Gift
 } from "lucide-react";
 
 const plans = [
   {
-    name: "Full Pack",
+    name: "Full Learning Pack",
     price: "₹3,499",
+    originalPrice: "₹4,999",
     period: "/year",
     popular: true,
     gradient: "from-primary to-secondary",
     features: [
-      { icon: CirclePlay, text: "Video Lectures" },
-      { icon: Code, text: "Practice Compiler" },
+      { icon: CirclePlay, text: "50+ Video Lectures" },
+      { icon: Code, text: "Unlimited Code Lab Access" },
       { icon: FileQuestion, text: "Interactive Quizzes" },
-      { icon: Blocks, text: "Practice Projects" },
-      { icon: TrendingUp, text: "Analytics" },
-      { icon: BookMarked, text: "Physical Book" },
+      { icon: Blocks, text: "Hands-on Projects" },
+      { icon: TrendingUp, text: "Progress Analytics" },
+      { icon: BookMarked, text: "Physical Workbook" },
     ],
   },
   {
-    name: "Book Only",
+    name: "Workbook Only",
     price: "₹999",
+    originalPrice: null,
     period: "",
     popular: false,
     gradient: "from-muted to-muted",
     features: [
-      { icon: BookMarked, text: "Physical Workbook" },
+      { icon: BookMarked, text: "Theory + Worksheets" },
       { icon: FileQuestion, text: "Practice Exercises" },
       { icon: CheckCircle2, text: "Chapter Summaries" },
     ],
@@ -47,13 +51,17 @@ export function MobilePricing() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-8 px-4 bg-muted/20">
       <div className="text-center mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sunny/20 rounded-full mb-3">
+          <Gift className="h-4 w-4 text-sunny" />
+          <span className="text-xs font-bold text-sunny">Special Launch Pricing</span>
+        </div>
         <h2 className="text-xl font-bold text-foreground mb-2 font-display">
-          Simple <span className="text-gradient-primary">Pricing</span>
+          Simple, <span className="text-gradient-primary">Affordable</span> Plans
         </h2>
         <p className="text-sm text-muted-foreground">
-          Choose the plan that works for you
+          Start with 7-day free trial, no card needed
         </p>
       </div>
 
@@ -61,58 +69,92 @@ export function MobilePricing() {
         {plans.map((plan, index) => (
           <div
             key={index}
-            className={`relative rounded-2xl border-2 overflow-hidden ${
-              plan.popular ? "border-primary shadow-lg shadow-primary/10" : "border-border"
+            className={`relative rounded-2xl border-2 overflow-hidden bg-card ${
+              plan.popular ? "border-primary shadow-xl shadow-primary/10" : "border-border"
             }`}
           >
             {/* Popular Banner */}
             {plan.popular && (
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
-            )}
-
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-foreground">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">{plan.period}</span>
+              <>
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-secondary to-turquoise" />
+                <div className="absolute -top-0.5 -right-0.5">
+                  <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-current" />
+                    BEST VALUE
                   </div>
                 </div>
-                {plan.popular && (
-                  <Badge className="bg-gradient-to-r from-primary to-secondary text-white gap-1">
-                    <Star className="h-3 w-3 fill-current" />
-                    Best Value
-                  </Badge>
-                )}
+              </>
+            )}
+
+            <div className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                    <span className="text-sm text-muted-foreground">{plan.period}</span>
+                  </div>
+                  {plan.originalPrice && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      <span className="line-through">{plan.originalPrice}</span>
+                      <span className="text-lime font-semibold ml-1.5">Save 30%</span>
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className={`grid ${plan.popular ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mb-5`}>
                 {plan.features.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <feature.icon className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-xs">{feature.text}</span>
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-medium">{feature.text}</span>
                   </div>
                 ))}
               </div>
 
               {/* CTA */}
               <Button
-                onClick={() => navigate("/store")}
-                className={`w-full gap-2 rounded-xl ${
+                onClick={() => navigate(plan.popular ? "/student/signup" : "/store")}
+                className={`w-full h-12 gap-2 rounded-xl font-bold ${
                   plan.popular 
-                    ? "bg-gradient-to-r from-primary to-secondary hover:opacity-90" 
-                    : "bg-muted hover:bg-muted/80"
+                    ? "bg-gradient-to-r from-primary to-secondary hover:opacity-95 shadow-lg shadow-primary/20" 
+                    : ""
                 }`}
                 variant={plan.popular ? "default" : "outline"}
               >
-                Get {plan.name}
+                {plan.popular ? (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Start Free Trial
+                  </>
+                ) : (
+                  <>Buy Workbook</>
+                )}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* School Partnership CTA */}
+      <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-turquoise/10 to-lime/10 border border-turquoise/30">
+        <p className="text-sm font-bold text-foreground mb-1">🏫 Schools & Institutions</p>
+        <p className="text-xs text-muted-foreground mb-3">
+          Special bulk pricing at ₹2,999/student with dedicated support
+        </p>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => navigate("/school-partnership")}
+          className="w-full border-turquoise/50 text-turquoise hover:bg-turquoise/10"
+        >
+          Partner With Us
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
       </div>
     </section>
   );
