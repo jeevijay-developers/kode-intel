@@ -44,6 +44,8 @@ import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import studentsLearning from "@/assets/students-learning-ai.png";
 import { useCourses, useChapters } from "@/hooks/useCourses";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Sound generator
 const playSound = (type: 'correct' | 'wrong' | 'tick' | 'timeout') => {
@@ -606,6 +608,7 @@ export default function GuestCourses() {
   const isMobile = useIsMobile();
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeVideoData, setActiveVideoData] = useState<any>(null);
   const [activeQuiz, setActiveQuiz] = useState<string | null>(null);
   const [completedVideos, setCompletedVideos] = useState<string[]>([]);
   const [completedQuizzes, setCompletedQuizzes] = useState<string[]>([]);
@@ -628,6 +631,23 @@ export default function GuestCourses() {
   
   // First 2 chapters are unlocked
   const unlockedChapterIds = publishedChapters.slice(0, 2).map(ch => ch.id);
+  
+  // Fetch videos for the selected chapter
+  const { data: chapterVideos = [] } = useQuery({
+    queryKey: ["guest-chapter-videos", selectedChapter?.id],
+    queryFn: async () => {
+      if (!selectedChapter?.id) return [];
+      const { data, error } = await supabase
+        .from("chapter_videos")
+        .select("*")
+        .eq("chapter_id", selectedChapter.id)
+        .eq("is_published", true)
+        .order("order_index");
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedChapter?.id,
+  });
   
   const extractClassNum = (title: string): number => {
     const match = title.match(/class\s*(\d+)/i);
@@ -665,16 +685,19 @@ export default function GuestCourses() {
   };
 
   // Video Player View
-  if (activeVideo) {
-    const chapter = publishedChapters.find(c => c.id === activeVideo);
+  if (activeVideo && activeVideoData) {
+    const chapter = publishedChapters.find(c => c.id === selectedChapter?.id);
+    const videoId = extractYouTubeId(activeVideoData.youtube_url);
+    
     return (
-      <div className="p-3 sm:p-4 lg:p-6 pb-20">
+      <div className="p-3 sm:p-4 lg:p-6 pb-20 animate-fade-in">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => {
             if (chapter) handleVideoComplete(chapter.id);
             setActiveVideo(null);
+            setActiveVideoData(null);
           }}
           className="gap-1.5 mb-3 text-xs sm:text-sm"
         >
@@ -682,20 +705,28 @@ export default function GuestCourses() {
           Back to Course
         </Button>
         <h1 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4">
-          {chapter?.title}
+          {activeVideoData.title}
         </h1>
-        <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
-          <div className="text-center p-6">
-            <Video className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Video content will be loaded from database</p>
+        {videoId ? (
+          <KodeIntelPlayer videoId={videoId} title={activeVideoData.title} />
+        ) : (
+          <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
+            <div className="text-center p-6">
+              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">Video not available</p>
+            </div>
           </div>
-        </div>
+        )}
+        {activeVideoData.description && (
+          <p className="text-sm text-muted-foreground mt-3">{activeVideoData.description}</p>
+        )}
         <div className="mt-4 flex gap-2">
           <Button
             size="sm"
             onClick={() => {
               if (chapter) handleVideoComplete(chapter.id);
               setActiveVideo(null);
+              setActiveVideoData(null);
             }}
             className="gap-1.5 text-xs sm:text-sm"
           >
@@ -923,7 +954,7 @@ export default function GuestCourses() {
 
       {/* Chapter Details Dialog */}
       <Dialog open={showChapterDialog} onOpenChange={setShowChapterDialog}>
-        <DialogContent className="max-w-md mx-auto p-0 gap-0 rounded-2xl">
+        <DialogContent className="max-w-md mx-auto p-0 gap-0 rounded-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader className="p-4 pb-2">
             <DialogTitle className="text-base font-bold">
               {selectedChapter?.title}
@@ -934,31 +965,50 @@ export default function GuestCourses() {
           </DialogHeader>
           
           <div className="p-4 pt-2 space-y-2.5">
-            {/* Watch Video */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start gap-3 h-12"
-              onClick={() => {
-                setActiveVideo(selectedChapter?.id);
-                setShowChapterDialog(false);
-              }}
-            >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                completedVideos.includes(selectedChapter?.id) ? 'bg-green-500/20' : 'bg-primary/20'
-              }`}>
-                {completedVideos.includes(selectedChapter?.id) ? (
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                ) : (
-                  <Video className="h-4 w-4 text-primary" />
-                )}
+            {/* Video List from Database */}
+            {chapterVideos.length > 0 ? (
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <Video className="h-3.5 w-3.5" />
+                  Videos ({chapterVideos.length})
+                </h4>
+                {chapterVideos.map((video: any, idx: number) => (
+                  <Button
+                    key={video.id}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-3 h-auto py-2.5"
+                    onClick={() => {
+                      setActiveVideo(video.id);
+                      setActiveVideoData(video);
+                      setShowChapterDialog(false);
+                    }}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      completedVideos.includes(video.id) ? 'bg-emerald-500/20' : 'bg-primary/20'
+                    }`}>
+                      {completedVideos.includes(video.id) ? (
+                        <CheckCircle className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <span className="text-xs font-bold text-primary">{idx + 1}</span>
+                      )}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="font-medium text-sm line-clamp-1">{video.title}</div>
+                      {video.duration_minutes && (
+                        <div className="text-[10px] text-muted-foreground">{video.duration_minutes} min</div>
+                      )}
+                    </div>
+                    <Play className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Button>
+                ))}
               </div>
-              <div className="flex-1 text-left">
-                <div className="font-medium text-sm">Watch Video Lesson</div>
-                <div className="text-[10px] text-muted-foreground">Learn the concepts</div>
+            ) : (
+              <div className="py-4 text-center">
+                <Video className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-xs text-muted-foreground">No videos available yet</p>
               </div>
-              <Play className="h-4 w-4 text-muted-foreground" />
-            </Button>
+            )}
 
             {/* Take Quiz */}
             {getQuizForChapter(selectedChapter?.index || 0) && (
@@ -976,11 +1026,11 @@ export default function GuestCourses() {
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                   completedQuizzes.includes(getQuizForChapter(selectedChapter?.index || 0)?.id || '') 
-                    ? 'bg-green-500/20' 
+                    ? 'bg-emerald-500/20' 
                     : 'bg-sunny/20'
                 }`}>
                   {completedQuizzes.includes(getQuizForChapter(selectedChapter?.index || 0)?.id || '') ? (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-emerald-500" />
                   ) : (
                     <HelpCircle className="h-4 w-4 text-sunny" />
                   )}
