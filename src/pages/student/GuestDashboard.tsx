@@ -306,20 +306,48 @@ export default function GuestDashboard() {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { icon: BookOpen, label: "Explore Courses", desc: "All Classes", color: "primary", path: "/guest/courses" },
-            { icon: Code, label: "Code Lab", desc: "Write & Run", color: "turquoise", path: "/compiler" },
-            { icon: Brain, label: "AI Learning", desc: "Smart Skills", color: "purple", path: "/guest/courses" },
-            { icon: Trophy, label: "Leaderboard", desc: "Top Learners", color: "sunny", path: "/guest/leaderboard" },
+            { 
+              icon: BookOpen, 
+              label: "Explore Courses", 
+              desc: "All Classes", 
+              path: "/guest/courses",
+              iconBg: "bg-gradient-to-br from-primary/20 to-primary/5",
+              iconColor: "text-primary"
+            },
+            { 
+              icon: Code, 
+              label: "Code Lab", 
+              desc: "Write & Run", 
+              path: "/compiler",
+              iconBg: "bg-gradient-to-br from-turquoise/20 to-turquoise/5",
+              iconColor: "text-turquoise"
+            },
+            { 
+              icon: Brain, 
+              label: "AI Learning", 
+              desc: "Smart Skills", 
+              path: "/guest/courses",
+              iconBg: "bg-gradient-to-br from-purple/20 to-purple/5",
+              iconColor: "text-purple"
+            },
+            { 
+              icon: Trophy, 
+              label: "Leaderboard", 
+              desc: "Top Learners", 
+              path: "/guest/leaderboard",
+              iconBg: "bg-gradient-to-br from-sunny/20 to-sunny/5",
+              iconColor: "text-sunny"
+            },
           ].map((action, idx) => (
             <Card
               key={action.label}
-              className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group overflow-hidden`}
+              className="cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group overflow-hidden"
               onClick={() => navigate(action.path)}
               style={{ animationDelay: `${idx * 50}ms` }}
             >
               <CardContent className="p-3 sm:p-4">
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-${action.color}/20 to-${action.color}/5 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md`}>
-                  <action.icon className={`h-5 w-5 sm:h-6 sm:w-6 text-${action.color}`} />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${action.iconBg} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md`}>
+                  <action.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${action.iconColor}`} />
                 </div>
                 <h3 className="font-bold text-xs sm:text-sm">{action.label}</h3>
                 <p className="text-[10px] text-muted-foreground">{action.desc}</p>
