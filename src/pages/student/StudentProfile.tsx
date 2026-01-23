@@ -4,13 +4,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   User,
@@ -25,6 +19,8 @@ import {
   Flame,
   Trophy,
   Sparkles,
+  ChevronRight,
+  Shield,
 } from "lucide-react";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -98,7 +94,7 @@ export default function StudentProfile() {
       });
     } else {
       toast({
-        title: "Password updated! 🎉",
+        title: "Password updated!",
         description: "Your new password is now active",
       });
       setShowPasswordForm(false);
@@ -118,92 +114,108 @@ export default function StudentProfile() {
   if (!student) return null;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
+    <div className="p-4 lg:p-6 max-w-2xl mx-auto space-y-4 lg:space-y-6">
       {/* Profile Header Card */}
-      <Card className="overflow-hidden">
-        <div className="bg-gradient-to-r from-primary/20 via-secondary/10 to-accent/20 p-6">
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl">
-              <User className="h-10 w-10 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{student.student_name}</h1>
-              <p className="text-muted-foreground">
-                Class {student.class}
-                {student.section && ` - Section ${student.section}`}
-              </p>
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline" className="bg-primary/10">
-                  <Trophy className="h-3 w-3 mr-1" />
-                  Level {points?.current_level || 1}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/90 to-secondary p-5 lg:p-6">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+        <div className="relative flex items-center gap-4">
+          <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl">
+            <User className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-xl lg:text-2xl font-bold text-white">{student.student_name}</h1>
+            <p className="text-white/70 text-sm lg:text-base">
+              Class {student.class}
+              {student.section && ` • Section ${student.section}`}
+            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge className="bg-white/20 text-white border-0 text-xs">
+                <Trophy className="h-3 w-3 mr-1" />
+                Level {points?.current_level || 1}
+              </Badge>
+              {isTrial && (
+                <Badge className="bg-sunny text-foreground text-xs">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  {getTrialDaysRemaining()}d Trial
                 </Badge>
-                {isTrial && (
-                  <Badge className="bg-sunny text-foreground">
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    {getTrialDaysRemaining()} Days Trial
-                  </Badge>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
-        <CardContent className="p-6">
-          {/* Stats Row */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-3 bg-sunny/10 rounded-xl">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Star className="h-4 w-4 text-sunny fill-sunny" />
-                <span className="font-bold text-sunny">{points?.total_points || 0}</span>
-              </div>
-              <p className="text-xs text-muted-foreground">XP Points</p>
+
+        {/* Stats Row */}
+        <div className="relative grid grid-cols-3 gap-2 mt-5">
+          <div className="text-center p-3 bg-white/15 backdrop-blur-sm rounded-xl">
+            <div className="flex items-center justify-center gap-1 mb-0.5">
+              <Star className="h-4 w-4 text-sunny fill-sunny" />
+              <span className="font-bold text-white">{points?.total_points || 0}</span>
             </div>
-            <div className="text-center p-3 bg-coral/10 rounded-xl">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Flame className="h-4 w-4 text-coral" />
-                <span className="font-bold text-coral">{points?.streak_days || 0}</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Day Streak</p>
-            </div>
-            <div className="text-center p-3 bg-primary/10 rounded-xl">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Trophy className="h-4 w-4 text-primary" />
-                <span className="font-bold text-primary">{points?.current_level || 1}</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Level</p>
-            </div>
+            <p className="text-[10px] text-white/70">XP</p>
           </div>
+          <div className="text-center p-3 bg-white/15 backdrop-blur-sm rounded-xl">
+            <div className="flex items-center justify-center gap-1 mb-0.5">
+              <Flame className="h-4 w-4 text-coral" />
+              <span className="font-bold text-white">{points?.streak_days || 0}</span>
+            </div>
+            <p className="text-[10px] text-white/70">Streak</p>
+          </div>
+          <div className="text-center p-3 bg-white/15 backdrop-blur-sm rounded-xl">
+            <div className="flex items-center justify-center gap-1 mb-0.5">
+              <Trophy className="h-4 w-4 text-lime" />
+              <span className="font-bold text-white">{points?.current_level || 1}</span>
+            </div>
+            <p className="text-[10px] text-white/70">Level</p>
+          </div>
+        </div>
+      </div>
 
-          {/* Student Details */}
-          <div className="grid gap-3">
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
-              <User className="h-5 w-5 text-primary" />
-              <div>
+      {/* Student Details */}
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          Account Info
+        </h2>
+        <Card className="rounded-2xl overflow-hidden">
+          <CardContent className="p-0 divide-y divide-border/50">
+            <div className="flex items-center gap-3 p-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <User className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">Username</p>
-                <p className="font-medium">{student.username}</p>
+                <p className="font-medium truncate">{student.username}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
-              <Phone className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-xs text-muted-foreground">Mobile Number</p>
+            <div className="flex items-center gap-3 p-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Phone className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground">Mobile</p>
                 <p className="font-medium">{student.mobile_number}</p>
               </div>
             </div>
 
             {student.email && (
-              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
-                <Mail className="h-5 w-5 text-primary" />
-                <div>
+              <div className="flex items-center gap-3 p-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground">Email</p>
-                  <p className="font-medium">{student.email}</p>
+                  <p className="font-medium truncate">{student.email}</p>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <div>
+            <div className="flex items-center gap-3 p-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">Class</p>
                 <p className="font-medium">
                   {student.class}
@@ -213,103 +225,110 @@ export default function StudentProfile() {
             </div>
 
             {school && (
-              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
-                <School className="h-5 w-5 text-primary" />
-                <div>
+              <div className="flex items-center gap-3 p-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <School className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground">School</p>
-                  <p className="font-medium">{school.name}</p>
+                  <p className="font-medium truncate">{school.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {school.city}, {school.state}
                   </p>
                 </div>
               </div>
             )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Password Change Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Lock className="h-5 w-5" />
-            Change Password
-          </CardTitle>
-          <CardDescription>
-            You can change your password here anytime
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!showPasswordForm ? (
-            <Button
-              variant="outline"
-              onClick={() => setShowPasswordForm(true)}
-              className="w-full h-12"
-            >
-              <Lock className="h-4 w-4 mr-2" />
-              Change My Password
-            </Button>
-          ) : (
-            <form onSubmit={handlePasswordChange} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  disabled={isUpdating}
-                  className="h-12"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="Enter password again"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={isUpdating}
-                  className="h-12"
-                />
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowPasswordForm(false);
-                    setNewPassword("");
-                    setConfirmPassword("");
-                  }}
-                  disabled={isUpdating}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isUpdating} className="flex-1">
-                  {isUpdating ? (
-                    "Saving..."
-                  ) : (
-                    <>
-                      <Check className="h-4 w-4 mr-2" />
-                      Save Password
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+      {/* Settings Section */}
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          Settings
+        </h2>
+        <Card className="rounded-2xl overflow-hidden">
+          <CardContent className="p-0">
+            {!showPasswordForm ? (
+              <button
+                onClick={() => setShowPasswordForm(true)}
+                className="flex items-center gap-3 p-4 w-full text-left hover:bg-muted/50 transition-colors active:bg-muted"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Change Password</p>
+                  <p className="text-xs text-muted-foreground">Update your login password</p>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </button>
+            ) : (
+              <form onSubmit={handlePasswordChange} className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={isUpdating}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="Enter password again"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={isUpdating}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowPasswordForm(false);
+                      setNewPassword("");
+                      setConfirmPassword("");
+                    }}
+                    disabled={isUpdating}
+                    className="flex-1 h-11 rounded-xl"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={isUpdating} 
+                    className="flex-1 h-11 rounded-xl"
+                  >
+                    {isUpdating ? (
+                      "Saving..."
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4 mr-2" />
+                        Save
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Logout Button */}
       <Button
         variant="destructive"
         onClick={handleSignOut}
-        className="w-full h-12 text-lg"
+        className="w-full h-12 text-base rounded-2xl"
       >
         <LogOut className="h-5 w-5 mr-2" />
         Logout
