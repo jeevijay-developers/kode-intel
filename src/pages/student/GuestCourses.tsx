@@ -86,11 +86,24 @@ const courseBanners: Record<string, string> = {
   "10": bannerAIProjects,
 };
 
-// Sample PDF mapping for chapters that have sample PDFs
-const samplePdfMapping: Record<string, { classNum: string; pdfUrl: string }> = {
-  "4": { classNum: "4", pdfUrl: "/ebooks/class-4-chapter-1.pdf" },
-  "6": { classNum: "6", pdfUrl: "/ebooks/class-6-chapter-1.pdf" },
-  "7": { classNum: "7", pdfUrl: "/ebooks/class-7-chapter-1.pdf" },
+// Available sample PDFs with their class numbers
+const availableSamplePdfs = [
+  { classNum: "4", pdfUrl: "/ebooks/class-4-chapter-1.pdf", label: "Class 4" },
+  { classNum: "6", pdfUrl: "/ebooks/class-6-chapter-1.pdf", label: "Class 6" },
+  { classNum: "7", pdfUrl: "/ebooks/class-7-chapter-1.pdf", label: "Class 7" },
+];
+
+// Get the best matching sample PDF for a class (exact match or nearest available)
+const getSamplePdfForClass = (classNum: string): { classNum: string; pdfUrl: string; label: string } => {
+  // First try exact match
+  const exact = availableSamplePdfs.find(p => p.classNum === classNum);
+  if (exact) return exact;
+  
+  // Fallback logic based on class range
+  const num = parseInt(classNum);
+  if (num <= 4) return availableSamplePdfs[0]; // Class 4 sample
+  if (num <= 6) return availableSamplePdfs[1]; // Class 6 sample
+  return availableSamplePdfs[2]; // Class 7 sample for 7+
 };
 
 const classes = ["Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"];
@@ -295,15 +308,6 @@ export default function GuestCourses() {
     return match ? match[1] : "3";
   };
 
-  // Check if sample PDF is available for a class chapter 1
-  const hasSamplePdf = (classNum: string, chapterIndex: number): boolean => {
-    return chapterIndex === 0 && samplePdfMapping[classNum] !== undefined;
-  };
-
-  // Get sample PDF for a class
-  const getSamplePdf = (classNum: string): { pdfUrl: string; classNum: string } | null => {
-    return samplePdfMapping[classNum] || null;
-  };
 
   // PDF Viewer View
   if (activePdf) {
@@ -627,54 +631,44 @@ export default function GuestCourses() {
                         <FileText className="h-3 w-3 text-turquoise" />
                       </div>
                       <h5 className="font-semibold text-sm">Study Materials</h5>
+                      <Badge variant="outline" className="text-[10px] ml-auto">Sample Preview</Badge>
                     </div>
                     
                     <div className="space-y-1.5 pl-8">
-                      {/* Sample PDF Preview - only show for Chapter 1 of classes that have samples */}
-                      {chapterIndex === 0 && getSamplePdf(selectedClassNum) && (
-                        <button
-                          onClick={() => {
-                            const pdf = getSamplePdf(selectedClassNum);
-                            if (pdf) {
+                      {/* Sample PDF Preview - available for every chapter */}
+                      {(() => {
+                        const samplePdf = getSamplePdfForClass(selectedClassNum);
+                        return (
+                          <button
+                            onClick={() => {
                               setActivePdf({
-                                title: `${chapter.title} - Sample Preview`,
-                                pdfUrl: pdf.pdfUrl,
-                                classNum: pdf.classNum,
+                                title: `${chapter.title} - Sample Book Preview`,
+                                pdfUrl: samplePdf.pdfUrl,
+                                classNum: samplePdf.classNum,
                               });
                               setPdfLoading(true);
                               setPdfPageNumber(1);
-                            }
-                          }}
-                          className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-turquoise/10 to-lime/10 hover:from-turquoise/20 hover:to-lime/20 border border-turquoise/30 transition-all hover:translate-x-1 text-left group"
-                        >
-                          <div className="w-7 h-7 rounded-full bg-turquoise/20 flex items-center justify-center shrink-0 group-hover:bg-turquoise/30 transition-colors">
-                            <BookOpen className="h-3.5 w-3.5 text-turquoise" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">
-                              📖 Chapter {chapterIndex + 1} - Sample Preview
-                            </p>
-                            <p className="text-[10px] text-muted-foreground">Free soft copy preview (non-downloadable)</p>
-                          </div>
-                          <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 text-[10px] group-hover:bg-turquoise group-hover:text-white transition-colors shrink-0">
-                            <Eye className="h-2.5 w-2.5 mr-0.5" />
-                            View
-                          </Badge>
-                        </button>
-                      )}
-                      
-                      {/* No sample available message */}
-                      {(chapterIndex !== 0 || !getSamplePdf(selectedClassNum)) && (
-                        <div className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-dashed border-muted-foreground/20">
-                          <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
-                            <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-muted-foreground">Physical Book Only</p>
-                            <p className="text-[10px] text-muted-foreground">Sample preview available for Chapter 1 only</p>
-                          </div>
-                        </div>
-                      )}
+                            }}
+                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-turquoise/10 to-lime/10 hover:from-turquoise/20 hover:to-lime/20 border border-turquoise/30 transition-all hover:translate-x-1 text-left group"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-turquoise/20 flex items-center justify-center shrink-0 group-hover:bg-turquoise/30 transition-colors">
+                              <BookOpen className="h-3.5 w-3.5 text-turquoise" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">
+                                📖 Sample Book Preview
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">
+                                Free soft copy preview • {samplePdf.label} sample (non-downloadable)
+                              </p>
+                            </div>
+                            <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 text-[10px] group-hover:bg-turquoise group-hover:text-white transition-colors shrink-0">
+                              <Eye className="h-2.5 w-2.5 mr-0.5" />
+                              View
+                            </Badge>
+                          </button>
+                        );
+                      })()}
                     </div>
 
                     {/* Physical Book Notice */}
