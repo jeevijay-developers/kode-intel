@@ -40,6 +40,8 @@ import {
   Rocket,
   User,
   Phone,
+  Code,
+  Timer,
 } from "lucide-react";
 import { useCourses, useChapters } from "@/hooks/useCourses";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -186,6 +188,20 @@ export default function GuestCourses() {
       name: name.trim(),
       mobile: mobile.trim(),
       selectedClass,
+      registeredAt: new Date(),
+    };
+    localStorage.setItem("guestInfo", JSON.stringify(info));
+    setGuestInfo(info);
+    setShowRegistration(false);
+  };
+
+  const handleRegistrationSimple = () => {
+    if (!name.trim() || !mobile.trim()) return;
+    
+    const info: GuestInfo = {
+      name: name.trim(),
+      mobile: mobile.trim(),
+      selectedClass: "Class 3", // Default
       registeredAt: new Date(),
     };
     localStorage.setItem("guestInfo", JSON.stringify(info));
@@ -473,85 +489,84 @@ export default function GuestCourses() {
   // Main Courses Grid
   return (
     <div className="p-3 sm:p-4 lg:p-6 animate-fade-in">
-      {/* Registration Modal */}
+      {/* Registration Modal - Simplified, just name and mobile */}
       <Dialog open={showRegistration} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
-          <DialogHeader className="text-center">
-            <div className="mx-auto mb-4">
-              <img src={mascot} alt="Kodi" className="w-20 h-20 mx-auto animate-bounce-gentle" />
+        <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto mb-2 relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-full blur-2xl scale-150" />
+              <img src={mascot} alt="Kodi" className="w-24 h-24 mx-auto relative z-10 drop-shadow-xl animate-bounce-gentle" />
             </div>
-            <DialogTitle className="text-xl font-bold font-display">
+            <DialogTitle className="text-2xl font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Start Your Free Trial! 🎉
             </DialogTitle>
-            <DialogDescription className="text-center">
-              Get <span className="text-primary font-semibold">24 hours</span> of unlimited access to explore all courses
+            <DialogDescription className="text-center text-base">
+              Get <span className="text-primary font-bold">24 hours</span> of unlimited access to all courses
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                Your Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="h-11"
-              />
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-coral/10 to-coral/5 border border-coral/20">
+                <Video className="h-5 w-5 mx-auto text-coral mb-1" />
+                <p className="text-[10px] font-medium">HD Videos</p>
+              </div>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple/10 to-purple/5 border border-purple/20">
+                <HelpCircle className="h-5 w-5 mx-auto text-purple mb-1" />
+                <p className="text-[10px] font-medium">Quizzes</p>
+              </div>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-turquoise/10 to-turquoise/5 border border-turquoise/20">
+                <Code className="h-5 w-5 mx-auto text-turquoise mb-1" />
+                <p className="text-[10px] font-medium">Code Lab</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="mobile" className="text-sm font-medium flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                Mobile Number
-              </Label>
-              <Input
-                id="mobile"
-                placeholder="Enter mobile number"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                className="h-11"
-                type="tel"
-              />
-            </div>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
+                  <User className="h-4 w-4 text-primary" />
+                  Your Name
+                </Label>
+                <Input
+                  id="name"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-12 text-base border-2 focus:border-primary"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                Select Your Class
-              </Label>
-              <Select value={selectedClass} onValueChange={setSelectedClass}>
-                <SelectTrigger className="h-11">
-                  <SelectValue placeholder="Choose your class" />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes.map((cls) => (
-                    <SelectItem key={cls} value={cls}>
-                      {cls}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-1.5">
+                <Label htmlFor="mobile" className="text-sm font-medium flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  Mobile Number
+                </Label>
+                <Input
+                  id="mobile"
+                  placeholder="Enter mobile number"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                  className="h-12 text-base border-2 focus:border-primary"
+                  type="tel"
+                />
+              </div>
             </div>
           </div>
 
           <Button
-            onClick={handleRegistration}
-            disabled={!name.trim() || !mobile.trim() || !selectedClass}
-            className="w-full h-12 gap-2 bg-gradient-to-r from-primary to-secondary text-base font-semibold"
+            onClick={handleRegistrationSimple}
+            disabled={!name.trim() || !mobile.trim()}
+            className="w-full h-14 gap-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] hover:bg-right transition-all duration-500 text-lg font-bold shadow-xl"
           >
             <Rocket className="h-5 w-5" />
-            Start Free Trial
+            Start My Free Trial
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
             Already have an account?{" "}
             <button
               onClick={() => navigate("/student/login")}
-              className="text-primary hover:underline font-medium"
+              className="text-primary hover:underline font-semibold"
             >
               Login here
             </button>
@@ -561,101 +576,174 @@ export default function GuestCourses() {
 
       {/* Header with Trial Timer */}
       {guestInfo && (
-        <Card className="mb-4 bg-gradient-to-r from-primary/10 via-turquoise/10 to-secondary/10 border-primary/20">
-          <CardContent className="p-3 sm:p-4">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/10 to-turquoise/15 border border-primary/20 shadow-lg mb-4">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-sunny/20 to-transparent rounded-full blur-2xl" />
+          
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                  <GraduationCap className="h-5 w-5 text-white" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-full blur-lg opacity-60" />
+                  <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+                    <GraduationCap className="h-6 w-6 text-white" />
+                  </div>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm sm:text-base">
+                  <p className="font-bold text-sm sm:text-lg">
                     Welcome, {guestInfo.name}! 👋
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {guestInfo.selectedClass} • Free Trial
+                    Free Trial Active • All Courses Unlocked
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center gap-1.5 text-primary">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-bold text-sm">{getTimeRemaining()}</span>
+              
+              {/* Timer */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 shadow-inner">
+                <Timer className="h-5 w-5 text-coral animate-pulse" />
+                <div className="text-right">
+                  <span className="font-bold text-primary font-mono">{getTimeRemaining()}</span>
+                  <p className="text-[9px] text-muted-foreground">remaining</p>
                 </div>
-                <p className="text-xs text-muted-foreground">remaining</p>
               </div>
             </div>
           </CardContent>
-        </Card>
+        </div>
       )}
 
       {/* Page Title */}
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold font-display flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            All Courses
-          </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Explore AI & Computational Thinking courses
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold font-display">
+              All Courses
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Classes 3-10 • AI & Computational Thinking
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Courses Grid */}
+      {/* Courses Grid - Enhanced Cards */}
       {coursesLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <div className="h-24 bg-muted rounded-t-lg" />
-              <CardContent className="p-3">
-                <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+            <Card key={i} className="animate-pulse overflow-hidden">
+              <div className="h-32 bg-gradient-to-br from-muted to-muted/50" />
+              <CardContent className="p-4">
+                <div className="h-5 bg-muted rounded w-3/4 mb-2" />
                 <div className="h-3 bg-muted rounded w-1/2" />
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {allCourses
             .filter((course) => course.is_published)
-            .map((course, index) => (
-              <Card
-                key={course.id}
-                className="overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group"
-                onClick={() => handleCourseClick(course)}
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="relative h-20 sm:h-24">
-                  <img
-                    src={course.thumbnail_url || "/placeholder.svg"}
-                    alt={course.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <Badge className="absolute top-2 left-2 text-[10px] bg-primary/90 backdrop-blur-sm">
-                    <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
-                    Free
-                  </Badge>
-                </div>
-                <CardContent className="p-2.5 sm:p-3">
-                  <h3 className="font-semibold text-xs sm:text-sm line-clamp-2 leading-tight mb-1 group-hover:text-primary transition-colors">
-                    {course.title}
-                  </h3>
-                  {course.description && (
-                    <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">
-                      {course.description}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+            .map((course, index) => {
+              const classMatch = course.title.match(/class\s*(\d+)/i);
+              const classNum = classMatch ? classMatch[1] : "3";
+              const gradients: Record<string, string> = {
+                "3": "from-coral to-sunny",
+                "4": "from-turquoise to-lime",
+                "5": "from-primary to-secondary",
+                "6": "from-purple to-primary",
+                "7": "from-sunny to-coral",
+                "8": "from-lime to-turquoise",
+                "9": "from-secondary to-purple",
+                "10": "from-primary to-turquoise",
+              };
+              const gradient = gradients[classNum] || gradients["3"];
+              
+              return (
+                <Card
+                  key={course.id}
+                  className="overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group border-2 border-transparent hover:border-primary/30"
+                  onClick={() => handleCourseClick(course)}
+                  style={{ animationDelay: `${index * 60}ms` }}
+                >
+                  {/* Course Banner with Gradient Overlay */}
+                  <div className="relative h-28 sm:h-32 overflow-hidden">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-90`} />
+                    {course.thumbnail_url && (
+                      <img
+                        src={course.thumbnail_url}
+                        alt={course.title}
+                        className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-700"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    
+                    {/* Class Badge */}
+                    <Badge className="absolute top-2 left-2 bg-white/95 text-foreground border-0 shadow-lg backdrop-blur-sm text-[10px] font-bold">
+                      Class {classNum}
+                    </Badge>
+                    
+                    {/* Free Badge */}
+                    <Badge className="absolute top-2 right-2 bg-gradient-to-r from-sunny to-coral text-white border-0 shadow-lg text-[10px]">
+                      <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
+                      Free
+                    </Badge>
+                    
+                    {/* Course Icon */}
+                    <div className="absolute bottom-3 left-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/30">
+                        <BookOpen className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    
+                    {/* Play Button on Hover */}
+                    <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="w-10 h-10 rounded-full bg-white/95 flex items-center justify-center shadow-xl">
+                        <Play className="h-4 w-4 text-primary fill-primary ml-0.5" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Course Info */}
+                  <CardContent className="p-3 sm:p-4 bg-gradient-to-b from-background to-muted/30">
+                    <h3 className="font-bold text-sm sm:text-base line-clamp-2 leading-tight mb-2 group-hover:text-primary transition-colors">
+                      {course.title}
+                    </h3>
+                    {course.description && (
+                      <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2 mb-3">
+                        {course.description}
+                      </p>
+                    )}
+                    
+                    {/* Course Content Indicators */}
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-coral/10">
+                        <Video className="h-3 w-3 text-coral" />
+                        Videos
+                      </span>
+                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple/10">
+                        <HelpCircle className="h-3 w-3 text-purple" />
+                        Quizzes
+                      </span>
+                      <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-turquoise/10">
+                        <FileText className="h-3 w-3 text-turquoise" />
+                        E-Books
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
         </div>
       )}
 
       {/* Empty State */}
       {!coursesLoading && allCourses.filter((c) => c.is_published).length === 0 && (
-        <Card className="p-8 text-center">
+        <Card className="p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20">
           <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
           <h3 className="font-bold text-lg mb-2">No Courses Available</h3>
           <p className="text-muted-foreground text-sm">
@@ -666,22 +754,28 @@ export default function GuestCourses() {
 
       {/* Upgrade CTA */}
       {guestInfo && (
-        <Card className="mt-6 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-          <CardContent className="p-4 sm:p-6">
+        <Card className="mt-6 overflow-hidden relative bg-gradient-to-r from-primary/15 via-secondary/15 to-purple/15 border-primary/20 shadow-xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-sunny/30 to-transparent rounded-full blur-2xl" />
+          <Sparkles className="absolute top-4 right-4 h-5 w-5 text-sunny animate-pulse" />
+          
+          <CardContent className="p-5 sm:p-6 relative">
             <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-xl animate-bounce-gentle">
+                <Rocket className="h-6 w-6 text-white" />
+              </div>
               <div className="flex-1 text-center sm:text-left">
                 <h3 className="font-bold text-base sm:text-lg mb-1">
                   Enjoying the trial? 🚀
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Sign up for unlimited access, track your progress, and earn badges!
+                  Sign up for unlimited access, track progress, earn badges, and compete on leaderboard!
                 </p>
               </div>
               <Button
                 onClick={() => navigate("/student/signup")}
-                className="w-full sm:w-auto gap-2 bg-gradient-to-r from-primary to-secondary"
+                className="w-full sm:w-auto gap-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] hover:bg-right transition-all duration-500 text-base font-semibold shadow-xl h-12"
               >
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-5 w-5" />
                 Sign Up Free
               </Button>
             </div>
