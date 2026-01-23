@@ -107,7 +107,7 @@ const classes = ["Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8
 interface GuestInfo {
   name: string;
   mobile: string;
-  selectedClass: string;
+  selectedClass?: string;
   registeredAt: Date;
 }
 
@@ -163,10 +163,10 @@ export default function GuestCourses() {
 
   const { courses: allCourses = [], isLoading: coursesLoading } = useCourses();
 
-  // Filter courses based on selected class
+  // Filter courses based on selected class (if provided)
   const filteredCourses = allCourses.filter(course => 
     course.is_published && 
-    (guestInfo ? course.title.toLowerCase().includes(guestInfo.selectedClass.toLowerCase().replace(" ", "")) : true)
+    (guestInfo?.selectedClass ? course.title.toLowerCase().includes(guestInfo.selectedClass.toLowerCase().replace(" ", "")) : true)
   );
 
   // Fetch chapters for selected course
