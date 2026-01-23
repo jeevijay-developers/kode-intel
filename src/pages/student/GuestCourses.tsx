@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,14 +48,8 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 import { useCourses, useChapters } from "@/hooks/useCourses";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
@@ -63,6 +57,8 @@ import { supabase } from "@/integrations/supabase/client";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import mascot from "@/assets/kodi-mascot-3d.png";
 import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
+
+const GuestPdfPreview = lazy(() => import("@/components/student/GuestPdfPreview"));
 
 // Course banner imports
 import bannerClass3 from "@/assets/course-banner-class3.png";
@@ -131,6 +127,19 @@ export default function GuestCourses() {
   const [pdfNumPages, setPdfNumPages] = useState(0);
   const [pdfLoading, setPdfLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
+  const [pdfWidth, setPdfWidth] = useState<number>(600);
+
+  useEffect(() => {
+    // Avoid touching window during SSR-like environments; also reduces layout thrash on mobile.
+    const update = () => {
+      if (typeof window === "undefined") return;
+      setPdfWidth(Math.min(window.innerWidth * 0.85, 600));
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // Check for existing guest session
   useEffect(() => {
@@ -349,32 +358,23 @@ export default function GuestCourses() {
           <div className="flex-1 overflow-hidden bg-muted/30">
             <ScrollArea className="h-full">
               <div className="flex justify-center p-4 min-h-full">
-                <Document
-                  file={activePdf.pdfUrl}
-                  onLoadSuccess={({ numPages }) => {
-                    setPdfNumPages(numPages);
-                    setPdfLoading(false);
-                  }}
-                  loading={
+                <Suspense
+                  fallback={
                     <div className="flex items-center justify-center h-96">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
                   }
-                  error={
-                    <div className="flex flex-col items-center justify-center h-96 text-muted-foreground">
-                      <BookOpen className="h-12 w-12 mb-2 opacity-50" />
-                      <p>Failed to load PDF</p>
-                    </div>
-                  }
                 >
-                  <Page
+                  <GuestPdfPreview
+                    file={activePdf.pdfUrl}
                     pageNumber={pdfPageNumber}
-                    renderTextLayer={true}
-                    renderAnnotationLayer={true}
-                    className="shadow-xl rounded-lg overflow-hidden"
-                    width={Math.min(window.innerWidth * 0.85, 600)}
+                    width={pdfWidth}
+                    onLoadSuccess={(numPages) => {
+                      setPdfNumPages(numPages);
+                      setPdfLoading(false);
+                    }}
                   />
-                </Document>
+                </Suspense>
               </div>
             </ScrollArea>
           </div>
