@@ -9,6 +9,7 @@ import { StudentProtectedRoute } from "@/components/student/StudentProtectedRout
 import PublicLayout from "@/components/layout/PublicLayout";
 import StudentLayout from "@/components/student/StudentLayout";
 import GuestLayout from "@/components/student/GuestLayout";
+import InstitutionLayout from "@/components/institution/InstitutionLayout";
 import Dashboard from "./pages/Dashboard";
 import Schools from "./pages/Schools";
 import BulkUpload from "./pages/BulkUpload";
@@ -43,6 +44,13 @@ import GuestLeaderboard from "./pages/student/GuestLeaderboard";
 import StudentLeaderboard from "./pages/student/StudentLeaderboard";
 import GuestQuiz from "./pages/student/GuestQuiz";
 import GuestQuizList from "./pages/student/GuestQuizList";
+import InstitutionLogin from "./pages/institution/InstitutionLogin";
+import InstitutionSignup from "./pages/institution/InstitutionSignup";
+import InstitutionDashboard from "./pages/institution/InstitutionDashboard";
+import InstitutionStudents from "./pages/institution/InstitutionStudents";
+import InstitutionCourses from "./pages/institution/InstitutionCourses";
+import InstitutionReports from "./pages/institution/InstitutionReports";
+import InstitutionPayments from "./pages/institution/InstitutionPayments";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -101,6 +109,19 @@ function App() {
 
             {/* Compiler route - accessible to all */}
             <Route path="/compiler" element={<Compiler />} />
+
+            {/* Institution auth routes */}
+            <Route path="/institution/login" element={<InstitutionLogin />} />
+            <Route path="/institution/signup" element={<InstitutionSignup />} />
+
+            {/* Institution dashboard routes */}
+            <Route path="/institution" element={<InstitutionLayout />}>
+              <Route index element={<InstitutionDashboard />} />
+              <Route path="students" element={<InstitutionStudents />} />
+              <Route path="courses" element={<InstitutionCourses />} />
+              <Route path="reports" element={<InstitutionReports />} />
+              <Route path="payments" element={<InstitutionPayments />} />
+            </Route>
 
             {/* Auth route (no header) */}
             <Route path="/auth" element={<Auth />} />
