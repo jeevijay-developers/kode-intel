@@ -13,6 +13,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   BookOpen,
   Play,
   Rocket,
@@ -49,9 +56,10 @@ import courseBannerAlgorithms from "@/assets/course-banner-algorithms.png";
 import courseBannerPatterns from "@/assets/course-banner-patterns.png";
 import courseBannerMl from "@/assets/course-banner-ml.png";
 
-interface GuestInfo {
+export interface GuestInfo {
   name: string;
   mobile: string;
+  selectedClass: string;
   registeredAt: Date;
 }
 
@@ -65,6 +73,17 @@ const classColors: Record<string, { from: string; to: string; accent: string }> 
   "9": { from: "from-secondary", to: "to-purple", accent: "secondary" },
   "10": { from: "from-primary", to: "to-turquoise", accent: "primary" },
 };
+
+const classOptions = [
+  { value: "3", label: "Class 3", description: "Age 8-9" },
+  { value: "4", label: "Class 4", description: "Age 9-10" },
+  { value: "5", label: "Class 5", description: "Age 10-11" },
+  { value: "6", label: "Class 6", description: "Age 11-12" },
+  { value: "7", label: "Class 7", description: "Age 12-13" },
+  { value: "8", label: "Class 8", description: "Age 13-14" },
+  { value: "9", label: "Class 9", description: "Age 14-15" },
+  { value: "10", label: "Class 10", description: "Age 15-16" },
+];
 
 const getClassNumber = (title: string): string => {
   const match = title.match(/class\s*(\d+)/i);
@@ -89,6 +108,7 @@ export default function GuestDashboard() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
+  const [selectedClass, setSelectedClass] = useState("5");
   const { courses: allCourses = [] } = useCourses();
 
   useEffect(() => {
@@ -134,11 +154,12 @@ export default function GuestDashboard() {
   }, [guestInfo]);
 
   const handleRegistration = () => {
-    if (!name.trim() || !mobile.trim()) return;
+    if (!name.trim() || !mobile.trim() || !selectedClass) return;
     
     const info: GuestInfo = {
       name: name.trim(),
       mobile: mobile.trim(),
+      selectedClass,
       registeredAt: new Date(),
     };
     localStorage.setItem("guestInfo", JSON.stringify(info));
@@ -148,7 +169,15 @@ export default function GuestDashboard() {
 
   const publishedCourses = allCourses.filter((c) => c.is_published);
   
-  // Group courses by class
+  // Filter courses by selected class
+  const filteredCourses = guestInfo?.selectedClass 
+    ? publishedCourses.filter(course => {
+        const courseClass = getClassNumber(course.title);
+        return courseClass === guestInfo.selectedClass;
+      })
+    : publishedCourses;
+  
+  // Group courses by class for display
   const coursesByClass = publishedCourses.reduce((acc, course) => {
     const classNum = getClassNumber(course.title);
     if (!acc[classNum]) acc[classNum] = [];
@@ -221,12 +250,38 @@ export default function GuestDashboard() {
                   type="tel"
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  Select Your Class
+                </Label>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger className="h-12 text-base border-2 focus:border-primary bg-background">
+                    <SelectValue placeholder="Choose your class" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-2 z-50">
+                    {classOptions.map((option) => (
+                      <SelectItem 
+                        key={option.value} 
+                        value={option.value}
+                        className="cursor-pointer hover:bg-muted"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">{option.label}</span>
+                          <span className="text-muted-foreground text-xs">({option.description})</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
           <Button
             onClick={handleRegistration}
-            disabled={!name.trim() || !mobile.trim()}
+            disabled={!name.trim() || !mobile.trim() || !selectedClass}
             className="w-full h-14 gap-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] hover:bg-right transition-all duration-500 text-lg font-bold shadow-xl"
           >
             <Rocket className="h-5 w-5" />
@@ -271,9 +326,15 @@ export default function GuestDashboard() {
                     <Sparkles className="h-3 w-3 mr-1" />
                     Free Trial
                   </Badge>
+                  {guestInfo?.selectedClass && (
+                    <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
+                      <GraduationCap className="h-3 w-3 mr-1" />
+                      Class {guestInfo.selectedClass}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Explore all courses, watch videos, and practice coding!
+                  Exploring Class {guestInfo?.selectedClass || "5"} courses • Watch videos, take quizzes, and practice coding!
                 </p>
                 
                 {/* Trial Timer */}
@@ -356,7 +417,7 @@ export default function GuestDashboard() {
           ))}
         </div>
 
-        {/* Courses by Class Section */}
+        {/* Courses for Selected Class */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -364,8 +425,16 @@ export default function GuestDashboard() {
                 <GraduationCap className="h-4 w-4 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-base sm:text-lg font-display">All Courses</h2>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Classes 3-10 • AI & Computational Thinking</p>
+                <h2 className="font-bold text-base sm:text-lg font-display">
+                  {guestInfo?.selectedClass 
+                    ? `Class ${guestInfo.selectedClass} Courses` 
+                    : "All Courses"}
+                </h2>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  {guestInfo?.selectedClass 
+                    ? `AI & Computational Thinking for Class ${guestInfo.selectedClass}`
+                    : "Classes 3-10 • AI & Computational Thinking"}
+                </p>
               </div>
             </div>
             <Button
@@ -381,7 +450,7 @@ export default function GuestDashboard() {
 
           {/* Course Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {publishedCourses.map((course, index) => {
+            {(filteredCourses.length > 0 ? filteredCourses : publishedCourses.slice(0, 4)).map((course, index) => {
               const classNum = getClassNumber(course.title);
               const colors = classColors[classNum] || classColors["3"];
               
