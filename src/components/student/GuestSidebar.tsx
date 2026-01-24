@@ -164,7 +164,10 @@ export function GuestSidebar() {
                 <GraduationCap className="h-4 w-4 text-primary" />
                 <span className="font-semibold">Class {guestInfo.selectedClass}</span>
               </div>
-              <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <span>Change</span>
+                <RefreshCw className="h-3 w-3" />
+              </div>
             </Button>
           </div>
         )}
