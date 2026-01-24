@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Confetti } from "@/components/ui/confetti";
 import mascot from "@/assets/kodi-mascot-3d.png";
+import { useGuestProgress } from "@/hooks/useGuestProgress";
 
 interface Question {
   id: string;
@@ -40,6 +41,7 @@ interface Option {
 export default function GuestQuiz() {
   const { quizId } = useParams<{ quizId: string }>();
   const navigate = useNavigate();
+  const { markQuizCompleted } = useGuestProgress();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
@@ -118,7 +120,15 @@ export default function GuestQuiz() {
     setShowResults(true);
     const score = calculateScore();
     const passingScore = quiz?.passing_score || 60;
-    if ((score / totalQuestions) * 100 >= passingScore) {
+    const scorePercentage = Math.round((score / totalQuestions) * 100);
+    const passed = scorePercentage >= passingScore;
+    
+    // Save progress to localStorage
+    if (quizId) {
+      markQuizCompleted(quizId, scorePercentage, passed);
+    }
+    
+    if (passed) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 5000);
     }

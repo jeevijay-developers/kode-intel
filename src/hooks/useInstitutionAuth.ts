@@ -23,6 +23,34 @@ interface AuthError {
   code?: string;
 }
 
+// Hash password using edge function
+async function hashPassword(password: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke('hash-password', {
+      body: { action: 'hash', password }
+    });
+    if (error) throw error;
+    return data.hash;
+  } catch (err) {
+    console.error('Hash password error:', err);
+    return null;
+  }
+}
+
+// Verify password using edge function
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.functions.invoke('hash-password', {
+      body: { action: 'verify', password, storedHash }
+    });
+    if (error) throw error;
+    return data.valid === true;
+  } catch (err) {
+    console.error('Verify password error:', err);
+    return false;
+  }
+}
+
 export function useInstitutionAuth() {
   const [institution, setInstitution] = useState<Institution | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,18 +70,24 @@ export function useInstitutionAuth() {
 
   const signIn = async (email: string, password: string): Promise<{ error: AuthError | null }> => {
     try {
-      // Simple password verification (in production, use bcrypt comparison)
+      // First get the institution by email
       const { data, error } = await supabase
         .from("institution_accounts")
         .select("*")
         .eq("email", email.toLowerCase().trim())
-        .eq("password_hash", password) // In production, use proper hashing
         .eq("is_active", true)
         .maybeSingle();
 
       if (error) throw error;
 
       if (!data) {
+        return { error: { message: "Invalid email or password", code: "INVALID_CREDENTIALS" } };
+      }
+
+      // Verify password using edge function
+      const isValidPassword = await verifyPassword(password, data.password_hash);
+      
+      if (!isValidPassword) {
         return { error: { message: "Invalid email or password", code: "INVALID_CREDENTIALS" } };
       }
 
@@ -107,6 +141,12 @@ export function useInstitutionAuth() {
         return { error: { message: "An institution with this email already exists", code: "EMAIL_EXISTS" } };
       }
 
+      // Hash password using edge function
+      const hashedPassword = await hashPassword(data.password);
+      if (!hashedPassword) {
+        return { error: { message: "Failed to secure password. Please try again.", code: "HASH_ERROR" } };
+      }
+
       // Create institution account
       const { data: newInstitution, error } = await supabase
         .from("institution_accounts")
@@ -118,7 +158,7 @@ export function useInstitutionAuth() {
           phone: data.phone.trim(),
           city: data.city.trim(),
           state: data.state.trim(),
-          password_hash: data.password, // In production, hash this!
+          password_hash: hashedPassword,
           expected_student_count: data.expected_student_count || 0,
           address: data.address?.trim(),
         })

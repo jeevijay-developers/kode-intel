@@ -60,6 +60,7 @@ import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import mascot from "@/assets/kodi-mascot-3d.png";
 import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
 import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
+import { useGuestProgress } from "@/hooks/useGuestProgress";
 
 const GuestPdfPreview = lazy(() => import("@/components/student/GuestPdfPreview"));
 
@@ -117,6 +118,7 @@ interface GuestInfo {
 export default function GuestCourses() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isVideoWatched, isQuizCompleted, getQuizScore, isEbookViewed, markVideoWatched, markEbookViewed, getStats } = useGuestProgress();
   const [showRegistration, setShowRegistration] = useState(false);
   const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
   const [name, setName] = useState("");
@@ -125,7 +127,7 @@ export default function GuestCourses() {
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [activeVideo, setActiveVideo] = useState<any>(null);
   const [activeQuiz, setActiveQuiz] = useState<any>(null);
-  const [activePdf, setActivePdf] = useState<{ title: string; pdfUrl: string; classNum: string } | null>(null);
+  const [activePdf, setActivePdf] = useState<{ title: string; pdfUrl: string; classNum: string; ebookId?: string } | null>(null);
   const [pdfPageNumber, setPdfPageNumber] = useState(1);
   const [pdfNumPages, setPdfNumPages] = useState(0);
   const [pdfLoading, setPdfLoading] = useState(true);
@@ -346,6 +348,20 @@ export default function GuestCourses() {
   };
 
 
+  // Mark video as watched when viewing (moved here to avoid hooks in conditionals)
+  useEffect(() => {
+    if (activeVideo?.id) {
+      markVideoWatched(activeVideo.id);
+    }
+  }, [activeVideo?.id, markVideoWatched]);
+
+  // Mark ebook as viewed when viewing
+  useEffect(() => {
+    if (activePdf?.ebookId) {
+      markEbookViewed(activePdf.ebookId);
+    }
+  }, [activePdf?.ebookId, markEbookViewed]);
+
   // PDF Viewer View
   if (activePdf) {
     return (
@@ -457,6 +473,7 @@ export default function GuestCourses() {
 
   // Video Player View
   if (activeVideo) {
+
     return (
       <div className="p-3 sm:p-4 lg:p-6 animate-fade-in">
         <Button
@@ -475,7 +492,13 @@ export default function GuestCourses() {
             title={activeVideo.title}
           />
           <CardContent className="p-4">
-            <h2 className="font-bold text-lg mb-2">{activeVideo.title}</h2>
+            <div className="flex items-center gap-2 mb-2">
+              <h2 className="font-bold text-lg">{activeVideo.title}</h2>
+              <Badge className="bg-lime/20 text-lime border-lime/30 text-[10px]">
+                <CheckCircle className="h-2.5 w-2.5 mr-0.5" />
+                Watched
+              </Badge>
+            </div>
             {activeVideo.description && (
               <p className="text-muted-foreground text-sm">{activeVideo.description}</p>
             )}
@@ -593,27 +616,44 @@ export default function GuestCourses() {
                         <Badge variant="outline" className="text-[10px] ml-auto">{videos.length} videos</Badge>
                       </div>
                       <div className="space-y-1.5 pl-8">
-                        {videos.map((video: any, videoIndex: number) => (
-                          <button
-                            key={video.id}
-                            onClick={() => setActiveVideo(video)}
-                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 text-left group"
-                          >
-                            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                              <span className="text-xs font-medium text-primary">{videoIndex + 1}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">{video.title}</p>
-                              {video.duration_minutes && (
-                                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                  <Clock className="h-2.5 w-2.5" />
-                                  {video.duration_minutes} min
-                                </p>
+                        {videos.map((video: any, videoIndex: number) => {
+                          const watched = isVideoWatched(video.id);
+                          return (
+                            <button
+                              key={video.id}
+                              onClick={() => setActiveVideo(video)}
+                              className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all hover:translate-x-1 text-left group ${
+                                watched ? 'bg-lime/10 border border-lime/30' : 'bg-muted/40 hover:bg-muted'
+                              }`}
+                            >
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                watched ? 'bg-lime/20' : 'bg-primary/10 group-hover:bg-primary/20'
+                              }`}>
+                                {watched ? (
+                                  <CheckCircle className="h-3.5 w-3.5 text-lime" />
+                                ) : (
+                                  <span className="text-xs font-medium text-primary">{videoIndex + 1}</span>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-sm font-medium truncate transition-colors ${
+                                  watched ? 'text-lime' : 'group-hover:text-primary'
+                                }`}>{video.title}</p>
+                                {video.duration_minutes && (
+                                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                    <Clock className="h-2.5 w-2.5" />
+                                    {video.duration_minutes} min
+                                  </p>
+                                )}
+                              </div>
+                              {watched ? (
+                                <Badge className="bg-lime/20 text-lime border-lime/30 text-[10px]">Done</Badge>
+                              ) : (
+                                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
                               )}
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
-                          </button>
-                        ))}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -629,25 +669,68 @@ export default function GuestCourses() {
                         <Badge variant="outline" className="text-[10px] ml-auto">{quizzes.length} quiz{quizzes.length > 1 ? 'zes' : ''}</Badge>
                       </div>
                       <div className="space-y-1.5 pl-8">
-                        {quizzes.map((quiz: any, quizIndex: number) => (
-                          <button
-                            key={quiz.id}
-                            onClick={() => navigate(`/guest/quiz/${quiz.id}`)}
-                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-muted/40 hover:bg-muted transition-all hover:translate-x-1 text-left group"
-                          >
-                            <div className="w-7 h-7 rounded-full bg-purple/10 flex items-center justify-center shrink-0 group-hover:bg-purple/20 transition-colors">
-                              <HelpCircle className="h-3.5 w-3.5 text-purple" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate group-hover:text-purple transition-colors">{quiz.title}</p>
-                              <p className="text-[10px] text-muted-foreground">Passing score: {quiz.passing_score}%</p>
-                            </div>
-                            <Badge className="bg-purple/20 text-purple border-purple/30 text-[10px] group-hover:bg-purple group-hover:text-white transition-colors">
-                              <Play className="h-2.5 w-2.5 mr-0.5" />
-                              Start
-                            </Badge>
-                          </button>
-                        ))}
+                      {quizzes.map((quiz: any) => {
+                          const quizResult = getQuizScore(quiz.id);
+                          const completed = isQuizCompleted(quiz.id);
+                          return (
+                            <button
+                              key={quiz.id}
+                              onClick={() => navigate(`/guest/quiz/${quiz.id}`)}
+                              className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all hover:translate-x-1 text-left group ${
+                                completed 
+                                  ? quizResult?.passed 
+                                    ? 'bg-lime/10 border border-lime/30' 
+                                    : 'bg-coral/10 border border-coral/30'
+                                  : 'bg-muted/40 hover:bg-muted'
+                              }`}
+                            >
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                completed 
+                                  ? quizResult?.passed ? 'bg-lime/20' : 'bg-coral/20'
+                                  : 'bg-purple/10 group-hover:bg-purple/20'
+                              }`}>
+                                {completed ? (
+                                  quizResult?.passed ? (
+                                    <CheckCircle className="h-3.5 w-3.5 text-lime" />
+                                  ) : (
+                                    <XCircle className="h-3.5 w-3.5 text-coral" />
+                                  )
+                                ) : (
+                                  <HelpCircle className="h-3.5 w-3.5 text-purple" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-sm font-medium truncate transition-colors ${
+                                  completed 
+                                    ? quizResult?.passed ? 'text-lime' : 'text-coral'
+                                    : 'group-hover:text-purple'
+                                }`}>{quiz.title}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {completed 
+                                    ? `Score: ${quizResult?.score}% ${quizResult?.passed ? '✓ Passed' : '• Try Again'}`
+                                    : `Passing score: ${quiz.passing_score}%`
+                                  }
+                                </p>
+                              </div>
+                              <Badge className={`text-[10px] transition-colors ${
+                                completed 
+                                  ? quizResult?.passed 
+                                    ? 'bg-lime/20 text-lime border-lime/30'
+                                    : 'bg-coral/20 text-coral border-coral/30'
+                                  : 'bg-purple/20 text-purple border-purple/30 group-hover:bg-purple group-hover:text-white'
+                              }`}>
+                                {completed ? (
+                                  quizResult?.passed ? 'Passed' : 'Retry'
+                                ) : (
+                                  <>
+                                    <Play className="h-2.5 w-2.5 mr-0.5" />
+                                    Start
+                                  </>
+                                )}
+                              </Badge>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
