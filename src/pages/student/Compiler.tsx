@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { cpp } from "@codemirror/lang-cpp";
@@ -11,6 +11,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Play,
   Trash2,
@@ -37,17 +44,15 @@ import {
   Binary,
   Coffee,
   Globe,
-  Wand2,
-  Calculator,
-  Palette,
-  MousePointer,
-  MessageCircle,
-  Hand,
+  GraduationCap,
+  Filter,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { allCodeExamples as codeExamples, type CodeExample } from "@/lib/codeExamples";
 
 type LanguageId = "python" | "javascript" | "c" | "cpp" | "java";
+type LevelId = "all" | "beginner" | "intermediate" | "advanced";
 
 interface LanguageConfig {
   id: LanguageId;
@@ -65,245 +70,22 @@ const languages: LanguageConfig[] = [
   { id: "java", name: "Java", Icon: Coffee, color: "from-orange-500 to-red-500", description: "Build Apps!" },
 ];
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  Icon: React.FC<{ className?: string }>;
-  difficulty: "Easy" | "Medium" | "Hard";
-  language: string;
-  code: string;
-  challenge?: string;
-}
-
-const projects: Project[] = [
-  {
-    id: "hello",
-    name: "Hello World",
-    description: "Your first program! Say hello to the world of coding.",
-    Icon: Hand,
-    difficulty: "Easy",
-    language: "python",
-    code: `# My First Program!
-# This is a comment - the computer ignores it
-
-print("Hello, World!")
-print("I'm learning to code!")
-print("This is SO cool!")`,
-    challenge: "Try changing the message to your name!",
-  },
-  {
-    id: "calculator",
-    name: "Fun Calculator",
-    description: "Build a calculator that does magic with numbers!",
-    Icon: Calculator,
-    difficulty: "Easy",
-    language: "python",
-    code: `# My Fun Calculator!
-
-# Let's add two numbers
-num1 = 10
-num2 = 5
-
-print("Number 1:", num1)
-print("Number 2:", num2)
-print()
-print("Addition:", num1 + num2)
-print("Subtraction:", num1 - num2)
-print("Multiplication:", num1 * num2)
-print("Division:", num1 / num2)`,
-    challenge: "Change the numbers and see what happens!",
-  },
-  {
-    id: "pattern",
-    name: "Star Pattern",
-    description: "Create beautiful star patterns with loops!",
-    Icon: Star,
-    difficulty: "Medium",
-    language: "python",
-    code: `# Star Pattern Generator!
-
-rows = 5
-print("Here's your star pyramid!")
-print()
-
-for i in range(1, rows + 1):
-    # Print spaces
-    print(" " * (rows - i), end="")
-    # Print stars
-    print("* " * i)
-
-print()
-print("Amazing pattern!")`,
-    challenge: "Try making the pyramid bigger by changing 'rows'!",
-  },
-  {
-    id: "guessing",
-    name: "Number Guessing",
-    description: "A fun guessing game with hints!",
-    Icon: Target,
-    difficulty: "Medium",
-    language: "python",
-    code: `# Number Guessing Game!
-
-secret = 7
-print("Let's play a guessing game!")
-print()
-
-for guess in range(1, 11):
-    if guess == secret:
-        print(f"{guess} is CORRECT! You found it!")
-    elif guess < secret:
-        print(f"{guess} is too small...")
-    else:
-        print(f"{guess} is too big...")
-
-print()
-print("Game Over!")`,
-    challenge: "Change the secret number and run again!",
-  },
-  {
-    id: "art",
-    name: "ASCII Art",
-    description: "Draw pictures using text characters!",
-    Icon: Palette,
-    difficulty: "Easy",
-    language: "python",
-    code: `# ASCII Art Gallery!
-
-print("=" * 30)
-print("   MY ART GALLERY")
-print("=" * 30)
-print()
-
-# Draw a house
-print("       /\\\\")
-print("      /  \\\\")
-print("     /    \\\\")
-print("    /______\\\\")
-print("    |      |")
-print("    |  []  |")
-print("    |______|")
-print()
-print("Home Sweet Home!")
-print()
-
-# Draw a tree
-print("      *")
-print("      /\\\\")
-print("     /  \\\\")
-print("    /    \\\\")
-print("   /______\\\\")
-print("      ||")
-print()
-print("Happy Holidays!")`,
-    challenge: "Create your own ASCII art picture!",
-  },
-  {
-    id: "countdown",
-    name: "Rocket Launch",
-    description: "Build a countdown timer for a rocket launch!",
-    Icon: Rocket,
-    difficulty: "Easy",
-    language: "python",
-    code: `# Rocket Launch Countdown!
-
-print("=" * 30)
-print("   SPACE MISSION")
-print("=" * 30)
-print()
-print("Initiating launch sequence...")
-print()
-
-for i in range(10, 0, -1):
-    print(f"   {i}...")
-
-print()
-print("BLAST OFF!")
-print()
-print("Rocket is flying to space!")
-print("Mission successful!")`,
-    challenge: "Make it count down from 20 instead!",
-  },
+const classOptions = [
+  { value: "3", label: "Class 3", ageRange: "Age 8-9" },
+  { value: "4", label: "Class 4", ageRange: "Age 9-10" },
+  { value: "5", label: "Class 5", ageRange: "Age 10-11" },
+  { value: "6", label: "Class 6", ageRange: "Age 11-12" },
+  { value: "7", label: "Class 7", ageRange: "Age 12-13" },
+  { value: "8", label: "Class 8", ageRange: "Age 13-14" },
+  { value: "9", label: "Class 9", ageRange: "Age 14-15" },
+  { value: "10", label: "Class 10", ageRange: "Age 15-16" },
 ];
 
-interface BlockExample {
-  id: string;
-  name: string;
-  description: string;
-  Icon: React.FC<{ className?: string }>;
-  blocks: string[];
-  code: string;
-}
-
-const blockBasedExamples: BlockExample[] = [
-  {
-    id: "motion",
-    name: "Move & Dance",
-    description: "Make things move on screen!",
-    Icon: Wand2,
-    blocks: ["move 10 steps", "turn 90°", "repeat 4 times", "change color"],
-    code: `# Dance Moves!
-# Imagine a character dancing
-
-moves = ["Step Right", "Step Left", "Spin!", "Jump!"]
-
-print("Let's dance!")
-print()
-
-for i in range(3):  # Dance 3 times
-    print(f"Round {i + 1}:")
-    for move in moves:
-        print(f"  {move}")
-    print()
-
-print("Great dancing!")`,
-  },
-  {
-    id: "looks",
-    name: "Say & Think",
-    description: "Make characters talk!",
-    Icon: MessageCircle,
-    blocks: ["say 'Hello!'", "think 'Hmm...'", "change costume", "show/hide"],
-    code: `# Talking Characters!
-
-characters = ["Cat", "Dog", "Bunny"]
-
-print("Character Chat")
-print()
-
-for char in characters:
-    print(f"{char} says: 'Hello there!'")
-    print(f"{char} thinks: 'I love coding!'")
-    print()
-
-print("What a fun conversation!")`,
-  },
-  {
-    id: "events",
-    name: "When Things Happen",
-    description: "React to clicks and keys!",
-    Icon: MousePointer,
-    blocks: ["when clicked", "when key pressed", "when I receive", "broadcast"],
-    code: `# Event Simulator!
-
-print("Game Controller Simulator")
-print()
-
-events = [
-    ("When SPACE pressed", "Jump!"),
-    ("When LEFT pressed", "Move left"),
-    ("When RIGHT pressed", "Move right"),
-    ("When clicked", "Attack!"),
-]
-
-print("Controller mapping:")
-for event, action in events:
-    print(f"  {event} -> {action}")
-
-print()
-print("Ready to play!")`,
-  },
+const levelOptions = [
+  { value: "all", label: "All Levels", color: "bg-muted" },
+  { value: "beginner", label: "Beginner", color: "bg-green-500/20 text-green-500" },
+  { value: "intermediate", label: "Intermediate", color: "bg-sunny/20 text-sunny" },
+  { value: "advanced", label: "Advanced", color: "bg-coral/20 text-coral" },
 ];
 
 const starterCode: Record<string, string> = {
@@ -356,16 +138,72 @@ const getLanguageExtension = (langId: string) => {
   }
 };
 
+const getLevelColor = (level: string) => {
+  switch (level) {
+    case "beginner":
+      return "border-green-500/50 text-green-500 bg-green-500/10";
+    case "intermediate":
+      return "border-sunny/50 text-sunny bg-sunny/10";
+    case "advanced":
+      return "border-coral/50 text-coral bg-coral/10";
+    default:
+      return "border-muted text-muted-foreground";
+  }
+};
+
+const getLanguageColor = (lang: string) => {
+  switch (lang) {
+    case "python":
+      return "bg-green-500/20 text-green-500";
+    case "javascript":
+      return "bg-yellow-500/20 text-yellow-600";
+    case "c":
+      return "bg-blue-500/20 text-blue-500";
+    case "cpp":
+      return "bg-purple-500/20 text-purple-500";
+    case "java":
+      return "bg-orange-500/20 text-orange-500";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+};
+
 export default function Compiler() {
   const navigate = useNavigate();
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState(starterCode.python);
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState("projects");
+  const [activeTab, setActiveTab] = useState("examples");
   const [copied, setCopied] = useState(false);
+  
+  // New filters for class-wise examples
+  const [selectedClass, setSelectedClass] = useState("5");
+  const [selectedLevel, setSelectedLevel] = useState<LevelId>("all");
+  const [selectedLang, setSelectedLang] = useState<LanguageId | "all">("all");
 
   const currentLang = languages.find((l) => l.id === language);
+
+  // Filter examples based on class, level, and language
+  const filteredExamples = useMemo(() => {
+    return codeExamples.filter((example) => {
+      const classMatch = example.classLevel === parseInt(selectedClass);
+      const levelMatch = selectedLevel === "all" || example.level === selectedLevel;
+      const langMatch = selectedLang === "all" || example.language === selectedLang;
+      return classMatch && levelMatch && langMatch;
+    });
+  }, [selectedClass, selectedLevel, selectedLang]);
+
+  // Get stats for current class
+  const classStats = useMemo(() => {
+    const classExamples = codeExamples.filter(e => e.classLevel === parseInt(selectedClass));
+    return {
+      total: classExamples.length,
+      beginner: classExamples.filter(e => e.level === "beginner").length,
+      intermediate: classExamples.filter(e => e.level === "intermediate").length,
+      advanced: classExamples.filter(e => e.level === "advanced").length,
+    };
+  }, [selectedClass]);
 
   const handleLanguageChange = (newLang: string) => {
     setLanguage(newLang);
@@ -373,20 +211,12 @@ export default function Compiler() {
     setOutput("");
   };
 
-  const handleLoadProject = (project: Project) => {
-    setLanguage(project.language);
-    setCode(project.code);
-    setOutput("");
-    setActiveTab("code");
-    toast.success(`Loaded "${project.name}" project! 🚀`);
-  };
-
-  const handleLoadBlockExample = (example: (typeof blockBasedExamples)[0]) => {
-    setLanguage("python");
+  const handleLoadExample = (example: CodeExample) => {
+    setLanguage(example.language);
     setCode(example.code);
     setOutput("");
     setActiveTab("code");
-    toast.success(`Loaded "${example.name}" example! 🧩`);
+    toast.success(`Loaded "${example.title}" example! 🚀`);
   };
 
   const handleRun = useCallback(async () => {
@@ -523,17 +353,13 @@ export default function Compiler() {
       </div>
 
       <div className="flex-1 flex" onKeyDown={handleKeyDown}>
-        {/* Left Sidebar - Projects & Blocks */}
+        {/* Left Sidebar - Class-wise Examples */}
         <aside className="w-80 border-r border-border/50 bg-card/50 hidden lg:flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid grid-cols-3 mx-4 mt-4">
-              <TabsTrigger value="projects" className="text-xs gap-1">
-                <Rocket className="h-3 w-3" />
-                Projects
-              </TabsTrigger>
-              <TabsTrigger value="blocks" className="text-xs gap-1">
-                <Blocks className="h-3 w-3" />
-                Blocks
+            <TabsList className="grid grid-cols-2 mx-4 mt-4">
+              <TabsTrigger value="examples" className="text-xs gap-1">
+                <BookOpen className="h-3 w-3" />
+                Examples
               </TabsTrigger>
               <TabsTrigger value="code" className="text-xs gap-1">
                 <Code className="h-3 w-3" />
@@ -541,94 +367,125 @@ export default function Compiler() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="projects" className="flex-1 mt-0 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Puzzle className="h-5 w-5 text-primary" />
-                    <h3 className="font-bold text-foreground">Fun Projects</h3>
-                  </div>
-                  {projects.map((project) => (
-                    <button
-                      key={project.id}
-                      onClick={() => handleLoadProject(project)}
-                      className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
+            <TabsContent value="examples" className="flex-1 mt-0 overflow-hidden flex flex-col">
+              {/* Class & Level Filters */}
+              <div className="p-4 space-y-3 border-b border-border/50">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                  <h3 className="font-bold text-foreground">Class-wise Examples</h3>
+                </div>
+                
+                {/* Class Selector */}
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger className="h-9 bg-background">
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    {classOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">{opt.label}</span>
+                          <span className="text-xs text-muted-foreground">({opt.ageRange})</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Level Filter */}
+                <div className="flex flex-wrap gap-1.5">
+                  {levelOptions.map((level) => (
+                    <Button
+                      key={level.value}
+                      variant={selectedLevel === level.value ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedLevel(level.value as LevelId)}
+                      className={`text-xs h-7 px-2 ${selectedLevel === level.value ? "" : level.color}`}
                     >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <project.Icon className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                            {project.name}
-                          </p>
-                          <Badge
-                            variant="outline"
-                            className={`text-[10px] ${
-                              project.difficulty === "Easy"
-                                ? "border-green-500/50 text-green-500"
-                                : project.difficulty === "Medium"
-                                ? "border-sunny/50 text-sunny"
-                                : "border-coral/50 text-coral"
-                            }`}
-                          >
-                            {project.difficulty}
-                          </Badge>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                      </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {project.description}
-                      </p>
-                    </button>
+                      {level.label}
+                    </Button>
                   ))}
                 </div>
-              </ScrollArea>
-            </TabsContent>
 
-            <TabsContent value="blocks" className="flex-1 mt-0 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Blocks className="h-5 w-5 text-secondary" />
-                    <h3 className="font-bold text-foreground">Block Ideas</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Click to load block-based coding concepts!
-                  </p>
-                  {blockBasedExamples.map((example) => (
-                    <button
-                      key={example.id}
-                      onClick={() => handleLoadBlockExample(example)}
-                      className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-secondary/50 hover:bg-secondary/5 transition-all duration-200 text-left group"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <example.Icon className="h-5 w-5 text-secondary" />
+                {/* Language Filter */}
+                <Select value={selectedLang} onValueChange={(v) => setSelectedLang(v as LanguageId | "all")}>
+                  <SelectTrigger className="h-9 bg-background">
+                    <SelectValue placeholder="All Languages" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="all">All Languages</SelectItem>
+                    {languages.map((lang) => (
+                      <SelectItem key={lang.id} value={lang.id}>
+                        <div className="flex items-center gap-2">
+                          <lang.Icon className="h-3.5 w-3.5" />
+                          {lang.name}
                         </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-foreground group-hover:text-secondary transition-colors">
-                            {example.name}
-                          </p>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Stats */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Badge variant="outline" className="text-[10px]">
+                    {filteredExamples.length} examples
+                  </Badge>
+                  <span>•</span>
+                  <span className="text-green-500">{classStats.beginner} beginner</span>
+                  <span>•</span>
+                  <span className="text-sunny">{classStats.intermediate} intermediate</span>
+                </div>
+              </div>
+
+              {/* Examples List */}
+              <ScrollArea className="flex-1">
+                <div className="p-4 space-y-2">
+                  {filteredExamples.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Filter className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                      <p className="text-sm text-muted-foreground">No examples found</p>
+                      <p className="text-xs text-muted-foreground mt-1">Try adjusting filters</p>
+                    </div>
+                  ) : (
+                    filteredExamples.map((example) => (
+                      <button
+                        key={example.id}
+                        onClick={() => handleLoadExample(example)}
+                        className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform mt-0.5">
+                            <Lightbulb className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground text-sm group-hover:text-primary transition-colors truncate">
+                              {example.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                              {example.description}
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-2">
+                              <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${getLevelColor(example.level)}`}>
+                                {example.level}
+                              </Badge>
+                              <Badge variant="secondary" className={`text-[9px] px-1.5 py-0 ${getLanguageColor(example.language)}`}>
+                                {example.language}
+                              </Badge>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-secondary group-hover:translate-x-1 transition-all" />
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        {example.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {example.blocks.slice(0, 3).map((block, i) => (
-                          <Badge
-                            key={i}
-                            variant="secondary"
-                            className="text-[10px] bg-secondary/20"
-                          >
-                            {block}
-                          </Badge>
-                        ))}
-                      </div>
-                    </button>
-                  ))}
+                        {example.challenge && (
+                          <div className="mt-2 p-2 rounded-lg bg-sunny/10 border border-sunny/20">
+                            <p className="text-[10px] text-sunny flex items-center gap-1">
+                              <Target className="h-3 w-3" />
+                              <span className="font-medium">Challenge:</span> {example.challenge}
+                            </p>
+                          </div>
+                        )}
+                      </button>
+                    ))
+                  )}
                 </div>
               </ScrollArea>
             </TabsContent>
