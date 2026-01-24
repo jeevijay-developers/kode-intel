@@ -134,7 +134,7 @@ export default function GuestCourses() {
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
   const [pdfWidth, setPdfWidth] = useState<number>(600);
   const [showChangeClass, setShowChangeClass] = useState(false);
-  const [showAllCourses, setShowAllCourses] = useState(false);
+  // Removed showAllCourses toggle as per UX requirements
 
   useEffect(() => {
     // Avoid touching window during SSR-like environments; also reduces layout thrash on mobile.
@@ -179,10 +179,9 @@ export default function GuestCourses() {
     return match ? match[1] : "";
   };
 
-  // Filter courses based on selected class
+  // Filter courses based on selected class - only show class-specific courses
   const filteredCourses = allCourses.filter(course => {
     if (!course.is_published) return false;
-    if (showAllCourses) return true;
     if (!guestInfo?.selectedClass) return true;
     const courseClass = getClassFromTitle(course.title);
     return courseClass === guestInfo.selectedClass;
@@ -290,7 +289,6 @@ export default function GuestCourses() {
       localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
       setGuestInfo(updatedInfo);
       setSelectedClass(newClass);
-      setShowAllCourses(false);
     }
     setShowChangeClass(false);
   };
@@ -985,46 +983,31 @@ export default function GuestCourses() {
           </div>
           <div>
             <h1 className="text-base sm:text-lg md:text-xl font-bold font-display">
-              {showAllCourses 
-                ? "All Courses" 
-                : guestInfo?.selectedClass 
-                  ? `Class ${guestInfo.selectedClass} Courses` 
-                  : "All Courses"}
+              {guestInfo?.selectedClass 
+                ? `Class ${guestInfo.selectedClass} Learning Modules` 
+                : "Learning Modules"}
             </h1>
             <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
-              {showAllCourses 
-                ? "Classes 3-10 • AI & Coding" 
-                : guestInfo?.selectedClass 
-                  ? `AI & Computational Thinking for Class ${guestInfo.selectedClass}` 
-                  : "Classes 3-10 • AI & Coding"}
+              {guestInfo?.selectedClass 
+                ? `AI & Computational Thinking curriculum for Class ${guestInfo.selectedClass}` 
+                : "Classes 3-10 • AI & Coding"}
             </p>
           </div>
         </div>
         
-        {/* Class Filter Controls */}
+        {/* Class Change Control */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {guestInfo?.selectedClass && (
-            <>
-              <Button
-                variant={showAllCourses ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowAllCourses(!showAllCourses)}
-                className={`gap-1.5 text-xs h-8 ${showAllCourses ? 'bg-primary' : 'border-primary/30'}`}
-              >
-                <Filter className="h-3.5 w-3.5" />
-                {showAllCourses ? "Showing All" : "Show All Classes"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowChangeClass(true)}
-                className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10 text-xs h-8"
-              >
-                <GraduationCap className="h-3.5 w-3.5" />
-                Class {guestInfo.selectedClass}
-                <RefreshCw className="h-3 w-3" />
-              </Button>
-            </>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowChangeClass(true)}
+              className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10 text-xs h-8"
+            >
+              <GraduationCap className="h-3.5 w-3.5" />
+              <span>Class {guestInfo.selectedClass}</span>
+              <RefreshCw className="h-3 w-3" />
+            </Button>
           )}
         </div>
       </div>
@@ -1043,20 +1026,12 @@ export default function GuestCourses() {
           ))}
         </div>
       ) : filteredCourses.length === 0 ? (
-        <Card className="p-6 sm:p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20">
+        <Card className="p-6 sm:p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20 border-dashed">
           <GraduationCap className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-muted-foreground/50" />
           <h3 className="font-bold text-base sm:text-lg mb-2">No Courses for Class {guestInfo?.selectedClass}</h3>
           <p className="text-muted-foreground text-xs sm:text-sm mb-4">
-            No published courses found for this class yet.
+            No published courses found for this class yet. Try changing your class from the header.
           </p>
-          <Button
-            variant="outline"
-            onClick={() => setShowAllCourses(true)}
-            className="gap-2"
-          >
-            <Filter className="h-4 w-4" />
-            View All Courses
-          </Button>
         </Card>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">

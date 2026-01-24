@@ -427,33 +427,22 @@ export default function GuestDashboard() {
 
         {/* Courses for Selected Class */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
-                <GraduationCap className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <h2 className="font-bold text-base sm:text-lg font-display">
-                  {guestInfo?.selectedClass 
-                    ? `Class ${guestInfo.selectedClass} Courses` 
-                    : "All Courses"}
-                </h2>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  {guestInfo?.selectedClass 
-                    ? `AI & Computational Thinking for Class ${guestInfo.selectedClass}`
-                    : "Classes 3-10 • AI & Computational Thinking"}
-                </p>
-              </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
+              <GraduationCap className="h-4 w-4 text-white" />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/guest/courses")}
-              className="text-xs gap-1 hover:bg-primary/10"
-            >
-              View All
-              <ArrowRight className="h-3 w-3" />
-            </Button>
+            <div>
+              <h2 className="font-bold text-base sm:text-lg font-display">
+                {guestInfo?.selectedClass 
+                  ? `Class ${guestInfo.selectedClass} Learning Modules` 
+                  : "Learning Modules"}
+              </h2>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
+                {guestInfo?.selectedClass 
+                  ? `AI & Computational Thinking curriculum for Class ${guestInfo.selectedClass}`
+                  : "Classes 3-10 • AI & Computational Thinking"}
+              </p>
+            </div>
           </div>
 
           {/* Course Cards Grid */}
@@ -475,7 +464,7 @@ export default function GuestDashboard() {
                   </CardContent>
                 </Card>
               ))
-            ) : (filteredCourses.length > 0 ? filteredCourses : publishedCourses.slice(0, 4)).map((course, index) => {
+            ) : filteredCourses.length > 0 ? filteredCourses.map((course, index) => {
               const classNum = getClassNumber(course.title);
               const colors = classColors[classNum] || classColors["3"];
               
@@ -554,10 +543,21 @@ export default function GuestDashboard() {
                   </CardContent>
                 </Card>
               );
-            })}
+            }) : (
+              <Card className="col-span-full p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20 border-dashed">
+                <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                <h3 className="font-bold text-lg mb-2">No Courses Available</h3>
+                <p className="text-muted-foreground text-sm mb-4">
+                  No courses available for Class {guestInfo?.selectedClass || "5"} yet.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Try exploring other classes or check back soon!
+                </p>
+              </Card>
+            )}
           </div>
 
-          {publishedCourses.length === 0 && (
+          {publishedCourses.length === 0 && !coursesLoading && (
             <Card className="p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20">
               <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="font-bold text-lg mb-2">No Courses Yet</h3>
@@ -568,17 +568,22 @@ export default function GuestDashboard() {
 
         {/* Features Highlight */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { icon: Play, label: "HD Video Lectures", color: "coral" },
-            { icon: HelpCircle, label: "Interactive Quizzes", color: "purple" },
-            { icon: FileText, label: "Study Materials", color: "turquoise" },
-            { icon: Code, label: "Live Code Editor", color: "lime" },
-          ].map((feature, idx) => (
-            <Card key={feature.label} className={`p-3 sm:p-4 text-center bg-gradient-to-br from-${feature.color}/10 to-${feature.color}/5 border-${feature.color}/20 hover:shadow-lg transition-all`}>
-              <feature.icon className={`h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-${feature.color}`} />
-              <p className="text-[10px] sm:text-xs font-medium">{feature.label}</p>
-            </Card>
-          ))}
+          <Card className="p-3 sm:p-4 text-center bg-gradient-to-br from-coral/10 to-coral/5 border-coral/20 hover:shadow-lg transition-all">
+            <Play className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-coral" />
+            <p className="text-[10px] sm:text-xs font-medium">HD Video Lectures</p>
+          </Card>
+          <Card className="p-3 sm:p-4 text-center bg-gradient-to-br from-purple/10 to-purple/5 border-purple/20 hover:shadow-lg transition-all">
+            <HelpCircle className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-purple" />
+            <p className="text-[10px] sm:text-xs font-medium">Interactive Quizzes</p>
+          </Card>
+          <Card className="p-3 sm:p-4 text-center bg-gradient-to-br from-turquoise/10 to-turquoise/5 border-turquoise/20 hover:shadow-lg transition-all">
+            <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-turquoise" />
+            <p className="text-[10px] sm:text-xs font-medium">Study Materials</p>
+          </Card>
+          <Card className="p-3 sm:p-4 text-center bg-gradient-to-br from-lime/10 to-lime/5 border-lime/20 hover:shadow-lg transition-all">
+            <Code className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-lime" />
+            <p className="text-[10px] sm:text-xs font-medium">Live Code Editor</p>
+          </Card>
         </div>
 
         {/* Upgrade CTA */}
