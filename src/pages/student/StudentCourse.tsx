@@ -2,37 +2,18 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
   BookOpen,
-  Play,
-  FileText,
-  HelpCircle,
   CheckCircle,
   Brain,
   User,
-  Video,
   Rocket,
   Search,
   Inbox,
-  Star,
-  Zap,
-  Lightbulb,
-  Target,
-  Flame,
-  Palette,
-  Gamepad2,
-  Trophy,
-  Rainbow,
   Lock,
   Sparkles,
   GraduationCap,
@@ -42,6 +23,7 @@ import { useCourse, useChapters } from "@/hooks/useCourses";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { CourseContentViewer } from "@/components/courses/CourseContentViewer";
 
 export default function StudentCourse() {
   const { id } = useParams();
@@ -101,6 +83,19 @@ export default function StudentCourse() {
     }
   }, [student, id, courseProgress, courseLoading]);
 
+  // Handlers for content viewer
+  const handleVideoClick = (video: any) => {
+    navigate(`/student/video/${video.id}`);
+  };
+
+  const handleQuizClick = (quiz: any) => {
+    navigate(`/student/quiz/${quiz.id}`);
+  };
+
+  const handleEbookClick = (ebook: any) => {
+    navigate(`/student/ebook/${ebook.id}`);
+  };
+
   if (loading || !student) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -114,10 +109,30 @@ export default function StudentCourse() {
   if (courseLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/4" />
-            <div className="h-64 bg-muted rounded" />
+        <div className="container mx-auto px-4 py-8 space-y-6">
+          {/* Header skeleton */}
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+          {/* Course card skeleton */}
+          <Card>
+            <div className="flex flex-col sm:flex-row">
+              <Skeleton className="w-full sm:w-48 h-28 sm:h-40" />
+              <div className="p-4 flex-1 space-y-3">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              </div>
+            </div>
+          </Card>
+          {/* Content skeleton */}
+          <div className="flex flex-col lg:flex-row gap-4">
+            <Skeleton className="lg:w-72 h-[400px] rounded-xl" />
+            <Skeleton className="flex-1 h-[500px] rounded-xl" />
           </div>
         </div>
       </div>
@@ -143,7 +158,7 @@ export default function StudentCourse() {
   const publishedChapters = chapters.filter((c) => c.is_published);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-fade-in">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -180,7 +195,7 @@ export default function StudentCourse() {
 
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Course Header */}
-        <Card className="mb-4 sm:mb-6 overflow-hidden">
+        <Card className="mb-4 sm:mb-6 overflow-hidden animate-slide-up">
           <div className="flex flex-col sm:flex-row">
             <div className="w-full sm:w-48 h-28 sm:h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
               {course.thumbnail_url ? (
@@ -222,7 +237,7 @@ export default function StudentCourse() {
 
         {/* Trial Banner */}
         {isTrial && (
-          <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
+          <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30 animate-slide-up stagger-1">
             <CardContent className="py-3 sm:py-4 px-3 sm:px-5">
               <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -245,383 +260,31 @@ export default function StudentCourse() {
           </Card>
         )}
 
-        {/* Chapters */}
-        <Card>
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" /> Content
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6 pt-0">
-            {publishedChapters.length === 0 ? (
-              <div className="text-center py-8 sm:py-12">
-                <Inbox className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
-                <p className="text-sm sm:text-lg text-muted-foreground">
-                  No content yet. Check back soon!
-                </p>
-              </div>
-            ) : (
-              <Accordion type="multiple" className="space-y-2 sm:space-y-3">
-                {publishedChapters.map((chapter, index) => (
-                  <ChapterAccordion
-                    key={chapter.id}
-                    chapter={chapter}
-                    index={index}
-                    studentId={student.id}
-                    isLocked={isTrial && index > 0}
-                    hasFullAccess={hasFullAccess}
-                  />
-                ))}
-              </Accordion>
-            )}
-          </CardContent>
-        </Card>
+        {/* Course Content - New Structured UI */}
+        <div className="animate-slide-up stagger-2">
+          {publishedChapters.length === 0 ? (
+            <Card>
+              <CardContent className="py-12">
+                <div className="text-center">
+                  <Inbox className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+                  <p className="text-sm sm:text-lg text-muted-foreground">
+                    No content yet. Check back soon!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <CourseContentViewer
+              chapters={publishedChapters}
+              studentId={student.id}
+              isLocked={(index) => isTrial && index > 0}
+              onVideoClick={handleVideoClick}
+              onQuizClick={handleQuizClick}
+              onEbookClick={handleEbookClick}
+            />
+          )}
+        </div>
       </main>
     </div>
-  );
-}
-
-interface ChapterAccordionProps {
-  chapter: any;
-  index: number;
-  studentId: string;
-  isLocked: boolean;
-  hasFullAccess: boolean;
-}
-
-function ChapterAccordion({
-  chapter,
-  index,
-  studentId,
-  isLocked,
-  hasFullAccess,
-}: ChapterAccordionProps) {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // Fetch chapter content
-  const { data: videos = [] } = useQuery({
-    queryKey: ["chapter-videos", chapter.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("chapter_videos")
-        .select("*")
-        .eq("chapter_id", chapter.id)
-        .eq("is_published", true)
-        .order("order_index");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: ebooks = [] } = useQuery({
-    queryKey: ["chapter-ebooks", chapter.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("chapter_ebooks")
-        .select("*")
-        .eq("chapter_id", chapter.id)
-        .eq("is_published", true)
-        .order("order_index");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: quizzes = [] } = useQuery({
-    queryKey: ["chapter-quizzes", chapter.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("chapter_quizzes")
-        .select("*")
-        .eq("chapter_id", chapter.id)
-        .eq("is_published", true)
-        .order("order_index");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Fetch video progress
-  const { data: videoProgress = [] } = useQuery({
-    queryKey: ["video-progress", studentId, chapter.id],
-    queryFn: async () => {
-      const videoIds = videos.map((v: any) => v.id);
-      if (videoIds.length === 0) return [];
-      const { data, error } = await supabase
-        .from("student_video_progress")
-        .select("*")
-        .eq("student_id", studentId)
-        .in("video_id", videoIds);
-      if (error) throw error;
-      return data;
-    },
-    enabled: videos.length > 0,
-  });
-
-  const markVideoComplete = useMutation({
-    mutationFn: async (videoId: string) => {
-      const existing = videoProgress.find((p: any) => p.video_id === videoId);
-      if (existing) {
-        await supabase
-          .from("student_video_progress")
-          .update({ is_completed: true })
-          .eq("id", existing.id);
-      } else {
-        await supabase.from("student_video_progress").insert({
-          student_id: studentId,
-          video_id: videoId,
-          is_completed: true,
-        });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["video-progress"] });
-      toast({ title: "Great job! Video completed!" });
-    },
-  });
-
-  const extractYouTubeId = (url: string) => {
-    const match = url.match(
-      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/
-    );
-    return match?.[1] || null;
-  };
-
-  const totalContent = videos.length + ebooks.length + quizzes.length;
-  const completedVideos = videoProgress.filter((p: any) => p.is_completed).length;
-  const allVideosCompleted = videos.length > 0 && completedVideos === videos.length;
-
-  // Chapter icon based on index
-  const chapterIcons = [
-    Star, Rocket, Lightbulb, Target, Flame, Zap, Palette, Gamepad2, Trophy, Rainbow,
-  ];
-  const ChapterIcon = chapterIcons[index % chapterIcons.length];
-
-  const handleLockedAction = () => {
-    toast({
-      title: "Content Locked",
-      description: "Subscribe to unlock this chapter!",
-      variant: "destructive",
-    });
-  };
-
-  return (
-    <AccordionItem
-      value={chapter.id}
-      className={`border rounded-xl px-2 sm:px-4 overflow-hidden ${
-        isLocked ? "opacity-75 bg-muted/20" : ""
-      }`}
-    >
-      <AccordionTrigger className="hover:no-underline py-3 sm:py-4">
-        <div className="flex items-center gap-2 sm:gap-3 text-left">
-          <div
-            className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${
-              isLocked
-                ? "bg-muted"
-                : allVideosCompleted
-                ? "bg-primary/20"
-                : "bg-primary/10"
-            }`}
-          >
-            {isLocked ? (
-              <Lock className="h-4 w-4 sm:h-6 sm:w-6 text-muted-foreground" />
-            ) : allVideosCompleted ? (
-              <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
-            ) : (
-              <ChapterIcon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <span className="font-semibold text-sm sm:text-lg">Ch. {index + 1}</span>
-              {isLocked && (
-                <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0">
-                  <Lock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" /> Locked
-                </Badge>
-              )}
-              {!isLocked && totalContent > 0 && (
-                <Badge variant="secondary" className="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0">
-                  {totalContent}
-                </Badge>
-              )}
-            </div>
-            <span className="text-xs sm:text-base text-muted-foreground line-clamp-1">{chapter.title}</span>
-          </div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent className="pb-3 sm:pb-4">
-        {isLocked ? (
-          <div className="text-center py-6 sm:py-8 bg-muted/30 rounded-xl">
-            <Lock className="h-8 w-8 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-2 sm:mb-3" />
-            <p className="text-sm sm:text-base text-muted-foreground font-medium mb-1 sm:mb-2">
-              Locked
-            </p>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
-              Subscribe to unlock
-            </p>
-            <Button size="sm" className="bg-gradient-to-r from-primary to-secondary h-8 text-xs sm:text-sm">
-              Upgrade
-            </Button>
-          </div>
-        ) : (
-          <Tabs defaultValue="videos" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-3 sm:mb-4 h-9 sm:h-10">
-              <TabsTrigger value="videos" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
-                <Video className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Videos</span> ({videos.length})
-              </TabsTrigger>
-              <TabsTrigger value="ebooks" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
-                <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Ebooks</span> ({ebooks.length})
-              </TabsTrigger>
-              <TabsTrigger value="quizzes" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3">
-                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Quiz</span> ({quizzes.length})
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="videos" className="space-y-2 sm:space-y-3 mt-0">
-              {videos.length === 0 ? (
-                <div className="text-center py-6 sm:py-8 rounded-xl border border-border">
-                  <Video className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-xs sm:text-sm text-muted-foreground">No videos</p>
-                </div>
-              ) : (
-                videos.map((video: any) => {
-                  const isCompleted = videoProgress.some(
-                    (p: any) => p.video_id === video.id && p.is_completed
-                  );
-                  const youtubeId = extractYouTubeId(video.youtube_url);
-
-                  return (
-                    <div
-                      key={video.id}
-                      className="flex items-center gap-2 sm:gap-4 border border-border p-2 sm:p-4 rounded-xl hover:border-primary/30 transition-colors"
-                    >
-                      <div className="w-16 h-12 sm:w-24 sm:h-16 bg-secondary rounded-lg overflow-hidden flex-shrink-0 relative">
-                        {youtubeId && (
-                          <img
-                            src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                            alt={video.title}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                          <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-primary flex items-center justify-center">
-                            <Play className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-primary-foreground ml-0.5" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <p className="font-medium text-xs sm:text-base truncate">{video.title}</p>
-                          {isCompleted && (
-                            <CheckCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-primary shrink-0" />
-                          )}
-                        </div>
-                        <p className="text-[10px] sm:text-sm text-muted-foreground">
-                          {video.duration_minutes ? `${video.duration_minutes}m` : "Video"}
-                        </p>
-                      </div>
-                      <div className="flex gap-1 sm:gap-2 shrink-0">
-                        <Button
-                          size="sm"
-                          onClick={() => navigate(`/student/video/${video.id}`)}
-                          className="h-7 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
-                        >
-                          <Play className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
-                          <span className="hidden sm:inline">Watch</span>
-                        </Button>
-                        {!isCompleted && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => markVideoComplete.mutate(video.id)}
-                            className="h-7 sm:h-10 px-2 sm:px-3"
-                          >
-                            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </TabsContent>
-
-            <TabsContent value="ebooks" className="space-y-2 sm:space-y-3 mt-0">
-              {ebooks.length === 0 ? (
-                <div className="text-center py-6 sm:py-8 border border-border rounded-xl">
-                  <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-xs sm:text-sm text-muted-foreground">No ebooks</p>
-                </div>
-              ) : (
-                ebooks.map((ebook: any) => (
-                  <div
-                    key={ebook.id}
-                    className="flex items-center gap-2 sm:gap-4 p-2 sm:p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
-                  >
-                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-xs sm:text-base truncate">{ebook.title}</p>
-                      <p className="text-[10px] sm:text-sm text-muted-foreground line-clamp-1">
-                        {ebook.description || "PDF"}
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => navigate(`/student/ebook/${ebook.id}`)}
-                      className="h-7 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
-                    >
-                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
-                      <span className="hidden sm:inline">Read</span>
-                    </Button>
-                  </div>
-                ))
-              )}
-            </TabsContent>
-
-            <TabsContent value="quizzes" className="space-y-2 sm:space-y-3 mt-0">
-              {quizzes.length === 0 ? (
-                <div className="text-center py-6 sm:py-8 border border-border rounded-xl">
-                  <HelpCircle className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-xs sm:text-sm text-muted-foreground">No quizzes</p>
-                </div>
-              ) : (
-                quizzes.map((quiz: any) => (
-                  <div
-                    key={quiz.id}
-                    className="flex items-center gap-2 sm:gap-4 p-2 sm:p-4 border border-border rounded-xl hover:border-primary/30 transition-colors"
-                  >
-                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-sunny/20 flex items-center justify-center shrink-0">
-                      <HelpCircle className="h-5 w-5 sm:h-7 sm:w-7 text-sunny" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-xs sm:text-base truncate">{quiz.title}</p>
-                      <p className="text-[10px] sm:text-sm text-muted-foreground">
-                        {quiz.passing_score}% to pass
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="h-7 sm:h-10 px-2 sm:px-4 bg-gradient-to-r from-sunny to-coral text-foreground text-xs sm:text-sm"
-                      onClick={() => navigate(`/student/quiz/${quiz.id}`)}
-                    >
-                      <Zap className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
-                      <span className="hidden sm:inline">Take</span>
-                    </Button>
-                  </div>
-                ))
-              )}
-            </TabsContent>
-          </Tabs>
-        )}
-      </AccordionContent>
-    </AccordionItem>
   );
 }
