@@ -4,27 +4,33 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   GraduationCap,
-  Sparkles,
   CheckCircle,
-  ArrowRight,
+  Loader2,
+  BookOpen,
+  Video,
+  Brain,
 } from "lucide-react";
 import { normalizeClassValue } from "@/lib/classLevel";
 
 const classes = [
-  { value: "3", label: "Class 3", age: "Ages 8-9", color: "from-coral to-sunny" },
-  { value: "4", label: "Class 4", age: "Ages 9-10", color: "from-turquoise to-lime" },
-  { value: "5", label: "Class 5", age: "Ages 10-11", color: "from-primary to-secondary" },
-  { value: "6", label: "Class 6", age: "Ages 11-12", color: "from-purple to-primary" },
-  { value: "7", label: "Class 7", age: "Ages 12-13", color: "from-sunny to-coral" },
-  { value: "8", label: "Class 8", age: "Ages 13-14", color: "from-lime to-turquoise" },
-  { value: "9", label: "Class 9", age: "Ages 14-15", color: "from-secondary to-purple" },
-  { value: "10", label: "Class 10", age: "Ages 15-16", color: "from-primary to-turquoise" },
+  { value: "3", label: "3", age: "8-9 yrs" },
+  { value: "4", label: "4", age: "9-10 yrs" },
+  { value: "5", label: "5", age: "10-11 yrs" },
+  { value: "6", label: "6", age: "11-12 yrs" },
+  { value: "7", label: "7", age: "12-13 yrs" },
+  { value: "8", label: "8", age: "13-14 yrs" },
+  { value: "9", label: "9", age: "14-15 yrs" },
+  { value: "10", label: "10", age: "15-16 yrs" },
+];
+
+const loadingInsights = [
+  { icon: BookOpen, text: "Loading new curriculum..." },
+  { icon: Video, text: "Preparing video lessons..." },
+  { icon: Brain, text: "Setting up quizzes..." },
 ];
 
 interface ChangeClassModalProps {
@@ -42,28 +48,101 @@ export function ChangeClassModal({
 }: ChangeClassModalProps) {
   const normalizedCurrentClass = normalizeClassValue(currentClass) || "5";
   const [selectedClass, setSelectedClass] = useState(normalizedCurrentClass);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
 
   const handleConfirm = () => {
-    onClassChange(selectedClass);
-    onOpenChange(false);
+    setIsLoading(true);
+    setLoadingStep(0);
+    
+    // Simulate loading steps with insights
+    const interval = setInterval(() => {
+      setLoadingStep((prev) => {
+        if (prev >= loadingInsights.length - 1) {
+          clearInterval(interval);
+          // Trigger the actual class change
+          setTimeout(() => {
+            onClassChange(selectedClass);
+            setIsLoading(false);
+            onOpenChange(false);
+          }, 400);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 500);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg border-2 border-primary/20 shadow-2xl">
-        <DialogHeader className="text-center pb-2">
-          <div className="mx-auto mb-3 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-            <GraduationCap className="h-7 w-7 text-white" />
+  const handleClose = (value: boolean) => {
+    if (!isLoading) {
+      onOpenChange(value);
+    }
+  };
+
+  // Loading State View
+  if (isLoading) {
+    const CurrentIcon = loadingInsights[loadingStep].icon;
+    return (
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-xs p-6 border-primary/20">
+          <div className="flex flex-col items-center justify-center py-6 space-y-5">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-white animate-spin" />
+              </div>
+              <div className="absolute inset-0 blur-xl bg-primary/30 animate-pulse rounded-full" />
+            </div>
+            
+            <div className="text-center space-y-2">
+              <p className="text-lg font-bold text-foreground">
+                Switching to Class {selectedClass}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <CurrentIcon className="h-4 w-4 text-primary animate-pulse" />
+                <span className="text-sm">{loadingInsights[loadingStep].text}</span>
+              </div>
+            </div>
+
+            {/* Progress dots */}
+            <div className="flex gap-1.5">
+              {loadingInsights.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx <= loadingStep
+                      ? "w-6 bg-primary"
+                      : "w-1.5 bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
-          <DialogTitle className="text-xl font-bold font-display">
-            Change Class Level
-          </DialogTitle>
-          <DialogDescription className="text-center">
-            Select a different class to explore its curriculum
-          </DialogDescription>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-sm p-4 border-primary/20">
+        <DialogHeader className="pb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-bold">
+                Change Class
+              </DialogTitle>
+              <p className="text-xs text-muted-foreground">
+                Select your class level
+              </p>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-2 py-4">
+        {/* Compact class grid - 4 columns */}
+        <div className="grid grid-cols-4 gap-1.5 py-3">
           {classes.map((cls) => {
             const isSelected = selectedClass === cls.value;
             const isCurrent = normalizedCurrentClass === cls.value;
@@ -71,47 +150,57 @@ export function ChangeClassModal({
               <button
                 key={cls.value}
                 onClick={() => setSelectedClass(cls.value)}
-                className={`relative p-3 rounded-xl border-2 transition-all duration-300 text-left ${
+                className={`relative p-2 rounded-lg border transition-all duration-200 text-center ${
                   isSelected
-                    ? "border-primary bg-primary/5 shadow-lg scale-[1.02]"
+                    ? "border-primary bg-primary/10 shadow-md"
+                    : isCurrent
+                    ? "border-primary/30 bg-primary/5"
                     : "border-border hover:border-primary/50 hover:bg-muted/50"
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${cls.color} flex items-center justify-center mb-2`}>
-                  <span className="text-primary-foreground text-xs font-bold">{cls.value}</span>
-                </div>
-                <p className="font-semibold text-sm">{cls.label}</p>
-                <p className="text-[10px] text-muted-foreground">{cls.age}</p>
+                <p className={`text-lg font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>
+                  {cls.label}
+                </p>
+                <p className="text-[9px] text-muted-foreground leading-tight">{cls.age}</p>
                 
                 {isSelected && (
-                  <CheckCircle className="absolute top-2 right-2 h-4 w-4 text-primary" />
+                  <CheckCircle className="absolute -top-1 -right-1 h-4 w-4 text-primary bg-background rounded-full" />
                 )}
                 {isCurrent && !isSelected && (
-                  <Badge className="absolute top-2 right-2 text-[8px] px-1.5 py-0 bg-muted text-muted-foreground">
-                    Current
-                  </Badge>
+                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-secondary rounded-full" />
                 )}
               </button>
             );
           })}
         </div>
 
-        <div className="flex gap-3">
+        {/* Current selection info */}
+        {selectedClass !== normalizedCurrentClass && (
+          <div className="text-center py-1.5 px-3 bg-primary/5 rounded-lg border border-primary/20">
+            <p className="text-xs text-muted-foreground">
+              Class <span className="font-semibold text-foreground">{normalizedCurrentClass}</span>
+              {" → "}
+              <span className="font-semibold text-primary">Class {selectedClass}</span>
+            </p>
+          </div>
+        )}
+
+        <div className="flex gap-2 pt-1">
           <Button
             variant="outline"
+            size="sm"
             onClick={() => onOpenChange(false)}
-            className="flex-1"
+            className="flex-1 h-9"
           >
             Cancel
           </Button>
           <Button
+            size="sm"
             onClick={handleConfirm}
             disabled={selectedClass === normalizedCurrentClass}
-            className="flex-1 gap-2 bg-gradient-to-r from-primary to-secondary"
+            className="flex-1 h-9 bg-gradient-to-r from-primary to-secondary"
           >
-            <Sparkles className="h-4 w-4" />
-            Apply Changes
-            <ArrowRight className="h-4 w-4" />
+            Apply
           </Button>
         </div>
       </DialogContent>
