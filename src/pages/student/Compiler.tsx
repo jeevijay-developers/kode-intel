@@ -19,6 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   Play,
   Trash2,
   ArrowLeft,
@@ -46,6 +53,7 @@ import {
   Globe,
   GraduationCap,
   Filter,
+  Menu,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -181,10 +189,9 @@ export default function Compiler() {
   const [selectedClass, setSelectedClass] = useState("5");
   const [selectedLevel, setSelectedLevel] = useState<LevelId>("all");
   const [selectedLang, setSelectedLang] = useState<LanguageId | "all">("all");
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const currentLang = languages.find((l) => l.id === language);
-
-  // Filter examples based on class, level, and language
   const filteredExamples = useMemo(() => {
     return codeExamples.filter((example) => {
       const classMatch = example.classLevel === parseInt(selectedClass);
@@ -314,12 +321,139 @@ export default function Compiler() {
             </div>
           </div>
 
+          {/* Mobile Examples Drawer Button */}
           <div className="flex items-center gap-2">
+            <Sheet open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="lg:hidden gap-2"
+                >
+                  <Menu className="h-4 w-4" />
+                  <span className="hidden sm:inline">Examples</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0">
+                <SheetHeader className="p-4 border-b border-border">
+                  <SheetTitle className="flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5 text-primary" />
+                    Class-wise Examples
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="p-4 space-y-3 border-b border-border/50">
+                  {/* Class Selector */}
+                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                    <SelectTrigger className="h-9 bg-background">
+                      <SelectValue placeholder="Select Class" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background z-50">
+                      {classOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">{opt.label}</span>
+                            <span className="text-xs text-muted-foreground">({opt.ageRange})</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Level Filter */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {levelOptions.map((level) => (
+                      <Button
+                        key={level.value}
+                        variant={selectedLevel === level.value ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedLevel(level.value as LevelId)}
+                        className={`text-xs h-7 px-2 ${selectedLevel === level.value ? "" : level.color}`}
+                      >
+                        {level.label}
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Language Filter */}
+                  <Select value={selectedLang} onValueChange={(v) => setSelectedLang(v as LanguageId | "all")}>
+                    <SelectTrigger className="h-9 bg-background">
+                      <SelectValue placeholder="All Languages" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background z-50">
+                      <SelectItem value="all">All Languages</SelectItem>
+                      {languages.map((lang) => (
+                        <SelectItem key={lang.id} value={lang.id}>
+                          <div className="flex items-center gap-2">
+                            <lang.Icon className="h-3.5 w-3.5" />
+                            {lang.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Badge variant="outline" className="text-[10px]">
+                      {filteredExamples.length} examples
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Mobile Examples List */}
+                <ScrollArea className="h-[calc(100vh-280px)]">
+                  <div className="p-4 space-y-2">
+                    {filteredExamples.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Filter className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                        <p className="text-sm text-muted-foreground">No examples found</p>
+                        <p className="text-xs text-muted-foreground mt-1">Try adjusting filters</p>
+                      </div>
+                    ) : (
+                      filteredExamples.map((example) => (
+                        <button
+                          key={example.id}
+                          onClick={() => {
+                            handleLoadExample(example);
+                            setMobileDrawerOpen(false);
+                          }}
+                          className="w-full p-3 rounded-xl bg-background/50 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform mt-0.5">
+                              <Lightbulb className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-foreground text-sm group-hover:text-primary transition-colors truncate">
+                                {example.title}
+                              </p>
+                              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                                {example.description}
+                              </p>
+                              <div className="flex items-center gap-1.5 mt-2">
+                                <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${getLevelColor(example.level)}`}>
+                                  {example.level}
+                                </Badge>
+                                <Badge variant="secondary" className={`text-[9px] px-1.5 py-0 ${getLanguageColor(example.language)}`}>
+                                  {example.language}
+                                </Badge>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
+
             <Button
               onClick={handleRun}
               disabled={isRunning}
               size="lg"
-              className="gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/25 px-6"
+              className="gap-2 bg-gradient-to-r from-lime to-turquoise hover:opacity-90 shadow-lg px-6"
             >
               {isRunning ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
