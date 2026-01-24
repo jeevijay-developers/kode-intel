@@ -61,6 +61,7 @@ import mascot from "@/assets/kodi-mascot-3d.png";
 import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
 import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
 import { useGuestProgress } from "@/hooks/useGuestProgress";
+import { normalizeClassValue } from "@/lib/classLevel";
 
 const GuestPdfPreview = lazy(() => import("@/components/student/GuestPdfPreview"));
 
@@ -153,14 +154,23 @@ export default function GuestCourses() {
     const stored = localStorage.getItem("guestInfo");
     if (stored) {
       const parsed = JSON.parse(stored);
+      const normalizedClass = normalizeClassValue(parsed?.selectedClass);
+      const normalizedGuest = normalizedClass
+        ? { ...parsed, selectedClass: normalizedClass }
+        : parsed;
+
+      if (normalizedClass && parsed?.selectedClass !== normalizedClass) {
+        localStorage.setItem("guestInfo", JSON.stringify(normalizedGuest));
+      }
+
       const registeredAt = new Date(parsed.registeredAt);
       const now = new Date();
       const hoursDiff = (now.getTime() - registeredAt.getTime()) / (1000 * 60 * 60);
       
       if (hoursDiff < 24) {
-        setGuestInfo(parsed);
-        if (parsed.selectedClass) {
-          setSelectedClass(parsed.selectedClass);
+        setGuestInfo(normalizedGuest);
+        if (normalizedGuest.selectedClass) {
+          setSelectedClass(normalizedGuest.selectedClass);
         }
       } else {
         localStorage.removeItem("guestInfo");
@@ -184,8 +194,15 @@ export default function GuestCourses() {
     if (!course.is_published) return false;
     if (!guestInfo?.selectedClass) return true;
     const courseClass = getClassFromTitle(course.title);
-    return courseClass === guestInfo.selectedClass;
+    return courseClass === normalizeClassValue(guestInfo.selectedClass);
   });
+
+  // If only one course matches the selected class, open it automatically.
+  useEffect(() => {
+    if (!selectedCourse && filteredCourses.length === 1) {
+      setSelectedCourse(filteredCourses[0]);
+    }
+  }, [filteredCourses, selectedCourse]);
 
   // Fetch chapters for selected course
   const { data: chapters = [] } = useQuery({
@@ -285,10 +302,11 @@ export default function GuestCourses() {
 
   const handleClassChange = (newClass: string) => {
     if (guestInfo) {
-      const updatedInfo = { ...guestInfo, selectedClass: newClass };
+      const normalized = normalizeClassValue(newClass) || newClass;
+      const updatedInfo = { ...guestInfo, selectedClass: normalized };
       localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
       setGuestInfo(updatedInfo);
-      setSelectedClass(newClass);
+      setSelectedClass(normalized);
     }
     setShowChangeClass(false);
   };

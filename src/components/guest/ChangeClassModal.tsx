@@ -14,16 +14,17 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
+import { normalizeClassValue } from "@/lib/classLevel";
 
 const classes = [
-  { value: "Class 3", label: "Class 3", age: "Ages 8-9", color: "from-coral to-sunny" },
-  { value: "Class 4", label: "Class 4", age: "Ages 9-10", color: "from-turquoise to-lime" },
-  { value: "Class 5", label: "Class 5", age: "Ages 10-11", color: "from-primary to-secondary" },
-  { value: "Class 6", label: "Class 6", age: "Ages 11-12", color: "from-purple to-primary" },
-  { value: "Class 7", label: "Class 7", age: "Ages 12-13", color: "from-sunny to-coral" },
-  { value: "Class 8", label: "Class 8", age: "Ages 13-14", color: "from-lime to-turquoise" },
-  { value: "Class 9", label: "Class 9", age: "Ages 14-15", color: "from-secondary to-purple" },
-  { value: "Class 10", label: "Class 10", age: "Ages 15-16", color: "from-primary to-turquoise" },
+  { value: "3", label: "Class 3", age: "Ages 8-9", color: "from-coral to-sunny" },
+  { value: "4", label: "Class 4", age: "Ages 9-10", color: "from-turquoise to-lime" },
+  { value: "5", label: "Class 5", age: "Ages 10-11", color: "from-primary to-secondary" },
+  { value: "6", label: "Class 6", age: "Ages 11-12", color: "from-purple to-primary" },
+  { value: "7", label: "Class 7", age: "Ages 12-13", color: "from-sunny to-coral" },
+  { value: "8", label: "Class 8", age: "Ages 13-14", color: "from-lime to-turquoise" },
+  { value: "9", label: "Class 9", age: "Ages 14-15", color: "from-secondary to-purple" },
+  { value: "10", label: "Class 10", age: "Ages 15-16", color: "from-primary to-turquoise" },
 ];
 
 interface ChangeClassModalProps {
@@ -39,7 +40,8 @@ export function ChangeClassModal({
   currentClass,
   onClassChange,
 }: ChangeClassModalProps) {
-  const [selectedClass, setSelectedClass] = useState(currentClass);
+  const normalizedCurrentClass = normalizeClassValue(currentClass) || "5";
+  const [selectedClass, setSelectedClass] = useState(normalizedCurrentClass);
 
   const handleConfirm = () => {
     onClassChange(selectedClass);
@@ -64,7 +66,7 @@ export function ChangeClassModal({
         <div className="grid grid-cols-2 gap-2 py-4">
           {classes.map((cls) => {
             const isSelected = selectedClass === cls.value;
-            const isCurrent = currentClass === cls.value;
+            const isCurrent = normalizedCurrentClass === cls.value;
             return (
               <button
                 key={cls.value}
@@ -76,9 +78,7 @@ export function ChangeClassModal({
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${cls.color} flex items-center justify-center mb-2`}>
-                  <span className="text-white text-xs font-bold">
-                    {cls.value.replace("Class ", "")}
-                  </span>
+                  <span className="text-primary-foreground text-xs font-bold">{cls.value}</span>
                 </div>
                 <p className="font-semibold text-sm">{cls.label}</p>
                 <p className="text-[10px] text-muted-foreground">{cls.age}</p>
@@ -106,7 +106,7 @@ export function ChangeClassModal({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={selectedClass === currentClass}
+            disabled={selectedClass === normalizedCurrentClass}
             className="flex-1 gap-2 bg-gradient-to-r from-primary to-secondary"
           >
             <Sparkles className="h-4 w-4" />
