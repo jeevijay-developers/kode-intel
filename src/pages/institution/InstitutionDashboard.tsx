@@ -61,6 +61,48 @@ export default function InstitutionDashboard() {
     },
   });
 
+  // Fetch top students from this institution
+  const { data: topStudents = [] } = useQuery({
+    queryKey: ["institution-top-students", institution.id],
+    queryFn: async () => {
+      // Get student IDs for this institution
+      const { data: mappings } = await supabase
+        .from("institution_students")
+        .select("student_id")
+        .eq("institution_id", institution.id)
+        .limit(10);
+
+      if (!mappings || mappings.length === 0) return [];
+
+      const studentIds = mappings.map((m: { student_id: string }) => m.student_id);
+      
+      // Get students with their points
+      const { data: studentsData } = await supabase
+        .from("students")
+        .select("id, student_name, class")
+        .in("id", studentIds);
+      
+      // Get points for these students
+      const { data: pointsData } = await supabase
+        .from("student_points")
+        .select("student_id, total_points")
+        .in("student_id", studentIds)
+        .order("total_points", { ascending: false })
+        .limit(3);
+      
+      // Merge data
+      return (pointsData || []).map((p: { student_id: string; total_points: number }) => {
+        const student = studentsData?.find((s: { id: string }) => s.id === p.student_id);
+        return {
+          id: p.student_id,
+          name: student?.student_name || "Unknown",
+          class: student?.class || "",
+          points: p.total_points,
+        };
+      });
+    },
+  });
+
   // Calculate pending amount (simplified)
   const pendingAmount = recentPayments
     .filter((p: { status: string }) => p.status === "pending")
@@ -189,18 +231,24 @@ export default function InstitutionDashboard() {
                   Add Students
                 </Button>
               </div>
+            ) : topStudents.length === 0 ? (
+              <div className="text-center py-8">
+                <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                <p className="text-muted-foreground">Students haven't earned points yet</p>
+                <p className="text-sm text-muted-foreground mt-1">Points are earned by watching videos and completing quizzes</p>
+              </div>
             ) : (
               <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+                {topStudents.map((student: { id: string; name: string; class: string; points: number }, index: number) => (
+                  <div key={student.id} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                      {i}
+                      {index + 1}
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-sm">Student {i}</p>
-                      <p className="text-xs text-muted-foreground">Class {i + 5}</p>
+                      <p className="font-medium text-sm">{student.name}</p>
+                      <p className="text-xs text-muted-foreground">{student.class}</p>
                     </div>
-                    <Badge variant="secondary">{100 - i * 5}%</Badge>
+                    <Badge variant="secondary">{student.points} pts</Badge>
                   </div>
                 ))}
               </div>

@@ -138,7 +138,7 @@ export default function StudentMyCourses() {
                     thumbnail={suggestedCourse.thumbnail_url}
                     isCompleted={false}
                     isStarted={false}
-                    onClick={() => navigate(`/student/courses/${suggestedCourse.id}`)}
+                    onClick={() => navigate(`/student/course/${suggestedCourse.id}`)}
                   />
                 </div>
                 
@@ -150,7 +150,7 @@ export default function StudentMyCourses() {
                     isLocked={false}
                     isSuggested={true}
                     chaptersCount={chaptersCount}
-                    onEnroll={() => navigate(`/student/courses/${suggestedCourse.id}`)}
+                    onEnroll={() => navigate(`/student/course/${suggestedCourse.id}`)}
                   />
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function StudentMyCourses() {
                 thumbnail={course.thumbnail_url}
                 isCompleted={!!course.progress?.completed_at}
                 isStarted={true}
-                onClick={() => navigate(`/student/courses/${course.id}`)}
+                onClick={() => navigate(`/student/course/${course.id}`)}
               />
             ))}
           </div>
@@ -213,7 +213,7 @@ export default function StudentMyCourses() {
                   thumbnail={suggestedCourse.thumbnail_url}
                   isCompleted={false}
                   isStarted={false}
-                  onClick={() => navigate(`/student/courses/${suggestedCourse.id}`)}
+                  onClick={() => navigate(`/student/course/${suggestedCourse.id}`)}
                 />
               </div>
               
@@ -225,7 +225,7 @@ export default function StudentMyCourses() {
                   isLocked={false}
                   isSuggested={true}
                   chaptersCount={chaptersCount}
-                  onEnroll={() => navigate(`/student/courses/${suggestedCourse.id}`)}
+                  onEnroll={() => navigate(`/student/course/${suggestedCourse.id}`)}
                 />
               </div>
             </div>
