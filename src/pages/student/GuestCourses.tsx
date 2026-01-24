@@ -294,12 +294,12 @@ export default function GuestCourses() {
   };
 
   const handleRegistrationSimple = () => {
-    if (!name.trim() || !mobile.trim()) return;
+    if (!name.trim() || !mobile.trim() || !selectedClass) return;
     
     const info: GuestInfo = {
       name: name.trim(),
       mobile: mobile.trim(),
-      selectedClass: "Class 3", // Default
+      selectedClass: selectedClass,
       registeredAt: new Date(),
     };
     localStorage.setItem("guestInfo", JSON.stringify(info));
@@ -813,6 +813,25 @@ export default function GuestCourses() {
                   className="h-12 text-base border-2 focus:border-primary"
                   type="tel"
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  Select Your Class
+                </Label>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger className="h-12 text-base border-2 focus:border-primary">
+                    <SelectValue placeholder="Select class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["3", "4", "5", "6", "7", "8", "9", "10"].map((cls) => (
+                      <SelectItem key={cls} value={cls}>
+                        Class {cls}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
