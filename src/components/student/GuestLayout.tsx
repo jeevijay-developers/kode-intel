@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { GuestErrorBoundary } from "@/components/student/GuestErrorBoundary";
 import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
 import { normalizeClassValue } from "@/lib/classLevel";
+import { GuestTutorial } from "@/components/guest/GuestTutorial";
 
 interface GuestInfo {
   name: string;
@@ -25,6 +26,17 @@ export default function GuestLayout() {
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0 });
   const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
   const [showChangeClass, setShowChangeClass] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Check if tutorial should be shown
+  useEffect(() => {
+    const tutorialSeen = localStorage.getItem("guestTutorialSeen");
+    const guestInfoStored = localStorage.getItem("guestInfo");
+    if (!tutorialSeen && guestInfoStored) {
+      // Small delay for better UX
+      setTimeout(() => setShowTutorial(true), 500);
+    }
+  }, []);
 
   useEffect(() => {
     const updateTimer = () => {
@@ -112,6 +124,7 @@ export default function GuestLayout() {
                   >
                     <GraduationCap className="h-3.5 w-3.5" />
                     <span className="hidden xs:inline">Class</span> {guestInfo.selectedClass}
+                    <span className="hidden sm:inline text-muted-foreground text-[10px]">Change</span>
                     <RefreshCw className="h-3 w-3" />
                   </Button>
                 )}
@@ -165,6 +178,11 @@ export default function GuestLayout() {
         currentClass={guestInfo?.selectedClass || "5"}
         onClassChange={handleClassChange}
       />
+
+      {/* First-time Tutorial */}
+      {showTutorial && (
+        <GuestTutorial onComplete={() => setShowTutorial(false)} />
+      )}
     </SidebarProvider>
   );
 }
