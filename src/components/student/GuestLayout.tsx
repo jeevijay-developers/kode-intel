@@ -3,23 +3,34 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { GuestSidebar } from "./GuestSidebar";
 import { GuestBottomNav } from "./GuestBottomNav";
 import { Button } from "@/components/ui/button";
-import { Menu, UserPlus, Timer } from "lucide-react";
+import { Menu, UserPlus, Timer, GraduationCap, RefreshCw } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import brainLogo from "@/assets/brain-logo.png";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GuestErrorBoundary } from "@/components/student/GuestErrorBoundary";
+import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
+
+interface GuestInfo {
+  name: string;
+  mobile: string;
+  selectedClass: string;
+  registeredAt: Date;
+}
 
 export default function GuestLayout() {
   const navigate = useNavigate();
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0 });
+  const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
+  const [showChangeClass, setShowChangeClass] = useState(false);
 
   useEffect(() => {
     const updateTimer = () => {
       const stored = localStorage.getItem("guestInfo");
       if (stored) {
         const parsed = JSON.parse(stored);
+        setGuestInfo(parsed);
         const registeredAt = new Date(parsed.registeredAt);
         const now = new Date();
         const endTime = new Date(registeredAt.getTime() + 24 * 60 * 60 * 1000);
@@ -37,6 +48,17 @@ export default function GuestLayout() {
     const interval = setInterval(updateTimer, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleClassChange = (newClass: string) => {
+    if (guestInfo) {
+      const updatedInfo = { ...guestInfo, selectedClass: newClass };
+      localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
+      setGuestInfo(updatedInfo);
+      // Reload the page to refresh course content
+      window.location.reload();
+    }
+    setShowChangeClass(false);
+  };
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -62,6 +84,20 @@ export default function GuestLayout() {
               </div>
               
               <div className="flex items-center gap-2 sm:gap-3">
+                {/* Change Class Button */}
+                {guestInfo?.selectedClass && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowChangeClass(true)}
+                    className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10 text-xs h-8 px-2 sm:px-3"
+                  >
+                    <GraduationCap className="h-3.5 w-3.5" />
+                    <span className="hidden xs:inline">Class</span> {guestInfo.selectedClass}
+                    <RefreshCw className="h-3 w-3" />
+                  </Button>
+                )}
+                
                 {/* Timer Badge */}
                 <Badge 
                   variant="outline" 
@@ -103,6 +139,14 @@ export default function GuestLayout() {
         {/* Mobile Bottom Navigation */}
         <GuestBottomNav />
       </div>
+
+      {/* Change Class Modal */}
+      <ChangeClassModal
+        open={showChangeClass}
+        onOpenChange={setShowChangeClass}
+        currentClass={guestInfo?.selectedClass || "5"}
+        onClassChange={handleClassChange}
+      />
     </SidebarProvider>
   );
 }

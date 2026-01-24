@@ -22,11 +22,21 @@ import {
   Trophy,
   Zap,
   Star,
+  GraduationCap,
+  RefreshCw,
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
+
+interface GuestInfo {
+  name: string;
+  mobile: string;
+  selectedClass: string;
+  registeredAt: Date;
+}
 
 const menuItems = [
   { 
@@ -69,14 +79,15 @@ export function GuestSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0 });
-  const [guestName, setGuestName] = useState("");
+  const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
+  const [showChangeClass, setShowChangeClass] = useState(false);
 
   useEffect(() => {
     const updateTimer = () => {
       const stored = localStorage.getItem("guestInfo");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setGuestName(parsed.name || "");
+        setGuestInfo(parsed);
         const registeredAt = new Date(parsed.registeredAt);
         const now = new Date();
         const endTime = new Date(registeredAt.getTime() + 24 * 60 * 60 * 1000);
@@ -96,6 +107,16 @@ export function GuestSidebar() {
     const interval = setInterval(updateTimer, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleClassChange = (newClass: string) => {
+    if (guestInfo) {
+      const updatedInfo = { ...guestInfo, selectedClass: newClass };
+      localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
+      setGuestInfo(updatedInfo);
+      window.location.reload();
+    }
+    setShowChangeClass(false);
+  };
 
   const isExpired = timeRemaining.hours === 0 && timeRemaining.minutes === 0;
 
@@ -130,6 +151,37 @@ export function GuestSidebar() {
             )}
           </div>
         </div>
+
+        {/* Current Class Badge & Change Button */}
+        {!collapsed && guestInfo?.selectedClass && (
+          <div className="px-3 pb-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowChangeClass(true)}
+              className="w-full justify-between border-primary/30 hover:bg-primary/10 h-10"
+            >
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-primary" />
+                <span className="font-semibold">Class {guestInfo.selectedClass}</span>
+              </div>
+              <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
+            </Button>
+          </div>
+        )}
+
+        {/* Collapsed Class Badge */}
+        {collapsed && guestInfo?.selectedClass && (
+          <div className="px-2 pb-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShowChangeClass(true)}
+              className="w-full aspect-square border-primary/30 hover:bg-primary/10"
+            >
+              <span className="text-xs font-bold text-primary">{guestInfo.selectedClass}</span>
+            </Button>
+          </div>
+        )}
 
         {/* Trial Timer Card */}
         {!collapsed && (
@@ -265,6 +317,14 @@ export function GuestSidebar() {
           <SidebarTrigger className="w-full justify-center hover:bg-muted/50 transition-colors" />
         </div>
       </SidebarContent>
+
+      {/* Change Class Modal */}
+      <ChangeClassModal
+        open={showChangeClass}
+        onOpenChange={setShowChangeClass}
+        currentClass={guestInfo?.selectedClass || "5"}
+        onClassChange={handleClassChange}
+      />
     </Sidebar>
   );
 }
