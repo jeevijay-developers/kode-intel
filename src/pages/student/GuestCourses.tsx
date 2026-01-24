@@ -983,14 +983,10 @@ export default function GuestCourses() {
           </div>
           <div>
             <h1 className="text-base sm:text-lg md:text-xl font-bold font-display">
-              {guestInfo?.selectedClass 
-                ? `Class ${guestInfo.selectedClass} Learning Modules` 
-                : "Learning Modules"}
+              My Courses
             </h1>
             <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
-              {guestInfo?.selectedClass 
-                ? `AI & Computational Thinking curriculum for Class ${guestInfo.selectedClass}` 
-                : "Classes 3-10 • AI & Coding"}
+              Class {guestInfo?.selectedClass || "5"} • AI & Computational Thinking
             </p>
           </div>
         </div>

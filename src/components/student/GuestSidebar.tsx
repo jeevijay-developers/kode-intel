@@ -48,7 +48,7 @@ const menuItems = [
     iconColor: "text-primary"
   },
   { 
-    title: "All Courses", 
+    title: "My Courses", 
     url: "/guest/courses", 
     icon: BookOpen, 
     iconBg: "bg-turquoise/10",
