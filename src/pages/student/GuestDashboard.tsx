@@ -366,18 +366,13 @@ export default function GuestDashboard() {
           </div>
         </div>
 
-        {/* Progress Card + Quick Actions Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Progress Summary Card */}
-          <GuestProgressCard className="lg:col-span-1 order-2 lg:order-1" />
-          
-          {/* Quick Actions */}
-          <div className="lg:col-span-2 order-1 lg:order-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Quick Actions Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { 
               icon: BookOpen, 
-              label: "Explore Courses", 
-              desc: "All Classes", 
+              label: "My Courses", 
+              desc: `Class ${guestInfo?.selectedClass || "5"}`, 
               path: "/guest/courses",
               iconBg: "bg-gradient-to-br from-primary/20 to-primary/5",
               iconColor: "text-primary"
@@ -422,27 +417,36 @@ export default function GuestDashboard() {
               </CardContent>
             </Card>
           ))}
-          </div>
         </div>
 
-        {/* Courses for Selected Class */}
+        {/* Progress Summary Card - Compact */}
+        <GuestProgressCard className="" />
+
+        {/* My Courses for Selected Class */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
-              <GraduationCap className="h-4 w-4 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
+                <GraduationCap className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h2 className="font-bold text-base sm:text-lg font-display">
+                  My Courses
+                </h2>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  Class {guestInfo?.selectedClass || "5"} • AI & Computational Thinking
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-bold text-base sm:text-lg font-display">
-                {guestInfo?.selectedClass 
-                  ? `Class ${guestInfo.selectedClass} Learning Modules` 
-                  : "Learning Modules"}
-              </h2>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">
-                {guestInfo?.selectedClass 
-                  ? `AI & Computational Thinking curriculum for Class ${guestInfo.selectedClass}`
-                  : "Classes 3-10 • AI & Computational Thinking"}
-              </p>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/guest/courses")}
+              className="text-xs gap-1.5"
+            >
+              View All
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
           </div>
 
           {/* Course Cards Grid */}
