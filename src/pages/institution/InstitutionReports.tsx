@@ -291,22 +291,24 @@ export default function InstitutionReports() {
 
         {/* Class Performance */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Target className="h-5 w-5 text-turquoise" />
-              Class Performance
-            </CardTitle>
-            <Select value={classFilter} onValueChange={setClassFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="All Classes" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Classes</SelectItem>
-                {classWiseStats.map((c) => (
-                  <SelectItem key={c.class} value={c.class}>{c.class}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="h-5 w-5 text-turquoise" />
+                Class Performance
+              </CardTitle>
+              <Select value={classFilter} onValueChange={setClassFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="All Classes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Classes</SelectItem>
+                  {classWiseStats.map((c) => (
+                    <SelectItem key={c.class} value={c.class}>{c.class}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardHeader>
           <CardContent>
             {classWiseStats.length === 0 ? (

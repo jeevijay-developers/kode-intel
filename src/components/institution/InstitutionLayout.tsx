@@ -28,6 +28,7 @@ const menuItems = [
   { title: "Courses", url: "/institution/courses", icon: BookOpen, color: "text-coral" },
   { title: "Reports", url: "/institution/reports", icon: BarChart3, color: "text-purple" },
   { title: "Payments", url: "/institution/payments", icon: CreditCard, color: "text-sunny" },
+  { title: "Settings", url: "/institution/settings", icon: Settings, color: "text-muted-foreground" },
 ];
 
 export default function InstitutionLayout() {
@@ -114,15 +115,7 @@ export default function InstitutionLayout() {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-3 border-t border-border/50 space-y-2">
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3"
-          onClick={() => navigate("/institution/settings")}
-        >
-          <Settings className="h-5 w-5" />
-          Settings
-        </Button>
+      <div className="p-3 border-t border-border/50">
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-destructive hover:text-destructive"
