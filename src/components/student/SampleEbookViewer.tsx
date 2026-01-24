@@ -15,8 +15,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { BookOpen, Eye, Sparkles, GraduationCap, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Set up PDF.js worker - use CDN with proper CORS
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface SampleEbook {
   id: string;
