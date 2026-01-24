@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -109,7 +110,7 @@ export default function GuestDashboard() {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [selectedClass, setSelectedClass] = useState("5");
-  const { courses: allCourses = [] } = useCourses();
+  const { courses: allCourses = [], isLoading: coursesLoading } = useCourses();
 
   useEffect(() => {
     const stored = localStorage.getItem("guestInfo");
@@ -450,7 +451,24 @@ export default function GuestDashboard() {
 
           {/* Course Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {(filteredCourses.length > 0 ? filteredCourses : publishedCourses.slice(0, 4)).map((course, index) => {
+            {coursesLoading ? (
+              // Skeleton Loading State
+              Array.from({ length: 4 }).map((_, idx) => (
+                <Card key={idx} className="overflow-hidden">
+                  <Skeleton className="h-28 sm:h-32 w-full" />
+                  <CardContent className="p-3 sm:p-4 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-2/3" />
+                    <div className="flex gap-2 mt-3">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (filteredCourses.length > 0 ? filteredCourses : publishedCourses.slice(0, 4)).map((course, index) => {
               const classNum = getClassNumber(course.title);
               const colors = classColors[classNum] || classColors["3"];
               
