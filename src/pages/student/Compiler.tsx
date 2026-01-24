@@ -289,7 +289,7 @@ export default function Compiler() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Playful Header */}
       <header className="bg-card/90 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -467,22 +467,13 @@ export default function Compiler() {
         </div>
       </header>
 
-      {/* Keyboard Shortcut */}
-      <div className="bg-gradient-to-r from-sunny/10 via-coral/10 to-sunny/10 border-b border-sunny/20 py-2">
-        <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-          <Star className="h-3 w-3 text-sunny fill-sunny" />
-          <span>
-            Pro tip: Press{" "}
-            <kbd className="px-1.5 py-0.5 bg-card rounded border text-[10px] font-mono">
-              Ctrl
-            </kbd>{" "}
-            +{" "}
-            <kbd className="px-1.5 py-0.5 bg-card rounded border text-[10px] font-mono">
-              Enter
-            </kbd>{" "}
-            to run your code!
-          </span>
-          <Star className="h-3 w-3 text-sunny fill-sunny" />
+      {/* Keyboard Shortcut Hint - Compact */}
+      <div className="bg-muted/50 border-b border-border py-1.5 px-3">
+        <p className="text-center text-[10px] text-muted-foreground flex items-center justify-center gap-1.5">
+          <Zap className="h-3 w-3 text-primary" />
+          Press{" "}
+          <kbd className="px-1 py-0.5 bg-card rounded border text-[9px] font-mono">Ctrl+Enter</kbd>{" "}
+          to run
         </p>
       </div>
 
@@ -694,7 +685,7 @@ export default function Compiler() {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+        <div className="flex-1 flex flex-col lg:flex-row gap-3 p-3 lg:p-4 min-h-0">
           {/* Code Editor */}
           <Card className="flex-1 flex flex-col min-h-[400px] overflow-hidden border-2 border-primary/20 shadow-xl shadow-primary/5">
             <CardHeader className="py-3 px-4 border-b border-border bg-gradient-to-r from-primary/10 via-purple-500/10 to-secondary/10">
@@ -773,12 +764,11 @@ export default function Compiler() {
         </div>
       </div>
 
-      {/* Fun Footer */}
-      <footer className="bg-card/80 border-t border-border/50 py-3">
-        <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-          <Trophy className="h-4 w-4 text-sunny" />
-          <span>Keep coding and become a coding superstar!</span>
-          <Star className="h-4 w-4 text-sunny fill-sunny" />
+      {/* Footer - Minimal */}
+      <footer className="bg-card/80 border-t border-border py-2 px-3">
+        <p className="text-center text-[10px] text-muted-foreground flex items-center justify-center gap-1.5">
+          <Code className="h-3 w-3 text-primary" />
+          KodeIntel Code Playground
         </p>
       </footer>
     </div>

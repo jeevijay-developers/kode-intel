@@ -70,6 +70,12 @@ export default function StudentLayout() {
                   Kode<span className="text-primary">Intel</span>
                 </span>
               </div>
+              
+              {/* Welcome message - visible on larger screens */}
+              <div className="hidden lg:flex items-center gap-2 ml-2 pl-3 border-l border-border/50">
+                <span className="text-sm text-muted-foreground">Welcome,</span>
+                <span className="font-semibold text-foreground">{student.student_name}</span>
+              </div>
             </div>
             
             <div className="flex items-center gap-2">
