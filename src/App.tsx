@@ -52,6 +52,7 @@ import InstitutionStudents from "./pages/institution/InstitutionStudents";
 import InstitutionCourses from "./pages/institution/InstitutionCourses";
 import InstitutionReports from "./pages/institution/InstitutionReports";
 import InstitutionPayments from "./pages/institution/InstitutionPayments";
+import InstitutionSettings from "./pages/institution/InstitutionSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -123,6 +124,7 @@ function App() {
               <Route path="courses" element={<InstitutionCourses />} />
               <Route path="reports" element={<InstitutionReports />} />
               <Route path="payments" element={<InstitutionPayments />} />
+              <Route path="settings" element={<InstitutionSettings />} />
             </Route>
 
             {/* Auth route (no header) */}
