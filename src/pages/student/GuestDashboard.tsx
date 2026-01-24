@@ -49,6 +49,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import mascot from "@/assets/kodi-mascot-3d.png";
 import { GuestProgressCard } from "@/components/dashboard/GuestProgressCard";
+import { normalizeClassValue } from "@/lib/classLevel";
 
 // Course banner images mapping
 import courseBannerClass3 from "@/assets/course-banner-class3.png";
@@ -117,12 +118,21 @@ export default function GuestDashboard() {
     const stored = localStorage.getItem("guestInfo");
     if (stored) {
       const parsed = JSON.parse(stored);
+      const normalizedClass = normalizeClassValue(parsed?.selectedClass);
+      const normalizedGuest = normalizedClass
+        ? { ...parsed, selectedClass: normalizedClass }
+        : parsed;
+
+      if (normalizedClass && parsed?.selectedClass !== normalizedClass) {
+        localStorage.setItem("guestInfo", JSON.stringify(normalizedGuest));
+      }
+
       const registeredAt = new Date(parsed.registeredAt);
       const now = new Date();
       const hoursDiff = (now.getTime() - registeredAt.getTime()) / (1000 * 60 * 60);
       
       if (hoursDiff < 24) {
-        setGuestInfo(parsed);
+        setGuestInfo(normalizedGuest);
       } else {
         localStorage.removeItem("guestInfo");
         setShowRegistration(true);
@@ -175,7 +185,7 @@ export default function GuestDashboard() {
   const filteredCourses = guestInfo?.selectedClass 
     ? publishedCourses.filter(course => {
         const courseClass = getClassNumber(course.title);
-        return courseClass === guestInfo.selectedClass;
+        return courseClass === normalizeClassValue(guestInfo.selectedClass);
       })
     : publishedCourses;
   

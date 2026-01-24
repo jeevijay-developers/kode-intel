@@ -11,6 +11,7 @@ import { Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GuestErrorBoundary } from "@/components/student/GuestErrorBoundary";
 import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
+import { normalizeClassValue } from "@/lib/classLevel";
 
 interface GuestInfo {
   name: string;
@@ -30,7 +31,17 @@ export default function GuestLayout() {
       const stored = localStorage.getItem("guestInfo");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setGuestInfo(parsed);
+        const normalizedClass = normalizeClassValue(parsed?.selectedClass);
+        const normalizedGuest = normalizedClass
+          ? { ...parsed, selectedClass: normalizedClass }
+          : parsed;
+
+        // If an older session stored "Class 4" etc, normalize it once.
+        if (normalizedClass && parsed?.selectedClass !== normalizedClass) {
+          localStorage.setItem("guestInfo", JSON.stringify(normalizedGuest));
+        }
+
+        setGuestInfo(normalizedGuest);
         const registeredAt = new Date(parsed.registeredAt);
         const now = new Date();
         const endTime = new Date(registeredAt.getTime() + 24 * 60 * 60 * 1000);
@@ -51,7 +62,7 @@ export default function GuestLayout() {
 
   const handleClassChange = (newClass: string) => {
     if (guestInfo) {
-      const updatedInfo = { ...guestInfo, selectedClass: newClass };
+      const updatedInfo = { ...guestInfo, selectedClass: normalizeClassValue(newClass) || newClass };
       localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
       setGuestInfo(updatedInfo);
       // Reload the page to refresh course content
