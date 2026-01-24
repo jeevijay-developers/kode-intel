@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { StudentProtectedRoute } from "@/components/student/StudentProtectedRoute";
+import DevToolsBlocker from "@/components/DevToolsBlocker";
 import PublicLayout from "@/components/layout/PublicLayout";
 import StudentLayout from "@/components/student/StudentLayout";
 import GuestLayout from "@/components/student/GuestLayout";
@@ -61,6 +62,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <DevToolsBlocker />
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
