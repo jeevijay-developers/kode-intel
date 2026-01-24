@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   BookOpen,
@@ -321,7 +320,7 @@ export function CourseContentView({
             <>
               {/* Content Tabs - Fixed at top */}
               <div className="shrink-0 bg-background border-b">
-                <TabsList className="w-full h-11 justify-start gap-0 bg-transparent p-0 rounded-none">
+                <div className="flex w-full h-11">
                   <button
                     onClick={() => setContentTab("videos")}
                     className={`flex-1 h-full flex items-center justify-center gap-1.5 text-sm font-medium transition-all border-b-2 ${
@@ -361,7 +360,7 @@ export function CourseContentView({
                     <BookOpen className="h-4 w-4" />
                     <span className="hidden xs:inline">Books</span>
                   </button>
-                </TabsList>
+                </div>
               </div>
 
               {/* Scrollable Content */}
