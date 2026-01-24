@@ -48,6 +48,7 @@ import { useCourses, useChapters } from "@/hooks/useCourses";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import mascot from "@/assets/kodi-mascot-3d.png";
+import { GuestProgressCard } from "@/components/dashboard/GuestProgressCard";
 
 // Course banner images mapping
 import courseBannerClass3 from "@/assets/course-banner-class3.png";
@@ -365,8 +366,13 @@ export default function GuestDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Progress Card + Quick Actions Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Progress Summary Card */}
+          <GuestProgressCard className="lg:col-span-1 order-2 lg:order-1" />
+          
+          {/* Quick Actions */}
+          <div className="lg:col-span-2 order-1 lg:order-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { 
               icon: BookOpen, 
@@ -416,6 +422,7 @@ export default function GuestDashboard() {
               </CardContent>
             </Card>
           ))}
+          </div>
         </div>
 
         {/* Courses for Selected Class */}
