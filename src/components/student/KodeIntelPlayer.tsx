@@ -126,14 +126,19 @@ export default function KodeIntelPlayer({
       playerVars: {
         controls: 0,
         modestbranding: 1,
-        rel: 0,
+        rel: 0, // Disable related videos
         showinfo: 0,
-        iv_load_policy: 3,
+        iv_load_policy: 3, // Disable annotations
         fs: 0,
         disablekb: 1,
         playsinline: 1,
         enablejsapi: 1,
         origin: window.location.origin,
+        cc_load_policy: 0, // Disable captions by default
+        autohide: 1,
+        autoplay: 0,
+        loop: 0,
+        playlist: videoId, // Required to prevent end screen recommendations
       },
       events: {
         onReady: (event) => {
