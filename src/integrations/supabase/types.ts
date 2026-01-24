@@ -338,6 +338,191 @@ export type Database = {
         }
         Relationships: []
       }
+      institution_accounts: {
+        Row: {
+          address: string | null
+          city: string
+          contact_person: string
+          created_at: string | null
+          email: string
+          expected_student_count: number | null
+          id: string
+          institution_name: string
+          institution_type: Database["public"]["Enums"]["institution_type"]
+          is_active: boolean | null
+          logo_url: string | null
+          password_hash: string
+          phone: string
+          state: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          city: string
+          contact_person: string
+          created_at?: string | null
+          email: string
+          expected_student_count?: number | null
+          id?: string
+          institution_name: string
+          institution_type?: Database["public"]["Enums"]["institution_type"]
+          is_active?: boolean | null
+          logo_url?: string | null
+          password_hash: string
+          phone: string
+          state: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string
+          contact_person?: string
+          created_at?: string | null
+          email?: string
+          expected_student_count?: number | null
+          id?: string
+          institution_name?: string
+          institution_type?: Database["public"]["Enums"]["institution_type"]
+          is_active?: boolean | null
+          logo_url?: string | null
+          password_hash?: string
+          phone?: string
+          state?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      institution_course_access: {
+        Row: {
+          amount_paid: number | null
+          course_id: string
+          created_at: string | null
+          id: string
+          institution_id: string
+          payment_status: string | null
+          student_count: number
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          amount_paid?: number | null
+          course_id: string
+          created_at?: string | null
+          id?: string
+          institution_id: string
+          payment_status?: string | null
+          student_count?: number
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          amount_paid?: number | null
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          institution_id?: string
+          payment_status?: string | null
+          student_count?: number
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_course_access_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "institution_course_access_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      institution_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          institution_id: string
+          invoice_number: string | null
+          notes: string | null
+          payment_method: string | null
+          status: string | null
+          transaction_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          institution_id: string
+          invoice_number?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          institution_id?: string
+          invoice_number?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_payments_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      institution_students: {
+        Row: {
+          created_at: string | null
+          id: string
+          institution_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          institution_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          institution_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_students_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "institution_students_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -875,6 +1060,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "admin"
+      institution_type: "school" | "corporate" | "coaching" | "other"
       question_type: "multiple_choice" | "true_false"
     }
     CompositeTypes: {
@@ -1004,6 +1190,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "admin"],
+      institution_type: ["school", "corporate", "coaching", "other"],
       question_type: ["multiple_choice", "true_false"],
     },
   },
