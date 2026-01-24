@@ -47,6 +47,8 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
+  RefreshCw,
+  Filter,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -57,6 +59,7 @@ import { supabase } from "@/integrations/supabase/client";
 import KodeIntelPlayer from "@/components/student/KodeIntelPlayer";
 import mascot from "@/assets/kodi-mascot-3d.png";
 import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
+import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
 
 const GuestPdfPreview = lazy(() => import("@/components/student/GuestPdfPreview"));
 
@@ -118,7 +121,7 @@ export default function GuestCourses() {
   const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedClass, setSelectedClass] = useState("5");
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [activeVideo, setActiveVideo] = useState<any>(null);
   const [activeQuiz, setActiveQuiz] = useState<any>(null);
@@ -128,6 +131,8 @@ export default function GuestCourses() {
   const [pdfLoading, setPdfLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
   const [pdfWidth, setPdfWidth] = useState<number>(600);
+  const [showChangeClass, setShowChangeClass] = useState(false);
+  const [showAllCourses, setShowAllCourses] = useState(false);
 
   useEffect(() => {
     // Avoid touching window during SSR-like environments; also reduces layout thrash on mobile.
@@ -152,6 +157,9 @@ export default function GuestCourses() {
       
       if (hoursDiff < 24) {
         setGuestInfo(parsed);
+        if (parsed.selectedClass) {
+          setSelectedClass(parsed.selectedClass);
+        }
       } else {
         localStorage.removeItem("guestInfo");
         setShowRegistration(true);
@@ -163,11 +171,20 @@ export default function GuestCourses() {
 
   const { courses: allCourses = [], isLoading: coursesLoading } = useCourses();
 
-  // Filter courses based on selected class (if provided)
-  const filteredCourses = allCourses.filter(course => 
-    course.is_published && 
-    (guestInfo?.selectedClass ? course.title.toLowerCase().includes(guestInfo.selectedClass.toLowerCase().replace(" ", "")) : true)
-  );
+  // Helper to get class number from course title
+  const getClassFromTitle = (title: string): string => {
+    const match = title.match(/class\s*(\d+)/i);
+    return match ? match[1] : "";
+  };
+
+  // Filter courses based on selected class
+  const filteredCourses = allCourses.filter(course => {
+    if (!course.is_published) return false;
+    if (showAllCourses) return true;
+    if (!guestInfo?.selectedClass) return true;
+    const courseClass = getClassFromTitle(course.title);
+    return courseClass === guestInfo.selectedClass;
+  });
 
   // Fetch chapters for selected course
   const { data: chapters = [] } = useQuery({
@@ -263,6 +280,17 @@ export default function GuestCourses() {
     localStorage.setItem("guestInfo", JSON.stringify(info));
     setGuestInfo(info);
     setShowRegistration(false);
+  };
+
+  const handleClassChange = (newClass: string) => {
+    if (guestInfo) {
+      const updatedInfo = { ...guestInfo, selectedClass: newClass };
+      localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
+      setGuestInfo(updatedInfo);
+      setSelectedClass(newClass);
+      setShowAllCourses(false);
+    }
+    setShowChangeClass(false);
   };
 
   const handleRegistrationSimple = () => {
@@ -847,20 +875,55 @@ export default function GuestCourses() {
         </div>
       )}
 
-      {/* Page Title */}
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
+      {/* Page Title with Class Filter */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 sm:mb-4">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shrink-0">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg md:text-xl font-bold font-display">
-              All Courses
+              {showAllCourses 
+                ? "All Courses" 
+                : guestInfo?.selectedClass 
+                  ? `Class ${guestInfo.selectedClass} Courses` 
+                  : "All Courses"}
             </h1>
             <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
-              Classes 3-10 • AI & Coding
+              {showAllCourses 
+                ? "Classes 3-10 • AI & Coding" 
+                : guestInfo?.selectedClass 
+                  ? `AI & Computational Thinking for Class ${guestInfo.selectedClass}` 
+                  : "Classes 3-10 • AI & Coding"}
             </p>
           </div>
+        </div>
+        
+        {/* Class Filter Controls */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {guestInfo?.selectedClass && (
+            <>
+              <Button
+                variant={showAllCourses ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowAllCourses(!showAllCourses)}
+                className={`gap-1.5 text-xs h-8 ${showAllCourses ? 'bg-primary' : 'border-primary/30'}`}
+              >
+                <Filter className="h-3.5 w-3.5" />
+                {showAllCourses ? "Showing All" : "Show All Classes"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowChangeClass(true)}
+                className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10 text-xs h-8"
+              >
+                <GraduationCap className="h-3.5 w-3.5" />
+                Class {guestInfo.selectedClass}
+                <RefreshCw className="h-3 w-3" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -877,11 +940,25 @@ export default function GuestCourses() {
             </Card>
           ))}
         </div>
+      ) : filteredCourses.length === 0 ? (
+        <Card className="p-6 sm:p-8 text-center bg-gradient-to-br from-muted/50 to-muted/20">
+          <GraduationCap className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-muted-foreground/50" />
+          <h3 className="font-bold text-base sm:text-lg mb-2">No Courses for Class {guestInfo?.selectedClass}</h3>
+          <p className="text-muted-foreground text-xs sm:text-sm mb-4">
+            No published courses found for this class yet.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => setShowAllCourses(true)}
+            className="gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            View All Courses
+          </Button>
+        </Card>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-          {allCourses
-            .filter((course) => course.is_published)
-            .map((course, index) => {
+          {filteredCourses.map((course, index) => {
               const classMatch = course.title.match(/class\s*(\d+)/i);
               const classNum = classMatch ? classMatch[1] : "3";
               const gradients: Record<string, string> = {
@@ -1054,6 +1131,14 @@ export default function GuestCourses() {
           </CardContent>
         </Card>
       )}
+
+      {/* Change Class Modal */}
+      <ChangeClassModal
+        open={showChangeClass}
+        onOpenChange={setShowChangeClass}
+        currentClass={guestInfo?.selectedClass || "5"}
+        onClassChange={handleClassChange}
+      />
     </div>
   );
 }
