@@ -62,6 +62,7 @@ import { SampleEbookViewer } from "@/components/student/SampleEbookViewer";
 import { ChangeClassModal } from "@/components/guest/ChangeClassModal";
 import { useGuestProgress } from "@/hooks/useGuestProgress";
 import { normalizeClassValue } from "@/lib/classLevel";
+import { CourseContentView } from "@/components/courses/CourseContentView";
 
 const GuestPdfPreview = lazy(() => import("@/components/student/GuestPdfPreview"));
 
@@ -524,328 +525,27 @@ export default function GuestCourses() {
     );
   }
 
-  // Course Detail View
+  // Course Detail View - using structured component
   if (selectedCourse) {
-    const classMatch = selectedCourse.title.match(/class\s*(\d+)/i);
-    const selectedClassNum = classMatch ? classMatch[1] : "3";
-    const selectedBanner = courseBanners[selectedClassNum] || bannerClass3;
-    const selectedGradient: Record<string, string> = {
-      "3": "from-coral to-sunny",
-      "4": "from-turquoise to-lime",
-      "5": "from-primary to-secondary",
-      "6": "from-purple to-primary",
-      "7": "from-sunny to-coral",
-      "8": "from-lime to-turquoise",
-      "9": "from-secondary to-purple",
-      "10": "from-primary to-turquoise",
-    };
-    const detailGradient = selectedGradient[selectedClassNum] || selectedGradient["3"];
-    
     return (
-      <div className="p-3 sm:p-4 lg:p-6 animate-fade-in">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setSelectedCourse(null)}
-          className="mb-3 gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Courses
-        </Button>
-
-        {/* Course Header with Banner */}
-        <Card className="mb-4 overflow-hidden shadow-xl">
-          <div className="relative h-36 sm:h-44 md:h-52">
-            {/* Gradient Background */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${detailGradient}`} />
-            {/* Banner Image */}
-            <img
-              src={selectedBanner}
-              alt={selectedCourse.title}
-              className="w-full h-full object-cover mix-blend-overlay opacity-60"
-            />
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-            
-            {/* Content */}
-            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
-              <Badge className="mb-2 bg-white/95 text-foreground border-0 shadow-lg text-xs font-bold">
-                Class {selectedClassNum}
-              </Badge>
-              <Badge className="mb-2 ml-2 bg-gradient-to-r from-sunny to-coral text-white border-0 shadow-lg text-xs">
-                <Star className="h-3 w-3 mr-1 fill-current" />
-                Free Trial
-              </Badge>
-              <h1 className="text-white font-bold text-base sm:text-lg md:text-xl leading-tight drop-shadow-lg">{selectedCourse.title}</h1>
-              {selectedCourse.description && (
-                <p className="text-white/80 text-xs sm:text-sm mt-1 line-clamp-2">{selectedCourse.description}</p>
-              )}
-            </div>
-          </div>
-        </Card>
-
-        {/* Course Modules */}
-        <div className="space-y-3">
-          {chapters.map((chapter: any, chapterIndex: number) => {
-            const videos = getChapterVideos(chapter.id);
-            const quizzes = getChapterQuizzes(chapter.id);
-            const ebooks = getChapterEbooks(chapter.id);
-            
-            return (
-              <Card key={chapter.id} className="overflow-hidden">
-                {/* Chapter Header */}
-                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 sm:p-4 border-b border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-md">
-                      <span className="text-sm font-bold text-white">{chapterIndex + 1}</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-muted-foreground font-medium">Chapter {chapterIndex + 1}</p>
-                      <h4 className="font-bold text-sm sm:text-base">{chapter.title}</h4>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {videos.length > 0 && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
-                          <Video className="h-2.5 w-2.5 mr-0.5" />
-                          {videos.length}
-                        </Badge>
-                      )}
-                      {quizzes.length > 0 && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
-                          <HelpCircle className="h-2.5 w-2.5 mr-0.5" />
-                          {quizzes.length}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <CardContent className="p-3 sm:p-4 space-y-4">
-                  {/* Video Lectures Section */}
-                  {videos.length > 0 && (
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-lg bg-coral/20 flex items-center justify-center">
-                          <Play className="h-3 w-3 text-coral" />
-                        </div>
-                        <h5 className="font-semibold text-sm">Video Lectures</h5>
-                        <Badge variant="outline" className="text-[10px] ml-auto">{videos.length} videos</Badge>
-                      </div>
-                      <div className="space-y-1.5 pl-8">
-                        {videos.map((video: any, videoIndex: number) => {
-                          const watched = isVideoWatched(video.id);
-                          return (
-                            <button
-                              key={video.id}
-                              onClick={() => setActiveVideo(video)}
-                              className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all hover:translate-x-1 text-left group ${
-                                watched ? 'bg-lime/10 border border-lime/30' : 'bg-muted/40 hover:bg-muted'
-                              }`}
-                            >
-                              <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                                watched ? 'bg-lime/20' : 'bg-primary/10 group-hover:bg-primary/20'
-                              }`}>
-                                {watched ? (
-                                  <CheckCircle className="h-3.5 w-3.5 text-lime" />
-                                ) : (
-                                  <span className="text-xs font-medium text-primary">{videoIndex + 1}</span>
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium truncate transition-colors ${
-                                  watched ? 'text-lime' : 'group-hover:text-primary'
-                                }`}>{video.title}</p>
-                                {video.duration_minutes && (
-                                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                    <Clock className="h-2.5 w-2.5" />
-                                    {video.duration_minutes} min
-                                  </p>
-                                )}
-                              </div>
-                              {watched ? (
-                                <Badge className="bg-lime/20 text-lime border-lime/30 text-[10px]">Done</Badge>
-                              ) : (
-                                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:translate-x-1 transition-transform" />
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Quizzes Section */}
-                  {quizzes.length > 0 && (
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-lg bg-purple/20 flex items-center justify-center">
-                          <HelpCircle className="h-3 w-3 text-purple" />
-                        </div>
-                        <h5 className="font-semibold text-sm">Quizzes</h5>
-                        <Badge variant="outline" className="text-[10px] ml-auto">{quizzes.length} quiz{quizzes.length > 1 ? 'zes' : ''}</Badge>
-                      </div>
-                      <div className="space-y-1.5 pl-8">
-                      {quizzes.map((quiz: any) => {
-                          const quizResult = getQuizScore(quiz.id);
-                          const completed = isQuizCompleted(quiz.id);
-                          return (
-                            <button
-                              key={quiz.id}
-                              onClick={() => navigate(`/guest/quiz/${quiz.id}`)}
-                              className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all hover:translate-x-1 text-left group ${
-                                completed 
-                                  ? quizResult?.passed 
-                                    ? 'bg-lime/10 border border-lime/30' 
-                                    : 'bg-coral/10 border border-coral/30'
-                                  : 'bg-muted/40 hover:bg-muted'
-                              }`}
-                            >
-                              <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                                completed 
-                                  ? quizResult?.passed ? 'bg-lime/20' : 'bg-coral/20'
-                                  : 'bg-purple/10 group-hover:bg-purple/20'
-                              }`}>
-                                {completed ? (
-                                  quizResult?.passed ? (
-                                    <CheckCircle className="h-3.5 w-3.5 text-lime" />
-                                  ) : (
-                                    <XCircle className="h-3.5 w-3.5 text-coral" />
-                                  )
-                                ) : (
-                                  <HelpCircle className="h-3.5 w-3.5 text-purple" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium truncate transition-colors ${
-                                  completed 
-                                    ? quizResult?.passed ? 'text-lime' : 'text-coral'
-                                    : 'group-hover:text-purple'
-                                }`}>{quiz.title}</p>
-                                <p className="text-[10px] text-muted-foreground">
-                                  {completed 
-                                    ? `Score: ${quizResult?.score}% ${quizResult?.passed ? '✓ Passed' : '• Try Again'}`
-                                    : `Passing score: ${quiz.passing_score}%`
-                                  }
-                                </p>
-                              </div>
-                              <Badge className={`text-[10px] transition-colors ${
-                                completed 
-                                  ? quizResult?.passed 
-                                    ? 'bg-lime/20 text-lime border-lime/30'
-                                    : 'bg-coral/20 text-coral border-coral/30'
-                                  : 'bg-purple/20 text-purple border-purple/30 group-hover:bg-purple group-hover:text-white'
-                              }`}>
-                                {completed ? (
-                                  quizResult?.passed ? 'Passed' : 'Retry'
-                                ) : (
-                                  <>
-                                    <Play className="h-2.5 w-2.5 mr-0.5" />
-                                    Start
-                                  </>
-                                )}
-                              </Badge>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* E-Books / Study Materials Section */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-6 h-6 rounded-lg bg-turquoise/20 flex items-center justify-center">
-                        <FileText className="h-3 w-3 text-turquoise" />
-                      </div>
-                      <h5 className="font-semibold text-sm">Study Materials</h5>
-                      <Badge variant="outline" className="text-[10px] ml-auto">Sample Preview</Badge>
-                    </div>
-                    
-                    <div className="space-y-1.5 pl-8">
-                      {/* Sample PDF Preview - available for every chapter */}
-                      {(() => {
-                        const samplePdf = getSamplePdfForClass(selectedClassNum);
-                        return (
-                          <button
-                            onClick={() => {
-                              setActivePdf({
-                                title: `${chapter.title} - Sample Book Preview`,
-                                pdfUrl: samplePdf.pdfUrl,
-                                classNum: samplePdf.classNum,
-                              });
-                              setPdfLoading(true);
-                              setPdfPageNumber(1);
-                            }}
-                            className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-turquoise/10 to-lime/10 hover:from-turquoise/20 hover:to-lime/20 border border-turquoise/30 transition-all hover:translate-x-1 text-left group"
-                          >
-                            <div className="w-7 h-7 rounded-full bg-turquoise/20 flex items-center justify-center shrink-0 group-hover:bg-turquoise/30 transition-colors">
-                              <BookOpen className="h-3.5 w-3.5 text-turquoise" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate group-hover:text-turquoise transition-colors">
-                                📖 Sample Book Preview
-                              </p>
-                              <p className="text-[10px] text-muted-foreground">
-                                Free soft copy preview • {samplePdf.label} sample (non-downloadable)
-                              </p>
-                            </div>
-                            <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 text-[10px] group-hover:bg-turquoise group-hover:text-white transition-colors shrink-0">
-                              <Eye className="h-2.5 w-2.5 mr-0.5" />
-                              View
-                            </Badge>
-                          </button>
-                        );
-                      })()}
-                    </div>
-
-                    {/* Physical Book Notice */}
-                    <div className="mt-3 pl-8">
-                      <div className="flex items-start gap-2 p-2.5 rounded-lg bg-gradient-to-r from-sunny/10 to-coral/10 border border-sunny/30">
-                        <BookOpen className="h-4 w-4 text-sunny shrink-0 mt-0.5" />
-                        <div className="text-xs">
-                          <p className="font-medium text-foreground flex items-center gap-1.5">
-                            📚 Theory + Worksheet Books
-                            <Badge className="bg-coral/20 text-coral text-[9px]">Hard Copy</Badge>
-                          </p>
-                          <p className="text-muted-foreground mt-1">
-                            Our books are available as <span className="font-semibold text-foreground">physical copies only</span>. 
-                            The soft copy previews above are sample chapters for review purposes.
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => navigate("/store")}
-                            className="mt-2 h-7 text-[10px] gap-1 border-coral/30 text-coral hover:bg-coral hover:text-white"
-                          >
-                            <BookOpen className="h-3 w-3" />
-                            Buy Physical Books →
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Empty State */}
-                  {videos.length === 0 && quizzes.length === 0 && ebooks.length === 0 && (
-                    <div className="text-center py-4 text-muted-foreground">
-                      <Sparkles className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Content coming soon!</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-
-          {chapters.length === 0 && (
-            <Card className="p-8 text-center">
-              <BookOpen className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
-              <h3 className="font-bold text-lg mb-1">No Chapters Yet</h3>
-              <p className="text-muted-foreground text-sm">Course content is being prepared</p>
-            </Card>
-          )}
-        </div>
-      </div>
+      <CourseContentView
+        course={selectedCourse}
+        chapters={chapters}
+        getChapterVideos={getChapterVideos}
+        getChapterQuizzes={getChapterQuizzes}
+        getChapterEbooks={getChapterEbooks}
+        isVideoWatched={isVideoWatched}
+        isQuizCompleted={isQuizCompleted}
+        getQuizScore={getQuizScore}
+        isEbookViewed={isEbookViewed}
+        onBack={() => setSelectedCourse(null)}
+        onVideoClick={(video) => setActiveVideo(video)}
+        onPdfClick={(pdf) => {
+          setActivePdf(pdf);
+          setPdfLoading(true);
+          setPdfPageNumber(1);
+        }}
+      />
     );
   }
 
