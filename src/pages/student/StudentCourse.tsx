@@ -96,6 +96,10 @@ export default function StudentCourse() {
     navigate(`/student/ebook/${ebook.id}`);
   };
 
+  const handleCodingClick = (module: any, chapterId: string) => {
+    navigate(`/student/coding/${module.id}?chapter=${chapterId}`);
+  };
+
   if (loading || !student) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -281,6 +285,7 @@ export default function StudentCourse() {
               onVideoClick={handleVideoClick}
               onQuizClick={handleQuizClick}
               onEbookClick={handleEbookClick}
+              onCodingClick={handleCodingClick}
             />
           )}
         </div>
