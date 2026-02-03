@@ -38,7 +38,7 @@ const menuItems = [
   { title: "Dashboard", url: "/student", icon: Home },
   { title: "My Courses", url: "/student/my-courses", icon: BookOpen },
   { title: "Leaderboard", url: "/student/leaderboard", icon: Crown },
-  { title: "Code Lab", url: "/compiler", icon: Code },
+  { title: "Code Lab", url: "/codelab", icon: Code },
   { title: "Achievements", url: "/student/achievements", icon: Trophy },
   { title: "Profile", url: "/student/profile", icon: User },
 ];
