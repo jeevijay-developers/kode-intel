@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { title: "Home", url: "/guest", icon: Home, bgActive: "bg-primary/15" },
   { title: "Courses", url: "/guest/courses", icon: BookOpen, bgActive: "bg-turquoise/15" },
-  { title: "Code Lab", url: "/compiler", icon: Code, bgActive: "bg-coral/15" },
+  { title: "Code Lab", url: "/codelab", icon: Code, bgActive: "bg-coral/15" },
   { title: "Quiz", url: "/guest/quiz", icon: HelpCircle, bgActive: "bg-purple/15" },
   { title: "Badges", url: "/guest/achievements", icon: Trophy, bgActive: "bg-sunny/15" },
 ];

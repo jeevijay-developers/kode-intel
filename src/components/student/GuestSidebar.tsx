@@ -65,7 +65,7 @@ const menuItems = [
   },
   { 
     title: "Code Lab", 
-    url: "/compiler", 
+    url: "/codelab", 
     icon: Code, 
     iconBg: "bg-lime/10",
     iconBgHover: "group-hover/item:bg-lime/20",

@@ -37,7 +37,7 @@ import StudentProfile from "./pages/student/StudentProfile";
 import StudentVideo from "./pages/student/StudentVideo";
 import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
-import Compiler from "./pages/student/Compiler";
+import BlockCodingLab from "./pages/student/BlockCodingLab";
 import GuestDashboard from "./pages/student/GuestDashboard";
 import GuestCourses from "./pages/student/GuestCourses";
 import GuestAchievements from "./pages/student/GuestAchievements";
@@ -110,8 +110,10 @@ function App() {
             <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
             <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
 
-            {/* Compiler route - accessible to all */}
-            <Route path="/compiler" element={<Compiler />} />
+            {/* Block Coding Lab - accessible to all */}
+            <Route path="/codelab" element={<BlockCodingLab />} />
+            <Route path="/compiler" element={<BlockCodingLab />} />
+            <Route path="/guest/compiler" element={<BlockCodingLab />} />
 
             {/* Institution auth routes */}
             <Route path="/institution/login" element={<InstitutionLogin />} />

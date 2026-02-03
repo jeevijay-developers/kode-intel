@@ -82,7 +82,7 @@ export default function StudentLayout() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate("/compiler")}
+                onClick={() => navigate("/codelab")}
                 className="h-9 w-9"
               >
                 <Code className="h-5 w-5" />

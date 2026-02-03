@@ -80,6 +80,45 @@ export type Database = {
         }
         Relationships: []
       }
+      block_categories: {
+        Row: {
+          blocks_json: Json
+          color: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          max_class_level: number
+          min_class_level: number
+          name: string
+          order_index: number
+        }
+        Insert: {
+          blocks_json?: Json
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          max_class_level?: number
+          min_class_level?: number
+          name: string
+          order_index?: number
+        }
+        Update: {
+          blocks_json?: Json
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          max_class_level?: number
+          min_class_level?: number
+          name?: string
+          order_index?: number
+        }
+        Relationships: []
+      }
       chapter_ebooks: {
         Row: {
           chapter_id: string
@@ -262,6 +301,167 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coding_modules: {
+        Row: {
+          chapter_id: string | null
+          class_level: number
+          created_at: string
+          description: string | null
+          difficulty_level: string
+          id: string
+          initial_blocks_xml: string | null
+          is_published: boolean
+          objective_text: string | null
+          order_index: number
+          title: string
+          updated_at: string
+          validation_rules: Json | null
+          xp_reward: number
+        }
+        Insert: {
+          chapter_id?: string | null
+          class_level?: number
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string
+          id?: string
+          initial_blocks_xml?: string | null
+          is_published?: boolean
+          objective_text?: string | null
+          order_index?: number
+          title: string
+          updated_at?: string
+          validation_rules?: Json | null
+          xp_reward?: number
+        }
+        Update: {
+          chapter_id?: string | null
+          class_level?: number
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string
+          id?: string
+          initial_blocks_xml?: string | null
+          is_published?: boolean
+          objective_text?: string | null
+          order_index?: number
+          title?: string
+          updated_at?: string
+          validation_rules?: Json | null
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coding_modules_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coding_progress: {
+        Row: {
+          attempts: number
+          best_score: number | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          module_id: string
+          student_id: string
+          xp_earned: number
+        }
+        Insert: {
+          attempts?: number
+          best_score?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          module_id: string
+          student_id: string
+          xp_earned?: number
+        }
+        Update: {
+          attempts?: number
+          best_score?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          module_id?: string
+          student_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coding_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "coding_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coding_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coding_projects: {
+        Row: {
+          blocks_xml: string
+          class_level: number
+          created_at: string
+          id: string
+          module_id: string | null
+          project_type: string
+          student_id: string
+          thumbnail_data: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          blocks_xml: string
+          class_level?: number
+          created_at?: string
+          id?: string
+          module_id?: string | null
+          project_type?: string
+          student_id: string
+          thumbnail_data?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          blocks_xml?: string
+          class_level?: number
+          created_at?: string
+          id?: string
+          module_id?: string | null
+          project_type?: string
+          student_id?: string
+          thumbnail_data?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coding_projects_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "coding_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coding_projects_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]
