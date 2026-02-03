@@ -38,6 +38,7 @@ import StudentVideo from "./pages/student/StudentVideo";
 import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
 import BlockCodingLab from "./pages/student/BlockCodingLab";
+import BlockCodingLesson from "./pages/student/BlockCodingLesson";
 import GuestDashboard from "./pages/student/GuestDashboard";
 import GuestCourses from "./pages/student/GuestCourses";
 import GuestAchievements from "./pages/student/GuestAchievements";
@@ -114,6 +115,7 @@ function App() {
             <Route path="/codelab" element={<BlockCodingLab />} />
             <Route path="/compiler" element={<BlockCodingLab />} />
             <Route path="/guest/compiler" element={<BlockCodingLab />} />
+            <Route path="/student/coding/:moduleId" element={<BlockCodingLesson />} />
 
             {/* Institution auth routes */}
             <Route path="/institution/login" element={<InstitutionLogin />} />

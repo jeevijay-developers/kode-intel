@@ -27,6 +27,8 @@ import {
   ArrowLeft,
   Clock,
   Eye,
+  Code,
+  Sparkles,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +41,7 @@ interface CourseContentViewerProps {
   onVideoClick?: (video: any, chapterId: string) => void;
   onQuizClick?: (quiz: any, chapterId: string) => void;
   onEbookClick?: (ebook: any, chapterId: string) => void;
+  onCodingClick?: (module: any, chapterId: string) => void;
 }
 
 const chapterIcons = [
@@ -52,11 +55,12 @@ export function CourseContentViewer({
   onVideoClick,
   onQuizClick,
   onEbookClick,
+  onCodingClick,
 }: CourseContentViewerProps) {
   const [selectedChapter, setSelectedChapter] = useState<string | null>(
     chapters.length > 0 ? chapters[0]?.id : null
   );
-  const [activeTab, setActiveTab] = useState<"videos" | "quizzes" | "books">("videos");
+  const [activeTab, setActiveTab] = useState<"videos" | "quizzes" | "books" | "coding">("videos");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -113,6 +117,40 @@ export function CourseContentViewer({
     enabled: !!selectedChapter,
   });
 
+  // Coding modules for the chapter
+  const { data: codingModules = [] } = useQuery({
+    queryKey: ["chapter-coding-modules", selectedChapter],
+    queryFn: async () => {
+      if (!selectedChapter) return [];
+      const { data, error } = await supabase
+        .from("coding_modules")
+        .select("*")
+        .eq("chapter_id", selectedChapter)
+        .eq("is_published", true)
+        .order("order_index");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedChapter,
+  });
+
+  // Coding progress
+  const { data: codingProgress = [] } = useQuery({
+    queryKey: ["coding-progress", studentId, selectedChapter],
+    queryFn: async () => {
+      const moduleIds = codingModules.map((m: any) => m.id);
+      if (moduleIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("coding_progress")
+        .select("*")
+        .eq("student_id", studentId)
+        .in("module_id", moduleIds);
+      if (error) throw error;
+      return data;
+    },
+    enabled: codingModules.length > 0 && !!studentId,
+  });
+
   // Video progress
   const { data: videoProgress = [] } = useQuery({
     queryKey: ["video-progress", studentId, selectedChapter],
@@ -132,6 +170,10 @@ export function CourseContentViewer({
 
   const isVideoCompleted = (videoId: string) => {
     return videoProgress.some((p: any) => p.video_id === videoId && p.is_completed);
+  };
+
+  const isCodingCompleted = (moduleId: string) => {
+    return codingProgress.some((p: any) => p.module_id === moduleId && p.completed_at);
   };
 
   const handleLockedClick = () => {
@@ -261,26 +303,33 @@ export function CourseContentViewer({
               </div>
             ) : (
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="flex-1 flex flex-col">
-                <TabsList className="grid w-full grid-cols-3 m-4 mb-0 max-w-md">
+                <TabsList className="grid w-full grid-cols-4 m-4 mb-0 max-w-lg">
                   <TabsTrigger value="videos" className="gap-1.5">
                     <Video className="h-4 w-4" />
-                    Videos
+                    <span className="hidden sm:inline">Videos</span>
                     <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
                       {videos.length}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="quizzes" className="gap-1.5">
                     <HelpCircle className="h-4 w-4" />
-                    Quizzes
+                    <span className="hidden sm:inline">Quizzes</span>
                     <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
                       {quizzes.length}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="books" className="gap-1.5">
                     <FileText className="h-4 w-4" />
-                    E-Books
+                    <span className="hidden sm:inline">E-Books</span>
                     <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
                       {ebooks.length}
+                    </Badge>
+                  </TabsTrigger>
+                  <TabsTrigger value="coding" className="gap-1.5">
+                    <Code className="h-4 w-4" />
+                    <span className="hidden sm:inline">Coding</span>
+                    <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
+                      {codingModules.length}
                     </Badge>
                   </TabsTrigger>
                 </TabsList>
@@ -410,6 +459,92 @@ export function CourseContentViewer({
                       <div className="p-3 rounded-xl bg-sunny/10 border border-sunny/20 text-center">
                         <p className="text-xs text-muted-foreground">
                           📚 E-books are sample previews. Complete books available as physical copies.
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* Coding Tab Content */}
+                  <TabsContent value="coding" className="mt-0 space-y-3">
+                    {codingModules.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Code className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+                        <p className="text-muted-foreground">No coding activities in this chapter yet</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-4"
+                          onClick={() => navigate('/codelab')}
+                        >
+                          <Code className="h-4 w-4 mr-2" />
+                          Try Free Practice
+                        </Button>
+                      </div>
+                    ) : (
+                      codingModules.map((module: any) => {
+                        const completed = isCodingCompleted(module.id);
+                        const difficultyColors: Record<string, string> = {
+                          beginner: "bg-lime/10 text-lime border-lime/30",
+                          intermediate: "bg-sunny/10 text-sunny border-sunny/30",
+                          advanced: "bg-coral/10 text-coral border-coral/30",
+                        };
+                        
+                        return (
+                          <button
+                            key={module.id}
+                            onClick={() => onCodingClick?.(module, selectedChapter!)}
+                            className={`w-full p-4 rounded-xl border transition-all group text-left ${
+                              completed
+                                ? "border-lime/50 bg-lime/5"
+                                : "border-border hover:border-primary/50 hover:bg-primary/5"
+                            }`}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform ${
+                                completed ? "bg-lime/20" : "bg-primary/10"
+                              }`}>
+                                {completed ? (
+                                  <CheckCircle className="h-5 w-5 text-lime" />
+                                ) : (
+                                  <Code className="h-5 w-5 text-primary" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`font-medium transition-colors ${
+                                  completed ? "text-lime" : "group-hover:text-primary"
+                                }`}>
+                                  {module.title}
+                                </p>
+                                {module.description && (
+                                  <p className="text-sm text-muted-foreground line-clamp-1">{module.description}</p>
+                                )}
+                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                  <Badge className={difficultyColors[module.difficulty_level] || difficultyColors.beginner}>
+                                    {module.difficulty_level}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-[10px] gap-1">
+                                    <Sparkles className="h-3 w-3 text-sunny" />
+                                    {module.xp_reward} XP
+                                  </Badge>
+                                  {completed && (
+                                    <Badge className="bg-lime/20 text-lime text-[10px]">
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      Completed
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+
+                    {codingModules.length > 0 && (
+                      <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center">
+                        <p className="text-xs text-muted-foreground">
+                          🧩 Complete coding activities to earn XP and unlock achievements!
                         </p>
                       </div>
                     )}
