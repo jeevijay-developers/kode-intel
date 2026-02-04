@@ -9,7 +9,8 @@ import {
   ChevronRight,
   ArrowRight,
   Sparkles,
-  GraduationCap
+  GraduationCap,
+  CheckCircle2
 } from "lucide-react";
 
 const courseLevels = [
@@ -17,7 +18,7 @@ const courseLevels = [
     grades: "Class 3-4", 
     title: "Foundation", 
     description: "Logical thinking basics",
-    emoji: "🌟", 
+    topics: ["What is AI?", "Patterns", "Problem solving"],
     icon: Lightbulb, 
     gradient: "from-sunny via-coral to-pink",
     bg: "bg-gradient-to-br from-sunny/15 to-coral/10"
@@ -26,7 +27,7 @@ const courseLevels = [
     grades: "Class 5-6", 
     title: "Explorer", 
     description: "Algorithms & patterns",
-    emoji: "🚀", 
+    topics: ["Flowcharts", "Block coding", "Data"],
     icon: Rocket, 
     gradient: "from-primary via-secondary to-purple",
     bg: "bg-gradient-to-br from-primary/15 to-secondary/10"
@@ -34,8 +35,8 @@ const courseLevels = [
   { 
     grades: "Class 7-8", 
     title: "Builder", 
-    description: "Real-world projects",
-    emoji: "⚡", 
+    description: "Python fundamentals",
+    topics: ["Python basics", "Functions", "Games"],
     icon: Code, 
     gradient: "from-turquoise via-lime to-sunny",
     bg: "bg-gradient-to-br from-turquoise/15 to-lime/10"
@@ -44,7 +45,7 @@ const courseLevels = [
     grades: "Class 9-10", 
     title: "Innovator", 
     description: "Advanced AI & ML",
-    emoji: "🧠", 
+    topics: ["ML concepts", "Neural nets", "Projects"],
     icon: Cpu, 
     gradient: "from-secondary via-pink to-coral",
     bg: "bg-gradient-to-br from-secondary/15 to-pink/10"
@@ -60,13 +61,13 @@ export function MobileCourseLevels() {
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full mb-3">
           <GraduationCap className="h-4 w-4 text-primary" />
-          <span className="text-xs font-bold text-primary">Structured Curriculum</span>
+          <span className="text-xs font-bold text-primary">8 Grade Levels</span>
         </div>
         <h2 className="text-xl font-bold text-foreground mb-2 font-display">
-          Progressive Learning <span className="text-gradient-primary">Paths</span>
+          Progressive <span className="text-gradient-primary">Learning Paths</span>
         </h2>
         <p className="text-sm text-muted-foreground">
-          Age-appropriate content for every grade
+          Age-appropriate curriculum that grows with your child
         </p>
       </div>
 
@@ -75,15 +76,15 @@ export function MobileCourseLevels() {
         {courseLevels.map((level, index) => (
           <button
             key={index}
-            onClick={() => navigate("/guest/courses")}
+            onClick={() => navigate("/student/guest")}
             className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all duration-300 active:scale-[0.97] border border-border/40 ${level.bg} group shadow-sm`}
           >
             {/* Gradient Accent */}
             <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${level.gradient} rounded-t-2xl`} />
             
             {/* Icon */}
-            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${level.gradient} flex items-center justify-center mb-3 shadow-lg group-active:scale-90 transition-transform`}>
-              <span className="text-xl">{level.emoji}</span>
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${level.gradient} flex items-center justify-center mb-2.5 shadow-lg group-active:scale-90 transition-transform`}>
+              <level.icon className="h-5 w-5 text-white" />
             </div>
             
             {/* Content */}
@@ -93,12 +94,22 @@ export function MobileCourseLevels() {
             <h3 className="text-sm font-bold text-foreground font-display mb-0.5">
               {level.title}
             </h3>
-            <p className="text-[10px] text-muted-foreground leading-tight">
+            <p className="text-[10px] text-muted-foreground leading-tight mb-2">
               {level.description}
             </p>
             
+            {/* Topics Preview */}
+            <div className="space-y-0.5">
+              {level.topics.slice(0, 2).map((topic, i) => (
+                <div key={i} className="flex items-center gap-1 text-[8px] text-muted-foreground">
+                  <CheckCircle2 className="h-2.5 w-2.5 text-lime" />
+                  {topic}
+                </div>
+              ))}
+            </div>
+            
             {/* Arrow */}
-            <ChevronRight className="absolute bottom-4 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+            <ChevronRight className="absolute bottom-3 right-2 h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
           </button>
         ))}
       </div>
@@ -106,7 +117,7 @@ export function MobileCourseLevels() {
       {/* View All Button */}
       <Button
         variant="outline"
-        onClick={() => navigate("/guest/courses")}
+        onClick={() => navigate("/student/guest")}
         className="w-full h-12 gap-2 rounded-xl border-2 font-semibold hover:bg-primary/5 hover:border-primary/50 transition-all"
       >
         <Sparkles className="h-4 w-4 text-primary" />

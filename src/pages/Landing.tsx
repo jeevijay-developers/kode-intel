@@ -37,7 +37,6 @@ import {
   Puzzle,
   Gamepad2,
   TrendingUp,
-  BadgeCheck,
   Layers,
   CirclePlay,
   FileQuestion,
@@ -46,9 +45,16 @@ import {
   Video,
   MessageSquare,
   Headphones,
+  Laptop,
+  Palette,
+  BarChart3,
+  Gift,
+  GlobeLock,
+  Fingerprint,
+  Workflow,
 } from "lucide-react";
 
-// New AI-generated images
+// AI-generated images
 import heroAiLearning from "@/assets/hero-ai-learning.png";
 import kodiMascot3d from "@/assets/kodi-mascot-3d.png";
 import schoolTechPartnership from "@/assets/school-tech-partnership.png";
@@ -182,115 +188,123 @@ export default function Landing() {
     );
   }
 
+  // What we offer - Learning modules
+  const learningModules = [
+    {
+      icon: BookOpen,
+      title: "Interactive Digital Books",
+      description: "Rich multimedia textbooks with animations, videos, and interactive elements that make learning engaging",
+      color: "from-primary to-secondary",
+      features: ["Touch-friendly navigation", "Content protection", "Progress tracking"],
+    },
+    {
+      icon: Blocks,
+      title: "Block-Based Coding Lab",
+      description: "Scratch-like visual programming for Classes 3-6, then transition to Python & Java for higher grades",
+      color: "from-turquoise to-lime",
+      features: ["Visual block coding", "Real code output", "Instant execution"],
+    },
+    {
+      icon: FileQuestion,
+      title: "Adaptive Worksheets",
+      description: "Auto-graded exercises including fill-blanks, matching, true/false, and short-answer questions",
+      color: "from-sunny to-coral",
+      features: ["Instant feedback", "XP rewards", "Progress saving"],
+    },
+    {
+      icon: Video,
+      title: "HD Video Lectures",
+      description: "Professionally produced lessons by expert educators, designed to maximize engagement and retention",
+      color: "from-pink to-secondary",
+      features: ["Chaptered videos", "Watch progress", "Offline access"],
+    },
+  ];
+
+  // Problems we solve
+  const problemsSolved = [
+    { icon: Target, problem: "Outdated CS curriculum", solution: "NEP 2020-aligned AI & Computational Thinking", color: "text-primary" },
+    { icon: GlobeLock, problem: "No structured learning path", solution: "Grade-wise progressive curriculum (3-10)", color: "text-turquoise" },
+    { icon: Gamepad2, problem: "Boring, text-heavy content", solution: "Gamified learning with badges & XP", color: "text-sunny" },
+    { icon: Fingerprint, problem: "Content piracy concerns", solution: "Protected digital books, no downloads", color: "text-coral" },
+    { icon: BarChart3, problem: "No visibility into progress", solution: "Real-time analytics for parents/schools", color: "text-lime" },
+    { icon: Workflow, problem: "Theory-only education", solution: "Hands-on coding practice with projects", color: "text-secondary" },
+  ];
+
   const products = [
     {
-      name: "Full Pack",
+      name: "Complete Learning Pack",
       price: "₹3,499",
+      originalPrice: "₹4,999",
       period: "/year",
       popular: true,
-      description: "Complete learning experience with everything included",
+      description: "Everything your child needs to master AI & Coding",
       features: [
-        { icon: CirclePlay, text: "Video Lectures (LMS)" },
-        { icon: Code, text: "Practice Compiler" },
-        { icon: FileQuestion, text: "Interactive Quizzes" },
-        { icon: Blocks, text: "Practice Projects" },
-        { icon: TrendingUp, text: "Analytics & Progress" },
-        { icon: BookMarked, text: "Physical Workbook" },
+        { icon: CirclePlay, text: "50+ HD Video Lectures" },
+        { icon: BookOpen, text: "Interactive Digital Textbook" },
+        { icon: Code, text: "Unlimited Code Lab Access" },
+        { icon: FileQuestion, text: "Adaptive Worksheets & Quizzes" },
+        { icon: Blocks, text: "10+ Hands-on Projects" },
+        { icon: TrendingUp, text: "Progress Analytics Dashboard" },
+        { icon: BookMarked, text: "Physical Workbook (Delivered)" },
+        { icon: Trophy, text: "Certificates & Badges" },
       ],
-      buttonText: "Get Full Pack",
+      buttonText: "Start 7-Day Free Trial",
       gradient: "gradient-primary",
     },
     {
-      name: "Book Only",
+      name: "Workbook Only",
       price: "₹999",
+      originalPrice: null,
       period: "",
       popular: false,
-      description: "Physical workbook for offline learning",
+      description: "Physical theory book + worksheets for offline learning",
       features: [
-        { icon: BookMarked, text: "Theory + Worksheets" },
-        { icon: FileText, text: "Practice Exercises" },
+        { icon: BookMarked, text: "Comprehensive Theory Book" },
+        { icon: FileText, text: "Practice Worksheets" },
         { icon: CheckCircle2, text: "Chapter Summaries" },
+        { icon: Award, text: "Activity Pages" },
       ],
-      buttonText: "Buy Book",
+      buttonText: "Buy Workbook",
       gradient: "bg-secondary",
     },
   ];
 
-  const benefits = [
-    {
-      icon: Brain,
-      title: "AI-Powered Learning",
-      description: "Learn artificial intelligence concepts through fun, interactive lessons designed for young minds",
-      gradient: "from-primary to-secondary",
-      image: aiNetworkAbstract,
-    },
-    {
-      icon: Puzzle,
-      title: "Computational Thinking",
-      description: "Develop problem-solving skills with step-by-step logical thinking exercises",
-      gradient: "from-secondary to-pink",
-      image: null,
-    },
-    {
-      icon: Gamepad2,
-      title: "Learn by Playing",
-      description: "Gamified learning experience with badges, levels, and exciting challenges",
-      gradient: "from-accent to-sunny",
-      image: gamificationRewards,
-    },
-    {
-      icon: Monitor,
-      title: "Interactive Compiler",
-      description: "Practice coding with our kid-friendly block and text-based compiler",
-      gradient: "from-turquoise to-lime",
-      image: null,
-    },
-  ];
-
-  const whyKodeIntel = [
-    { icon: Target, title: "NEP 2020 Aligned", description: "Curriculum designed as per National Education Policy guidelines", color: "text-primary" },
-    { icon: Clock, title: "40-Min Sessions", description: "Perfect session duration for maximum engagement", color: "text-secondary" },
-    { icon: Trophy, title: "Gamified Learning", description: "Earn badges, unlock levels, and compete with friends", color: "text-accent" },
-    { icon: Shield, title: "Safe & Secure", description: "Child-safe platform with no ads and protected content", color: "text-turquoise" },
-    { icon: Zap, title: "Fun Activities", description: "Hands-on projects and creative coding challenges", color: "text-coral" },
-    { icon: Heart, title: "Built for Kids", description: "Age-appropriate content designed by education experts", color: "text-pink" },
-  ];
-
   const courseLevels = [
-    { grades: "Classes 3-4", title: "Foundation", description: "Introduction to logical thinking", icon: Lightbulb, gradient: "from-sunny via-coral to-pink", emoji: "🌟" },
-    { grades: "Classes 5-6", title: "Explorer", description: "Algorithms & pattern recognition", icon: Rocket, gradient: "from-primary via-secondary to-purple", emoji: "🚀" },
-    { grades: "Classes 7-8", title: "Builder", description: "Create projects & applications", icon: Code, gradient: "from-turquoise via-lime to-sunny", emoji: "⚡" },
-    { grades: "Classes 9-10", title: "Innovator", description: "Advanced AI & real-world apps", icon: Cpu, gradient: "from-secondary via-pink to-coral", emoji: "🧠" },
+    { grades: "Classes 3-4", title: "Foundation", description: "Logical thinking & problem solving", icon: Lightbulb, gradient: "from-sunny via-coral to-pink", topics: ["What is AI?", "Thinking like a computer", "Patterns & sequences"] },
+    { grades: "Classes 5-6", title: "Explorer", description: "Algorithms & computational thinking", icon: Rocket, gradient: "from-primary via-secondary to-purple", topics: ["Flowcharts", "Block coding", "Data & decisions"] },
+    { grades: "Classes 7-8", title: "Builder", description: "Real coding with Python basics", icon: Code, gradient: "from-turquoise via-lime to-sunny", topics: ["Python fundamentals", "Functions", "Simple games"] },
+    { grades: "Classes 9-10", title: "Innovator", description: "Advanced AI & machine learning", icon: Cpu, gradient: "from-secondary via-pink to-coral", topics: ["ML concepts", "Neural networks", "AI projects"] },
   ];
 
   const stats = [
     { value: 1000, suffix: "+", label: "Happy Students", icon: Users },
     { value: 50, suffix: "+", label: "Video Lessons", icon: Video },
     { value: 25, suffix: "+", label: "Partner Schools", icon: Building2 },
-    { value: 100, suffix: "%", label: "Fun Guaranteed", icon: Heart },
+    { value: 8, suffix: "", label: "Grade Levels", icon: GraduationCap },
   ];
 
   const testimonials = [
-    { name: "Mrs. Sharma", role: "Parent of Class 7 Student", text: "My son is so excited about AI now! The videos are engaging and he's learning concepts I never imagined at his age.", avatar: woman2, rating: 5 },
-    { name: "Mr. Patel", role: "Parent of Class 5 Student", text: "My daughter looks forward to the quizzes every day. She's developing critical thinking skills while having fun!", avatar: man1, rating: 5 },
-    { name: "Mrs. Kumar", role: "Parent of Class 9 Student", text: "The computational thinking curriculum has improved my son's problem-solving abilities across all subjects.", avatar: woman4, rating: 5 },
-    { name: "Principal Verma", role: "Delhi Public School", text: "KodeIntel has transformed how we teach technology. The structured curriculum makes implementation seamless.", avatar: man3, rating: 5 },
+    { name: "Mrs. Anita Sharma", role: "Parent, Class 7 Student", text: "My son's problem-solving skills have improved dramatically. The interactive lessons keep him engaged for hours!", avatar: woman2, rating: 5 },
+    { name: "Mr. Rajesh Patel", role: "Parent, Class 5 Student", text: "Finally, a platform that teaches AI concepts at a level my daughter can understand. The gamification is brilliant!", avatar: man1, rating: 5 },
+    { name: "Mrs. Priya Kumar", role: "Parent, Class 9 Student", text: "The transition from block coding to Python was seamless. My son is now writing real programs!", avatar: woman4, rating: 5 },
+    { name: "Principal Verma", role: "Delhi Public School", text: "KodeIntel has transformed how we teach computer science. Students are more engaged than ever before.", avatar: man3, rating: 5 },
   ];
 
   const faqs = [
-    { question: "What is KodeIntel?", answer: "KodeIntel is an AI & Computational Thinking platform designed for students from Class 3 to Class 10, aligned with NEP 2020. It offers video lectures, quizzes, a practice compiler, and physical workbooks." },
-    { question: "How are the sessions structured?", answer: "Each academic year has 10 working months with 4 sessions per month. Each session is approximately 40 minutes, perfect for young learners' attention spans." },
-    { question: "What's the difference between Full Pack and Book Only?", answer: "Full Pack (₹3,499/year) includes video lectures, compiler access, quizzes, projects, analytics, and a physical book. Book Only (₹999) includes just the physical workbook." },
-    { question: "Is the compiler suitable for beginners?", answer: "Yes! Lower classes (3-6) use block-based coding similar to Scratch, while higher classes (7-10) progress to text-based Python and Java." },
-    { question: "How do schools partner with KodeIntel?", answer: "Schools get special bulk pricing at ₹2,999 per student, dedicated support, centralized analytics, and easy onboarding for all students." },
+    { question: "What exactly is KodeIntel?", answer: "KodeIntel is India's first comprehensive AI & Computational Thinking platform for school students (Classes 3-10). We combine interactive digital textbooks, a visual coding lab, HD video lectures, and gamified worksheets to make learning fun and effective." },
+    { question: "How is the curriculum structured?", answer: "Each grade has 10 months of content with 4 sessions per month. Each session is 40 minutes—perfect for young learners. The curriculum follows NEP 2020 guidelines and progressively builds from logical thinking to actual programming." },
+    { question: "What's included in the Complete Learning Pack?", answer: "You get access to all digital content (videos, interactive textbook, code lab, quizzes, projects, analytics) PLUS a physical workbook delivered to your doorstep. All for ₹3,499/year with a 7-day free trial." },
+    { question: "Is the coding suitable for complete beginners?", answer: "Absolutely! Classes 3-6 use block-based coding (like Scratch) which requires no typing. Higher classes transition to Python and Java with step-by-step guidance. Every student succeeds regardless of background." },
+    { question: "How does school partnership work?", answer: "Schools get bulk pricing at ₹2,999/student/year, a centralized analytics dashboard, teacher training, and dedicated support. We handle everything from onboarding to progress reports." },
+    { question: "Can parents track their child's progress?", answer: "Yes! Our analytics dashboard shows completed lessons, quiz scores, time spent, streak days, badges earned, and areas that need improvement. You'll always know how your child is progressing." },
   ];
 
   const howItWorks = [
-    { step: 1, title: "Sign Up", description: "Create your account in seconds", icon: Users, color: "from-primary to-secondary" },
-    { step: 2, title: "Choose Class", description: "Select your grade level", icon: GraduationCap, color: "from-secondary to-pink" },
-    { step: 3, title: "Watch & Learn", description: "Enjoy interactive video lessons", icon: Play, color: "from-turquoise to-lime" },
-    { step: 4, title: "Practice", description: "Code in our fun compiler", icon: Code, color: "from-accent to-coral" },
-    { step: 5, title: "Get Certified", description: "Earn badges and certificates", icon: Award, color: "from-purple to-primary" },
+    { step: 1, title: "Sign Up Free", description: "Create account in 30 seconds", icon: Users, color: "from-primary to-secondary" },
+    { step: 2, title: "Select Grade", description: "Choose your class level", icon: GraduationCap, color: "from-secondary to-pink" },
+    { step: 3, title: "Learn & Code", description: "Watch videos, practice coding", icon: Code, color: "from-turquoise to-lime" },
+    { step: 4, title: "Complete Quizzes", description: "Test knowledge, earn XP", icon: Trophy, color: "from-accent to-coral" },
+    { step: 5, title: "Get Certified", description: "Unlock badges & certificates", icon: Award, color: "from-purple to-primary" },
   ];
 
   return (
@@ -298,75 +312,71 @@ export default function Landing() {
       {/* Animated Mesh Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div 
-          className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-30"
+          className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-20"
           style={{
-            background: `radial-gradient(circle, hsl(var(--primary) / 0.4) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, hsl(var(--primary) / 0.5) 0%, transparent 70%)`,
             left: `${mousePosition.x * 0.3}%`,
             top: `${mousePosition.y * 0.2}%`,
             transition: 'left 0.5s ease-out, top 0.5s ease-out'
           }}
         />
         <div 
-          className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-25"
+          className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-20"
           style={{
-            background: `radial-gradient(circle, hsl(var(--secondary) / 0.4) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, hsl(var(--turquoise) / 0.4) 0%, transparent 70%)`,
             right: `${(100 - mousePosition.x) * 0.2}%`,
             bottom: `${(100 - mousePosition.y) * 0.2}%`,
             transition: 'right 0.8s ease-out, bottom 0.8s ease-out'
           }}
         />
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-turquoise/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1.5s" }} />
       </div>
 
-      {/* Hero Section - Enhanced */}
-      <section className="relative min-h-screen flex items-center py-12 px-4">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center py-16 px-4">
         <div className="container mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left Content */}
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-8 shadow-lg border border-primary/20">
-                <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-8 shadow-lg border border-primary/20">
+                <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse" />
                 <span className="text-foreground">NEP 2020 Aligned</span>
                 <span className="text-muted-foreground">•</span>
-                <span className="text-primary font-bold">Classes 3rd - 10th</span>
+                <span className="text-primary font-bold">Classes 3 to 10</span>
               </div>
               
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-[1.1] font-display">
-                Building{" "}
+                India's #1{" "}
                 <span className="relative">
-                  <span className="text-gradient-primary">Thinking</span>
+                  <span className="text-gradient-primary">AI & Coding</span>
                   <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
-                    <path d="M2 8C50 3 100 3 150 8C200 13 250 3 298 8" stroke="hsl(var(--accent))" strokeWidth="4" strokeLinecap="round"/>
+                    <path d="M2 8C50 3 100 3 150 8C200 13 250 3 298 8" stroke="hsl(var(--turquoise))" strokeWidth="4" strokeLinecap="round"/>
                   </svg>
                 </span>
                 <br />
-                <span className="text-foreground">Minds for the</span>{" "}
+                <span className="text-foreground">Platform for</span>{" "}
                 <span className="relative inline-block">
-                  <span className="text-gradient-playful">AI Age</span>
-                  <Sparkles className="absolute -top-4 -right-8 h-8 w-8 text-accent animate-pulse" />
+                  <span className="text-gradient-playful">School Kids</span>
+                  <Sparkles className="absolute -top-4 -right-8 h-8 w-8 text-sunny animate-pulse" />
                 </span>
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl leading-relaxed">
-                India's most exciting AI & Computational Thinking curriculum for young learners. 
-                <span className="text-foreground font-semibold"> Watch videos, solve puzzles, write code,</span> and become a future innovator!
+                <span className="text-foreground font-semibold">Interactive digital books, visual coding lab, video lectures & gamified worksheets</span> — 
+                everything your child needs to become future-ready.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <Button
                   size="lg"
                   onClick={() => navigate("/student/login")}
                   className="gap-3 rounded-full px-10 py-7 text-lg font-bold shadow-2xl hover:shadow-primary/25 transition-all hover:scale-105 btn-glow group relative overflow-hidden"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Rocket className="h-6 w-6 group-hover:animate-bounce" />
-                    Start Learning Free
-                    <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                  <Rocket className="h-6 w-6 group-hover:animate-bounce" />
+                  Start 7-Day Free Trial
+                  <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
                   size="lg"
@@ -375,55 +385,51 @@ export default function Landing() {
                   className="gap-3 rounded-full px-10 py-7 text-lg font-semibold border-2 border-border hover:border-primary/50 hover:bg-primary/5 group"
                 >
                   <Play className="h-5 w-5 group-hover:text-primary transition-colors" />
-                  Try Demo
+                  Try Demo Free
                 </Button>
               </div>
 
-              {/* Social Proof - Enhanced */}
-              <div className="flex items-center gap-6 flex-wrap p-4 glass rounded-2xl">
-                <div className="flex -space-x-4">
+              {/* Trust Indicators */}
+              <div className="flex items-center gap-6 flex-wrap p-5 glass rounded-2xl">
+                <div className="flex -space-x-3">
                   {[man1, woman2, man3, woman4].map((avatar, i) => (
                     <div 
                       key={i} 
-                      className="w-14 h-14 rounded-full border-4 border-background overflow-hidden shadow-lg hover:scale-125 hover:z-20 transition-all duration-300 cursor-pointer"
-                      style={{ animationDelay: `${i * 0.1}s` }}
+                      className="w-12 h-12 rounded-full border-3 border-background overflow-hidden shadow-lg hover:scale-110 hover:z-20 transition-all cursor-pointer"
                     >
                       <img src={avatar} alt="" className="w-full h-full object-cover" />
                     </div>
                   ))}
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-bold text-sm border-4 border-background shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-bold text-sm border-3 border-background shadow-lg">
                     +1K
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-1 mb-1">
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-5 w-5 fill-accent text-accent drop-shadow-sm" />
+                      <Star key={i} className="h-5 w-5 fill-sunny text-sunny" />
                     ))}
                     <span className="ml-2 font-bold text-foreground text-lg">4.9</span>
                   </div>
-                  <p className="text-sm text-muted-foreground font-medium">Trusted by 1000+ students & parents</p>
+                  <p className="text-sm text-muted-foreground font-medium">Loved by 1000+ students & parents</p>
                 </div>
               </div>
             </div>
 
-            {/* Right Content - Hero Image Enhanced */}
+            {/* Right Content - Hero Image */}
             <div className={`relative transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              {/* Multi-layer Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30 rounded-[2rem] blur-[60px] scale-110 animate-pulse" />
-              <div className="absolute inset-4 bg-gradient-to-tr from-turquoise/20 to-pink/20 rounded-[2rem] blur-[40px] animate-pulse" style={{ animationDelay: "0.5s" }} />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-turquoise/30 rounded-[2rem] blur-[60px] scale-110 animate-pulse" />
               
-              {/* Main Image Container */}
               <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-border/30 hover:border-primary/30 transition-all duration-500 group">
                 <img 
                   src={heroAiLearning} 
                   alt="Kids learning AI with holographic displays" 
                   className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-700" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
               </div>
               
-              {/* Floating Achievement Cards */}
+              {/* Floating Cards */}
               <FloatingElement delay={0} className="absolute -top-6 -right-6 z-20">
                 <div className="glass rounded-2xl shadow-2xl p-4 border border-turquoise/30">
                   <div className="flex items-center gap-3">
@@ -431,49 +437,33 @@ export default function Landing() {
                       <CheckCircle2 className="h-7 w-7 text-primary-foreground" />
                     </div>
                     <div>
-                      <p className="font-bold text-foreground">Quiz Completed!</p>
-                      <p className="text-sm text-turquoise font-semibold">Score: 95% 🎉</p>
+                      <p className="font-bold text-foreground">Quiz Passed!</p>
+                      <p className="text-sm text-turquoise font-semibold">Score: 95%</p>
                     </div>
                   </div>
                 </div>
               </FloatingElement>
               
               <FloatingElement delay={1.2} className="absolute -bottom-6 -left-6 z-20">
-                <div className="glass rounded-2xl shadow-2xl p-4 border border-accent/30">
+                <div className="glass rounded-2xl shadow-2xl p-4 border border-sunny/30">
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-sunny to-coral flex items-center justify-center shadow-lg">
                       <Award className="h-7 w-7 text-primary-foreground" />
                     </div>
                     <div>
                       <p className="font-bold text-foreground">New Badge!</p>
-                      <p className="text-sm text-accent font-semibold">AI Explorer 🏆</p>
-                    </div>
-                  </div>
-                </div>
-              </FloatingElement>
-
-              <FloatingElement delay={0.6} className="absolute top-1/3 -right-10 z-20 hidden xl:block">
-                <div className="glass rounded-2xl shadow-xl p-3 border border-primary/30">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                      <TrendingUp className="h-6 w-6 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm text-foreground">Level 5</p>
-                      <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="w-3/4 h-full bg-gradient-to-r from-primary to-secondary" />
-                      </div>
+                      <p className="text-sm text-sunny font-semibold">Code Master</p>
                     </div>
                   </div>
                 </div>
               </FloatingElement>
 
               {/* Mascot */}
-              <FloatingElement delay={0.3} className="absolute -bottom-2 right-8 z-30 hidden lg:block">
+              <FloatingElement delay={0.3} className="absolute -bottom-2 right-10 z-30 hidden lg:block">
                 <img 
                   src={kodiMascot3d} 
-                  alt="Kodi Mascot" 
-                  className="w-28 h-28 object-contain drop-shadow-2xl hover:scale-110 transition-transform cursor-pointer" 
+                  alt="KODI Mascot" 
+                  className="w-32 h-32 object-contain drop-shadow-2xl hover:scale-110 transition-transform cursor-pointer" 
                 />
               </FloatingElement>
             </div>
@@ -489,19 +479,17 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Stats Section - Enhanced */}
+      {/* Stats Section */}
       <section className="py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 gradient-primary" />
         <div className="absolute inset-0 pattern-dots opacity-20" />
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent" />
         
         <div className="container mx-auto relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             {stats.map((stat, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
                 <div className="text-center group">
-                  <div className="w-20 h-20 rounded-3xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-xl border border-primary-foreground/10">
+                  <div className="w-20 h-20 rounded-3xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform shadow-xl">
                     <stat.icon className="h-10 w-10 text-primary-foreground" />
                   </div>
                   <div className="text-5xl md:text-6xl font-bold text-primary-foreground mb-2 font-display">
@@ -515,83 +503,98 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Benefits Section - Enhanced with Images */}
+      {/* What We Offer Section */}
       <section className="py-24 px-4 relative">
         <div className="container mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6 shadow-md">
-                <Sparkles className="h-5 w-5 text-accent animate-pulse" />
-                <span className="text-foreground">Why Choose Us</span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6 shadow-md">
+                <Layers className="h-5 w-5 text-turquoise" />
+                <span className="text-foreground">Complete Learning Ecosystem</span>
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display leading-tight">
-                Supercharge Your Child's{" "}
-                <span className="text-gradient-primary">Future</span>
+                4 Powerful Learning{" "}
+                <span className="text-gradient-primary">Modules</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Our platform combines cutting-edge technology with child-friendly learning methods to make education exciting
+                A complete learning experience combining digital books, hands-on coding, video lessons, and adaptive practice
               </p>
             </div>
           </RevealOnScroll>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {benefits.map((benefit, index) => (
-              <RevealOnScroll key={index} delay={index * 150}>
-                <Card className="card-playful overflow-hidden group h-full border-2 hover:border-primary/30">
-                  <CardContent className="p-0">
-                    <div className="grid sm:grid-cols-2 h-full">
-                      <div className="p-8 flex flex-col justify-center">
-                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-xl`}>
-                          <benefit.icon className="h-8 w-8 text-primary-foreground" />
-                        </div>
-                        <h3 className="text-2xl font-bold text-foreground mb-3 font-display">{benefit.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
-                      </div>
-                      <div className={`h-48 sm:h-auto bg-gradient-to-br ${benefit.gradient} relative overflow-hidden`}>
-                        {benefit.image ? (
-                          <img 
-                            src={benefit.image} 
-                            alt={benefit.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <benefit.icon className="h-24 w-24 text-primary-foreground/30" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-r from-background/20 to-transparent" />
-                      </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {learningModules.map((module, index) => (
+              <RevealOnScroll key={index} delay={index * 100}>
+                <Card className="card-playful overflow-hidden group h-full border-2 hover:border-primary/30 transition-all">
+                  <CardContent className="p-8">
+                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xl`}>
+                      <module.icon className="h-10 w-10 text-primary-foreground" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-3 font-display">{module.title}</h3>
+                    <p className="text-muted-foreground mb-6 leading-relaxed">{module.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {module.features.map((feature, i) => (
+                        <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
+                          {feature}
+                        </span>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
               </RevealOnScroll>
             ))}
           </div>
-
-          {/* Feature Icons Banner */}
-          <RevealOnScroll delay={400}>
-            <div className="mt-16 rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src={featureIconsSet} 
-                alt="Educational Features" 
-                className="w-full h-48 md:h-64 object-cover"
-              />
-            </div>
-          </RevealOnScroll>
         </div>
       </section>
 
-      {/* How It Works Section - Enhanced */}
+      {/* Problems We Solve Section */}
       <section className="py-24 px-4 bg-muted/30 relative overflow-hidden">
-        <div className="absolute inset-0 pattern-grid opacity-20" />
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
-                <Layers className="h-5 w-5 text-secondary" />
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
+                <Target className="h-5 w-5 text-coral" />
+                <span>Problems We Solve</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
+                Traditional CS Education is <span className="text-gradient-primary">Broken</span>
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                We've reimagined how children learn technology skills
+              </p>
+            </div>
+          </RevealOnScroll>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {problemsSolved.map((item, index) => (
+              <RevealOnScroll key={index} delay={index * 80}>
+                <div className="bg-card rounded-2xl p-6 border-2 border-border hover:border-primary/30 transition-all group hover:shadow-xl hover:-translate-y-1">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <item.icon className={`h-6 w-6 ${item.color}`} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground line-through mb-1">{item.problem}</p>
+                      <p className="font-bold text-foreground">{item.solution}</p>
+                    </div>
+                  </div>
+                </div>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24 px-4 relative">
+        <div className="container mx-auto">
+          <RevealOnScroll>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
+                <Workflow className="h-5 w-5 text-secondary" />
                 <span>Simple Process</span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
                 Start Learning in <span className="text-gradient-primary">5 Easy Steps</span>
               </h2>
             </div>
@@ -602,7 +605,7 @@ export default function Landing() {
               <RevealOnScroll key={index} delay={index * 100}>
                 <div className="flex items-center">
                   <div className="flex flex-col items-center text-center group">
-                    <div className={`relative w-24 h-24 rounded-3xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300`}>
+                    <div className={`relative w-24 h-24 rounded-3xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all`}>
                       <step.icon className="h-12 w-12 text-primary-foreground" />
                       <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-lg shadow-lg border-4 border-background">
                         {step.step}
@@ -623,20 +626,20 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Course Levels Preview - Enhanced */}
-      <section id="courses" className="py-24 px-4 relative">
+      {/* Course Levels Section */}
+      <section id="courses" className="py-24 px-4 bg-muted/30 relative">
         <div className="container mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
                 <GraduationCap className="h-5 w-5 text-primary" />
                 <span>Grade-Wise Curriculum</span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
-                Choose Your <span className="text-gradient-primary">Level</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
+                Progressive Learning <span className="text-gradient-primary">Paths</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Progressive curriculum designed for each grade level with age-appropriate content
+                Age-appropriate curriculum that grows with your child
               </p>
             </div>
           </RevealOnScroll>
@@ -645,18 +648,24 @@ export default function Landing() {
             {courseLevels.map((level, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
                 <Card 
-                  className="card-playful overflow-hidden cursor-pointer group border-2 hover:border-primary/30"
+                  className="card-playful overflow-hidden cursor-pointer group border-2 hover:border-primary/30 h-full"
                   onClick={() => navigate("/courses")}
                 >
-                  <div className={`h-40 bg-gradient-to-br ${level.gradient} flex items-center justify-center relative overflow-hidden`}>
-                    <span className="text-6xl group-hover:scale-125 transition-transform duration-500">{level.emoji}</span>
-                    <level.icon className="absolute bottom-2 right-2 h-20 w-20 text-primary-foreground/20 group-hover:scale-110 transition-transform" />
-                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
+                  <div className={`h-32 bg-gradient-to-br ${level.gradient} flex items-center justify-center relative overflow-hidden`}>
+                    <level.icon className="h-16 w-16 text-primary-foreground/80 group-hover:scale-110 transition-transform" />
                   </div>
-                  <CardContent className="p-6 text-center">
+                  <CardContent className="p-6">
                     <p className="text-sm font-bold text-primary mb-2 uppercase tracking-wide">{level.grades}</p>
-                    <h3 className="text-2xl font-bold text-foreground mb-2 font-display">{level.title}</h3>
-                    <p className="text-muted-foreground">{level.description}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-2 font-display">{level.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{level.description}</p>
+                    <div className="space-y-1.5">
+                      {level.topics.map((topic, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-lime" />
+                          {topic}
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </RevealOnScroll>
@@ -668,9 +677,9 @@ export default function Landing() {
               <Button
                 size="lg"
                 onClick={() => navigate("/courses")}
-                className="gap-3 rounded-full px-10 py-7 text-lg font-semibold shadow-xl hover:shadow-2xl group"
+                className="gap-3 rounded-full px-10 py-7 text-lg font-bold shadow-xl hover:shadow-2xl group"
               >
-                View All Courses
+                Explore All Courses
                 <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
@@ -678,61 +687,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Why KodeIntel Section - Enhanced */}
-      <section className="py-24 px-4 gradient-mesh relative">
-        <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <RevealOnScroll>
-              <div>
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
-                  <Target className="h-5 w-5 text-primary" />
-                  <span>Our Approach</span>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display leading-tight">
-                  Why Parents & Schools{" "}
-                  <span className="text-gradient-primary">Trust Us</span>
-                </h2>
-                <p className="text-xl text-muted-foreground mb-10">
-                  We've designed every aspect of our platform with children's learning needs in mind, 
-                  following the latest educational research and NEP 2020 guidelines.
-                </p>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {whyKodeIntel.map((item, index) => (
-                    <div key={index} className="flex items-start gap-4 p-5 glass rounded-2xl hover:shadow-lg transition-all hover:-translate-y-1 group border border-transparent hover:border-primary/20">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                        <item.icon className={`h-6 w-6 ${item.color}`} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-foreground mb-1">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </RevealOnScroll>
-
-            <RevealOnScroll delay={200}>
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-3xl blur-3xl" />
-                <img 
-                  src={aiNetworkAbstract} 
-                  alt="AI Brain Network" 
-                  className="relative z-10 w-full rounded-3xl shadow-2xl border-4 border-border/20 hover:scale-[1.02] transition-transform duration-500"
-                />
-              </div>
-            </RevealOnScroll>
-          </div>
-        </div>
-      </section>
-
-      {/* Compiler Preview Section - Enhanced */}
+      {/* Compiler Preview Section */}
       <section className="py-24 px-4 bg-foreground text-background relative overflow-hidden">
-        <div className="absolute inset-0 pattern-dots opacity-5" />
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-primary/10 to-transparent" />
-        <div className="absolute bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-secondary/10 to-transparent" />
-        
         <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <RevealOnScroll className="order-2 lg:order-1">
@@ -742,30 +698,29 @@ export default function Landing() {
                   alt="Hybrid Compiler Preview" 
                   className="w-full group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
               </div>
             </RevealOnScroll>
             
             <RevealOnScroll delay={200} className="order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-background/10 rounded-full text-sm font-semibold mb-6">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-background/10 rounded-full text-sm font-bold mb-6">
                 <Code className="h-5 w-5" />
-                <span>Hybrid Compiler</span>
+                <span>Hybrid Code Lab</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display leading-tight">
-                Code Your Way to{" "}
-                <span className="text-primary">Success</span>
+                From Blocks to{" "}
+                <span className="text-primary">Real Code</span>
               </h2>
               <p className="text-xl text-background/80 mb-10 leading-relaxed">
-                Our hybrid compiler adapts to your skill level. Start with colorful blocks like Scratch, 
-                then graduate to real Python and Java code as you grow!
+                Start with colorful drag-and-drop blocks like Scratch, then graduate to real Python and Java as skills grow. 
+                Watch code execute instantly with visual output!
               </p>
               
               <div className="space-y-5 mb-10">
                 {[
-                  { icon: Blocks, text: "Block-based coding for beginners (Classes 3-6)", color: "from-turquoise to-lime" },
-                  { icon: Code, text: "Text-based Python & Java (Classes 7-10)", color: "from-primary to-secondary" },
-                  { icon: Play, text: "Instant code execution with visual output", color: "from-accent to-coral" },
-                  { icon: Trophy, text: "Gamified achievements and rewards", color: "from-sunny to-pink" },
+                  { icon: Blocks, text: "Visual block coding for Classes 3-6", color: "from-turquoise to-lime" },
+                  { icon: Code, text: "Python & Java for Classes 7-10", color: "from-primary to-secondary" },
+                  { icon: Play, text: "Instant execution with visual output", color: "from-sunny to-coral" },
+                  { icon: Trophy, text: "Earn XP & badges for every project", color: "from-pink to-secondary" },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-4 group">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
@@ -778,11 +733,11 @@ export default function Landing() {
 
               <Button
                 size="lg"
-                onClick={() => navigate("/compiler")}
-                className="gap-3 rounded-full px-10 py-7 text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl hover:shadow-2xl group"
+                onClick={() => navigate("/student/guest")}
+                className="gap-3 rounded-full px-10 py-7 text-lg font-bold bg-turquoise text-turquoise-foreground hover:bg-turquoise/90 shadow-xl hover:shadow-2xl group"
               >
                 <MousePointerClick className="h-6 w-6" />
-                Try Compiler
+                Try Code Lab Free
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </RevealOnScroll>
@@ -790,20 +745,20 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing Section - Enhanced */}
+      {/* Pricing Section */}
       <section className="py-24 px-4 relative">
         <div className="container mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
-                <BookMarked className="h-5 w-5 text-primary" />
-                <span>Pricing Plans</span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
+                <Gift className="h-5 w-5 text-sunny" />
+                <span>Launch Pricing</span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
-                Choose Your <span className="text-gradient-primary">Plan</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
+                Simple, Transparent <span className="text-gradient-primary">Pricing</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Flexible options to suit every learning journey
+                Start with a 7-day free trial. No credit card required.
               </p>
             </div>
           </RevealOnScroll>
@@ -813,28 +768,36 @@ export default function Landing() {
               <RevealOnScroll key={index} delay={index * 150}>
                 <Card className={`card-playful overflow-hidden relative h-full border-2 ${product.popular ? 'border-primary shadow-2xl shadow-primary/10' : ''}`}>
                   {product.popular && (
-                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-secondary to-accent" />
+                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-secondary to-turquoise" />
                   )}
                   {product.popular && (
                     <div className="absolute top-6 right-6">
                       <span className="px-4 py-1.5 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-bold rounded-full flex items-center gap-2 shadow-lg">
                         <Star className="h-4 w-4 fill-current" />
-                        POPULAR
+                        BEST VALUE
                       </span>
                     </div>
                   )}
                   <CardContent className="p-10">
-                    <h3 className="text-3xl font-bold text-foreground mb-3 font-display">{product.name}</h3>
+                    <h3 className="text-2xl font-bold text-foreground mb-2 font-display">{product.name}</h3>
                     <p className="text-muted-foreground mb-6">{product.description}</p>
                     <div className="mb-8">
-                      <span className="text-5xl font-bold text-foreground font-display">{product.price}</span>
-                      <span className="text-xl text-muted-foreground">{product.period}</span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-5xl font-bold text-foreground font-display">{product.price}</span>
+                        <span className="text-xl text-muted-foreground">{product.period}</span>
+                      </div>
+                      {product.originalPrice && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          <span className="line-through">{product.originalPrice}</span>
+                          <span className="text-lime font-bold ml-2">Save 30%</span>
+                        </p>
+                      )}
                     </div>
                     
-                    <ul className="space-y-4 mb-10">
+                    <ul className="space-y-3 mb-10">
                       {product.features.map((feature, fIndex) => (
-                        <li key={fIndex} className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <li key={fIndex} className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
                             <feature.icon className="h-5 w-5 text-primary" />
                           </div>
                           <span className="text-foreground font-medium">{feature.text}</span>
@@ -846,7 +809,7 @@ export default function Landing() {
                       className={`w-full rounded-full py-7 text-lg font-bold ${product.popular ? 'shadow-xl hover:shadow-2xl' : ''}`}
                       variant={product.popular ? "default" : "outline"}
                       size="lg"
-                      onClick={() => navigate("/store")}
+                      onClick={() => navigate(product.popular ? "/student/signup" : "/store")}
                     >
                       {product.buttonText}
                       <ArrowRight className="h-5 w-5 ml-2" />
@@ -860,7 +823,7 @@ export default function Landing() {
           <RevealOnScroll delay={300}>
             <div className="text-center mt-12">
               <p className="text-muted-foreground mb-4 text-lg">Looking for school bulk pricing?</p>
-              <Button variant="link" onClick={() => navigate("/schools")} className="gap-2 text-primary text-lg font-semibold">
+              <Button variant="link" onClick={() => navigate("/school-partnership")} className="gap-2 text-primary text-lg font-bold">
                 <Building2 className="h-5 w-5" />
                 View School Partnership Options
                 <ArrowRight className="h-5 w-5" />
@@ -870,38 +833,37 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Schools Preview Section - Enhanced */}
+      {/* Schools Section */}
       <section className="py-24 px-4 bg-muted/30 relative overflow-hidden">
-        <div className="absolute inset-0 pattern-grid opacity-20" />
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <RevealOnScroll>
               <div>
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
                   <Building2 className="h-5 w-5 text-primary" />
                   <span>For Schools</span>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display leading-tight">
-                  Transform Your School's{" "}
-                  <span className="text-gradient-primary">Tech Education</span>
+                  Partner With Us to{" "}
+                  <span className="text-gradient-primary">Transform Education</span>
                 </h2>
                 <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                  Partner with KodeIntel to bring cutting-edge AI & Computational Thinking education 
-                  to your students with special bulk pricing and dedicated support.
+                  Bring cutting-edge AI & Computational Thinking education to your students 
+                  with special bulk pricing and dedicated support.
                 </p>
 
                 <div className="space-y-4 mb-10">
                   {[
-                    { icon: Users, text: "Bulk student onboarding" },
-                    { icon: TrendingUp, text: "Centralized analytics dashboard" },
-                    { icon: Headphones, text: "Dedicated account manager" },
-                    { icon: Award, text: "Teacher training included" },
+                    "Bulk student onboarding & management",
+                    "Centralized progress analytics",
+                    "Teacher training & resources",
+                    "Dedicated account manager",
                   ].map((item, index) => (
-                    <div key={index} className="flex items-center gap-4">
+                    <div key={index} className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-turquoise/20 flex items-center justify-center">
                         <CheckCircle2 className="h-5 w-5 text-turquoise" />
                       </div>
-                      <span className="text-foreground font-medium text-lg">{item.text}</span>
+                      <span className="text-foreground font-medium text-lg">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -916,8 +878,8 @@ export default function Landing() {
 
                 <Button
                   size="lg"
-                  onClick={() => navigate("/schools")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-semibold shadow-xl hover:shadow-2xl group"
+                  onClick={() => navigate("/school-partnership")}
+                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold shadow-xl hover:shadow-2xl group"
                 >
                   <Building2 className="h-6 w-6" />
                   Partner With Us
@@ -932,7 +894,7 @@ export default function Landing() {
                 <img 
                   src={schoolTechPartnership} 
                   alt="School Partnership" 
-                  className="relative z-10 w-full rounded-3xl shadow-2xl border-4 border-border/20 hover:scale-[1.02] transition-transform duration-500"
+                  className="relative z-10 w-full rounded-3xl shadow-2xl border-4 border-border/20"
                 />
               </div>
             </RevealOnScroll>
@@ -940,16 +902,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials Section - Enhanced */}
+      {/* Testimonials Section */}
       <section className="py-24 px-4 relative">
         <div className="container mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
                 <Heart className="h-5 w-5 text-coral animate-pulse" />
                 <span>Testimonials</span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
                 What Parents & Schools <span className="text-gradient-primary">Say</span>
               </h2>
             </div>
@@ -962,7 +924,7 @@ export default function Landing() {
                   <CardContent className="p-8 flex flex-col h-full">
                     <div className="flex gap-1 mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-accent text-accent" />
+                        <Star key={i} className="h-5 w-5 fill-sunny text-sunny" />
                       ))}
                     </div>
                     <p className="text-muted-foreground mb-6 flex-grow italic leading-relaxed">"{testimonial.text}"</p>
@@ -985,19 +947,19 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FAQ Section - Enhanced */}
+      {/* FAQ Section */}
       <section className="py-24 px-4 bg-muted/30 relative">
         <div className="container mx-auto max-w-4xl">
           <RevealOnScroll>
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-semibold mb-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
                 <HelpCircle className="h-5 w-5 text-primary" />
                 <span>FAQ</span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 font-display">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-display">
                 Got <span className="text-gradient-primary">Questions?</span>
               </h2>
-              <p className="text-xl text-muted-foreground">We've got answers to the most common questions</p>
+              <p className="text-xl text-muted-foreground">We've got answers</p>
             </div>
           </RevealOnScroll>
 
@@ -1032,46 +994,52 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section - Enhanced */}
+      {/* CTA Section */}
       <section className="py-24 px-4 relative overflow-hidden">
         <div className="absolute inset-0 gradient-primary" />
         <div className="absolute inset-0 pattern-dots opacity-20" />
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-muted/30 to-transparent" />
         
         <div className="container mx-auto relative z-10">
           <RevealOnScroll>
             <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-foreground/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-8 text-primary-foreground">
-                <Rocket className="h-5 w-5 animate-bounce" />
-                <span>Ready to Start?</span>
-              </div>
+              <FloatingElement className="inline-block mb-6">
+                <img src={kodiMascot3d} alt="KODI Mascot" className="w-24 h-24 object-contain mx-auto" />
+              </FloatingElement>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 font-display leading-tight">
-                Start Your Child's AI Journey Today!
+                Ready to Shape Your Child's{" "}
+                <span className="relative">
+                  Future?
+                  <Sparkles className="absolute -top-4 -right-8 h-8 w-8 text-sunny animate-pulse" />
+                </span>
               </h2>
               <p className="text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-                Join thousands of students who are building the skills for tomorrow. 
-                The first week is completely free!
+                Join thousands of students mastering AI & Coding. Start your 7-day free trial today!
               </p>
+              
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   size="lg"
                   onClick={() => navigate("/student/login")}
-                  className="gap-3 rounded-full px-12 py-8 text-xl font-bold bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-2xl hover:shadow-primary-foreground/20 group"
+                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold bg-background text-foreground hover:bg-background/90 shadow-2xl group"
                 >
-                  <Rocket className="h-6 w-6 group-hover:animate-bounce" />
-                  Get Started Free
-                  <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                  <Rocket className="h-6 w-6" />
+                  Start Free Trial
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate("/schools")}
-                  className="gap-3 rounded-full px-12 py-8 text-xl font-bold border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 group"
+                  onClick={() => navigate("/student/guest")}
+                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 group"
                 >
-                  <Building2 className="h-6 w-6" />
-                  School Partnership
+                  <Play className="h-5 w-5" />
+                  Explore Demo
                 </Button>
               </div>
+
+              <p className="mt-8 text-primary-foreground/70 text-sm">
+                No credit card required • Cancel anytime • Full access for 7 days
+              </p>
             </div>
           </RevealOnScroll>
         </div>
