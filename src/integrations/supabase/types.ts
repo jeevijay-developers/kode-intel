@@ -119,6 +119,98 @@ export type Database = {
         }
         Relationships: []
       }
+      book_pages: {
+        Row: {
+          created_at: string | null
+          digital_book_id: string
+          id: string
+          is_published: boolean | null
+          order_index: number | null
+          page_number: number
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          digital_book_id: string
+          id?: string
+          is_published?: boolean | null
+          order_index?: number | null
+          page_number: number
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          digital_book_id?: string
+          id?: string
+          is_published?: boolean | null
+          order_index?: number | null
+          page_number?: number
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_pages_digital_book_id_fkey"
+            columns: ["digital_book_id"]
+            isOneToOne: false
+            referencedRelation: "digital_books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_reading_progress: {
+        Row: {
+          completed_at: string | null
+          completed_pages: number[] | null
+          created_at: string | null
+          current_page: number | null
+          digital_book_id: string
+          id: string
+          reading_time_minutes: number | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_pages?: number[] | null
+          created_at?: string | null
+          current_page?: number | null
+          digital_book_id: string
+          id?: string
+          reading_time_minutes?: number | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completed_pages?: number[] | null
+          created_at?: string | null
+          current_page?: number | null
+          digital_book_id?: string
+          id?: string
+          reading_time_minutes?: number | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_reading_progress_digital_book_id_fkey"
+            columns: ["digital_book_id"]
+            isOneToOne: false
+            referencedRelation: "digital_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_reading_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapter_ebooks: {
         Row: {
           chapter_id: string
@@ -538,6 +630,53 @@ export type Database = {
         }
         Relationships: []
       }
+      digital_books: {
+        Row: {
+          chapter_id: string
+          cover_image_url: string | null
+          created_at: string | null
+          estimated_reading_time: number | null
+          id: string
+          is_published: boolean | null
+          learning_objectives: Json | null
+          subtitle: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          chapter_id: string
+          cover_image_url?: string | null
+          created_at?: string | null
+          estimated_reading_time?: number | null
+          id?: string
+          is_published?: boolean | null
+          learning_objectives?: Json | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          cover_image_url?: string | null
+          created_at?: string | null
+          estimated_reading_time?: number | null
+          id?: string
+          is_published?: boolean | null
+          learning_objectives?: Json | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_books_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: true
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institution_accounts: {
         Row: {
           address: string | null
@@ -719,6 +858,47 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      page_content_blocks: {
+        Row: {
+          block_type: Database["public"]["Enums"]["content_block_type"]
+          class_level_max: number | null
+          class_level_min: number | null
+          content: Json
+          created_at: string | null
+          id: string
+          order_index: number | null
+          page_id: string
+        }
+        Insert: {
+          block_type: Database["public"]["Enums"]["content_block_type"]
+          class_level_max?: number | null
+          class_level_min?: number | null
+          content?: Json
+          created_at?: string | null
+          id?: string
+          order_index?: number | null
+          page_id: string
+        }
+        Update: {
+          block_type?: Database["public"]["Enums"]["content_block_type"]
+          class_level_max?: number | null
+          class_level_min?: number | null
+          content?: Json
+          created_at?: string | null
+          id?: string
+          order_index?: number | null
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_content_blocks_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "book_pages"
             referencedColumns: ["id"]
           },
         ]
@@ -1245,6 +1425,105 @@ export type Database = {
         }
         Relationships: []
       }
+      worksheet_progress: {
+        Row: {
+          answer_data: Json | null
+          attempted_at: string | null
+          chapter_id: string
+          id: string
+          is_correct: boolean | null
+          question_id: string
+          student_id: string
+        }
+        Insert: {
+          answer_data?: Json | null
+          attempted_at?: string | null
+          chapter_id: string
+          id?: string
+          is_correct?: boolean | null
+          question_id: string
+          student_id: string
+        }
+        Update: {
+          answer_data?: Json | null
+          attempted_at?: string | null
+          chapter_id?: string
+          id?: string
+          is_correct?: boolean | null
+          question_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worksheet_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worksheet_progress_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "worksheet_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worksheet_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worksheet_questions: {
+        Row: {
+          chapter_id: string
+          created_at: string | null
+          difficulty_level: string | null
+          id: string
+          is_published: boolean | null
+          order_index: number | null
+          question_data: Json
+          question_type: Database["public"]["Enums"]["worksheet_question_type"]
+          updated_at: string | null
+          xp_reward: number | null
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string
+          is_published?: boolean | null
+          order_index?: number | null
+          question_data: Json
+          question_type: Database["public"]["Enums"]["worksheet_question_type"]
+          updated_at?: string | null
+          xp_reward?: number | null
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string
+          is_published?: boolean | null
+          order_index?: number | null
+          question_data?: Json
+          question_type?: Database["public"]["Enums"]["worksheet_question_type"]
+          updated_at?: string | null
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worksheet_questions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1260,8 +1539,23 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "admin"
+      content_block_type:
+        | "text"
+        | "image"
+        | "callout"
+        | "block_visual"
+        | "video_embed"
+        | "activity"
+        | "divider"
       institution_type: "school" | "corporate" | "coaching" | "other"
       question_type: "multiple_choice" | "true_false"
+      worksheet_question_type:
+        | "fill_blank"
+        | "true_false"
+        | "match_column"
+        | "short_answer"
+        | "ordering"
+        | "block_reasoning"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1390,8 +1684,25 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "admin"],
+      content_block_type: [
+        "text",
+        "image",
+        "callout",
+        "block_visual",
+        "video_embed",
+        "activity",
+        "divider",
+      ],
       institution_type: ["school", "corporate", "coaching", "other"],
       question_type: ["multiple_choice", "true_false"],
+      worksheet_question_type: [
+        "fill_blank",
+        "true_false",
+        "match_column",
+        "short_answer",
+        "ordering",
+        "block_reasoning",
+      ],
     },
   },
 } as const

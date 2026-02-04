@@ -40,6 +40,9 @@ import StudentEbook from "./pages/student/StudentEbook";
 import StudentQuiz from "./pages/student/StudentQuiz";
 import BlockCodingLab from "./pages/student/BlockCodingLab";
 import BlockCodingLesson from "./pages/student/BlockCodingLesson";
+import DigitalBook from "./pages/student/DigitalBook";
+import ChapterHome from "./pages/student/ChapterHome";
+import ChapterWorksheet from "./pages/student/ChapterWorksheet";
 import GuestDashboard from "./pages/student/GuestDashboard";
 import GuestCourses from "./pages/student/GuestCourses";
 import GuestAchievements from "./pages/student/GuestAchievements";
@@ -108,9 +111,15 @@ function App() {
 
             {/* Student content routes (full screen, no sidebar) */}
             <Route path="/student/course/:id" element={<StudentCourse />} />
+            <Route path="/student/courses/:id" element={<StudentCourse />} />
             <Route path="/student/video/:videoId" element={<StudentVideo />} />
             <Route path="/student/ebook/:ebookId" element={<StudentEbook />} />
             <Route path="/student/quiz/:quizId" element={<StudentQuiz />} />
+            
+            {/* Digital Book System routes */}
+            <Route path="/student/chapter/:chapterId" element={<ChapterHome />} />
+            <Route path="/student/book/:bookId" element={<DigitalBook />} />
+            <Route path="/student/worksheet/:chapterId" element={<ChapterWorksheet />} />
 
             {/* Block Coding Lab - accessible to all */}
             <Route path="/codelab" element={<BlockCodingLab />} />
