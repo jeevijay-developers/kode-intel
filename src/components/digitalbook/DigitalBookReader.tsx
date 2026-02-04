@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, User } from "lucide-react";
 import { BookCoverPage } from "./BookCoverPage";
 import { PageRenderer } from "./PageRenderer";
-import { BookNavigation } from "./BookNavigation";
 import { cn } from "@/lib/utils";
 
 interface DigitalBookReaderProps {
@@ -193,20 +192,21 @@ export function DigitalBookReader({ bookId: propBookId }: DigitalBookReaderProps
     >
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => courseId ? navigate(`/student/chapter/${book.chapters?.id}`) : navigate(-1)}
+              className="h-8 w-8 sm:h-9 sm:w-9"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <div className="truncate">
-              <p className="font-semibold text-foreground text-sm truncate">
+              <p className="font-semibold text-foreground text-xs sm:text-sm truncate max-w-[180px] sm:max-w-none">
                 {book.title}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
                 Page {currentPage + 1} of {totalPages}
               </p>
             </div>
@@ -216,14 +216,16 @@ export function DigitalBookReader({ bookId: propBookId }: DigitalBookReaderProps
             variant="ghost"
             size="sm"
             onClick={() => navigate("/student/profile")}
+            className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3"
           >
             <User className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Profile</span>
           </Button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 container mx-auto px-4 pb-24 overflow-y-auto">
+      <main className="flex-1 container mx-auto px-3 sm:px-4 pb-20 sm:pb-24 overflow-y-auto">
         {currentPage === 0 ? (
           <BookCoverPage
             title={book.title}
@@ -234,9 +236,9 @@ export function DigitalBookReader({ bookId: propBookId }: DigitalBookReaderProps
             chapterNumber={book.chapters?.order_index}
           />
         ) : currentPageData ? (
-          <div className="py-6">
+          <div className="py-4 sm:py-6">
             {currentPageData.title && (
-              <h2 className="text-2xl font-bold text-foreground mb-6">
+              <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
                 {currentPageData.title}
               </h2>
             )}
@@ -245,14 +247,59 @@ export function DigitalBookReader({ bookId: propBookId }: DigitalBookReaderProps
         ) : null}
       </main>
 
-      {/* Navigation */}
-      <BookNavigation
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPrevious={() => handlePageChange(currentPage - 1)}
-        onNext={() => handlePageChange(currentPage + 1)}
-        onPageSelect={handlePageChange}
-      />
+      {/* Navigation - Fixed bottom bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border z-40">
+        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage <= 0}
+              className="h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Previous</span>
+              <span className="sm:hidden">Prev</span>
+            </Button>
+
+            <div className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 overflow-x-auto max-w-[200px] sm:max-w-none">
+              {Array.from({ length: Math.min(totalPages, 10) }).map((_, idx) => {
+                const pageIdx = totalPages <= 10 ? idx : Math.floor(idx * (totalPages - 1) / 9);
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handlePageChange(pageIdx)}
+                    className={cn(
+                      "w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all shrink-0",
+                      pageIdx === currentPage
+                        ? "bg-primary scale-125"
+                        : "bg-muted hover:bg-muted-foreground/30"
+                    )}
+                  />
+                );
+              })}
+              {totalPages > 10 && (
+                <span className="text-[10px] text-muted-foreground ml-1 hidden sm:inline">
+                  +{totalPages - 10}
+                </span>
+              )}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage >= totalPages - 1}
+              className="h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <span className="sm:hidden">Next</span>
+              <ArrowLeft className="h-4 w-4 ml-1 sm:ml-2 rotate-180" />
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

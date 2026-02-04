@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   BookOpen,
   Play,
@@ -17,8 +19,6 @@ import {
   CheckCircle,
   XCircle,
   Layers,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 
 // Course banner imports
@@ -40,21 +40,6 @@ const gradientMap: Record<string, string> = {
   "8": "from-lime to-turquoise",
   "9": "from-secondary to-purple",
   "10": "from-primary to-turquoise",
-};
-
-const availableSamplePdfs = [
-  { classNum: "4", pdfUrl: "/ebooks/class-4-chapter-1.pdf", label: "Class 4" },
-  { classNum: "6", pdfUrl: "/ebooks/class-6-chapter-1.pdf", label: "Class 6" },
-  { classNum: "7", pdfUrl: "/ebooks/class-7-chapter-1.pdf", label: "Class 7" },
-];
-
-const getSamplePdfForClass = (classNum: string) => {
-  const exact = availableSamplePdfs.find(p => p.classNum === classNum);
-  if (exact) return exact;
-  const num = parseInt(classNum);
-  if (num <= 4) return availableSamplePdfs[0];
-  if (num <= 6) return availableSamplePdfs[1];
-  return availableSamplePdfs[2];
 };
 
 interface CourseContentViewProps {
@@ -98,7 +83,22 @@ export function CourseContentView({
   const videos = selectedChapter ? getChapterVideos(selectedChapter.id) : [];
   const quizzes = selectedChapter ? getChapterQuizzes(selectedChapter.id) : [];
   const ebooks = selectedChapter ? getChapterEbooks(selectedChapter.id) : [];
-  const samplePdf = getSamplePdfForClass(classNum);
+
+  // Fetch digital books for selected chapter
+  const { data: digitalBooks = [] } = useQuery({
+    queryKey: ["chapter-digital-books", selectedChapter?.id],
+    queryFn: async () => {
+      if (!selectedChapter?.id) return [];
+      const { data, error } = await supabase
+        .from("digital_books")
+        .select("id, title, subtitle, estimated_reading_time, cover_image_url")
+        .eq("chapter_id", selectedChapter.id)
+        .eq("is_published", true);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedChapter?.id,
+  });
 
   const totalVideos = chapters.reduce((sum, ch) => sum + getChapterVideos(ch.id).length, 0);
   const totalQuizzes = chapters.reduce((sum, ch) => sum + getChapterQuizzes(ch.id).length, 0);
@@ -413,28 +413,34 @@ export function CourseContentView({
             {/* Books Tab Content */}
             {contentTab === "books" && (
               <div className="space-y-3">
-                <button
-                  onClick={() => onPdfClick({
-                    title: `${selectedChapter?.title} - Sample Preview`,
-                    pdfUrl: samplePdf.pdfUrl,
-                    classNum: samplePdf.classNum,
-                  })}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl border border-turquoise/40 bg-gradient-to-r from-turquoise/5 to-lime/5 active:from-turquoise/10 active:to-lime/10 transition-all"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-turquoise/20 flex items-center justify-center shrink-0">
-                    <BookOpen className="h-5 w-5 text-turquoise" />
-                  </div>
-                  <div className="flex-1 text-left min-w-0">
-                    <p className="text-sm font-medium">Sample Book Preview</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                      Free preview • {samplePdf.label}
-                    </p>
-                  </div>
-                  <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 shrink-0">
-                    <Eye className="h-3 w-3 mr-1" />
-                    View
-                  </Badge>
-                </button>
+                {digitalBooks.length > 0 ? (
+                  digitalBooks.map((book: any) => (
+                    <button
+                      key={book.id}
+                      onClick={() => navigate(`/guest/book/${book.id}`)}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl border border-turquoise/40 bg-gradient-to-r from-turquoise/5 to-lime/5 active:from-turquoise/10 active:to-lime/10 transition-all"
+                    >
+                      <div className="w-11 h-11 rounded-xl bg-turquoise/20 flex items-center justify-center shrink-0">
+                        <BookOpen className="h-5 w-5 text-turquoise" />
+                      </div>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-sm font-medium truncate">{book.title}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          Interactive Digital Book • {book.estimated_reading_time || 10} min read
+                        </p>
+                      </div>
+                      <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30 shrink-0">
+                        <Eye className="h-3 w-3 mr-1" />
+                        Read
+                      </Badge>
+                    </button>
+                  ))
+                ) : (
+                  <Card className="p-6 text-center border-dashed">
+                    <BookOpen className="h-10 w-10 mx-auto mb-2 text-muted-foreground/30" />
+                    <p className="text-sm text-muted-foreground">No digital books in this chapter yet</p>
+                  </Card>
+                )}
 
                 <Card className="p-3 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
                   <div className="flex items-start gap-2.5">
@@ -640,25 +646,33 @@ export function CourseContentView({
 
                     {contentTab === "books" && (
                       <>
-                        <button
-                          onClick={() => onPdfClick({
-                            title: `${selectedChapter.title} - Sample Preview`,
-                            pdfUrl: samplePdf.pdfUrl,
-                            classNum: samplePdf.classNum,
-                          })}
-                          className="w-full flex items-center gap-3 p-4 rounded-xl border border-turquoise/40 bg-gradient-to-r from-turquoise/5 to-lime/5 hover:from-turquoise/10 hover:to-lime/10 transition-all"
-                        >
-                          <div className="w-12 h-12 rounded-xl bg-turquoise/20 flex items-center justify-center">
-                            <BookOpen className="h-6 w-6 text-turquoise" />
-                          </div>
-                          <div className="flex-1 text-left">
-                            <p className="font-medium">Sample Book Preview</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Free preview • {samplePdf.label}</p>
-                          </div>
-                          <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30">
-                            <Eye className="h-3 w-3 mr-1" /> View
-                          </Badge>
-                        </button>
+                        {digitalBooks.length > 0 ? (
+                          digitalBooks.map((book: any) => (
+                            <button
+                              key={book.id}
+                              onClick={() => navigate(`/guest/book/${book.id}`)}
+                              className="w-full flex items-center gap-3 p-4 rounded-xl border border-turquoise/40 bg-gradient-to-r from-turquoise/5 to-lime/5 hover:from-turquoise/10 hover:to-lime/10 transition-all"
+                            >
+                              <div className="w-12 h-12 rounded-xl bg-turquoise/20 flex items-center justify-center">
+                                <BookOpen className="h-6 w-6 text-turquoise" />
+                              </div>
+                              <div className="flex-1 text-left">
+                                <p className="font-medium">{book.title}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                  Interactive Digital Book • {book.estimated_reading_time || 10} min read
+                                </p>
+                              </div>
+                              <Badge className="bg-turquoise/20 text-turquoise border-turquoise/30">
+                                <Eye className="h-3 w-3 mr-1" /> Read
+                              </Badge>
+                            </button>
+                          ))
+                        ) : (
+                          <Card className="p-8 text-center border-dashed">
+                            <BookOpen className="h-10 w-10 mx-auto mb-2 text-muted-foreground/30" />
+                            <p className="text-muted-foreground">No digital books in this chapter yet</p>
+                          </Card>
+                        )}
                         <Card className="p-4 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
                           <div className="flex items-start gap-3">
                             <BookOpen className="h-5 w-5 text-sunny shrink-0 mt-0.5" />

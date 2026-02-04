@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 
 import * as Blockly from 'blockly';
 import { getToolboxForClass } from '@/lib/blockly/toolboxConfigs';
 import '@/lib/blockly/customBlocks';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BlocklyWorkspaceProps {
   classLevel: number;
@@ -23,6 +24,7 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
   ({ classLevel, initialBlocks, onChange, readOnly = false }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const workspaceRef = useRef<Blockly.Workspace | null>(null);
+    const isMobile = useIsMobile();
 
     // Get blocks as serializable objects
     const getBlocks = useCallback((): any[] => {
@@ -115,7 +117,7 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
         fontStyle: {
           family: 'Nunito, sans-serif',
           weight: 'bold',
-          size: 12,
+          size: isMobile ? 11 : 12,
         },
         startHats: true,
       });
@@ -124,7 +126,7 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
         toolbox,
         theme,
         grid: {
-          spacing: 20,
+          spacing: isMobile ? 15 : 20,
           length: 3,
           colour: '#ccc',
           snap: true,
@@ -132,9 +134,9 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
         zoom: {
           controls: true,
           wheel: true,
-          startScale: 1.0,
+          startScale: isMobile ? 0.85 : 1.0,
           maxScale: 2,
-          minScale: 0.5,
+          minScale: 0.4,
           scaleSpeed: 1.1,
         },
         trashcan: true,
@@ -143,9 +145,13 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
           drag: true,
           wheel: true,
         },
-        sounds: true,
+        sounds: !isMobile, // Disable sounds on mobile for performance
         readOnly,
         renderer: 'zelos', // Rounded, kid-friendly look
+        // Optimize for mobile touch
+        ...(isMobile && {
+          toolboxPosition: 'start',
+        }),
       });
 
       workspaceRef.current = workspace;
@@ -174,7 +180,7 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
         workspace.dispose();
         workspaceRef.current = null;
       };
-    }, [classLevel, readOnly]);
+    }, [classLevel, readOnly, isMobile]);
 
     // Update toolbox when class level changes
     useEffect(() => {
@@ -190,8 +196,11 @@ const BlocklyWorkspace = forwardRef<BlocklyWorkspaceRef, BlocklyWorkspaceProps>(
     return (
       <div
         ref={containerRef}
-        className="w-full h-full min-h-[400px] rounded-lg overflow-hidden border-2 border-border/50"
-        style={{ backgroundColor: '#f9f9f9' }}
+        className="w-full h-full min-h-[180px] sm:min-h-[250px] lg:min-h-[400px] rounded-lg overflow-hidden border-2 border-border/50"
+        style={{ 
+          backgroundColor: '#f9f9f9',
+          touchAction: 'none', // Improve touch handling
+        }}
       />
     );
   }
