@@ -12,24 +12,29 @@ import {
   Star,
   ChevronRight,
   Sparkles,
-  Gift
+  Gift,
+  Trophy,
+  BookOpen,
+  Award
 } from "lucide-react";
 
 const plans = [
   {
-    name: "Full Learning Pack",
+    name: "Complete Learning Pack",
     price: "₹3,499",
     originalPrice: "₹4,999",
     period: "/year",
     popular: true,
     gradient: "from-primary to-secondary",
     features: [
-      { icon: CirclePlay, text: "50+ Video Lectures" },
+      { icon: CirclePlay, text: "50+ HD Video Lectures" },
+      { icon: BookOpen, text: "Interactive Digital Textbook" },
       { icon: Code, text: "Unlimited Code Lab Access" },
-      { icon: FileQuestion, text: "Interactive Quizzes" },
-      { icon: Blocks, text: "Hands-on Projects" },
+      { icon: FileQuestion, text: "Adaptive Worksheets" },
+      { icon: Blocks, text: "10+ Hands-on Projects" },
       { icon: TrendingUp, text: "Progress Analytics" },
       { icon: BookMarked, text: "Physical Workbook" },
+      { icon: Trophy, text: "Badges & Certificates" },
     ],
   },
   {
@@ -40,9 +45,10 @@ const plans = [
     popular: false,
     gradient: "from-muted to-muted",
     features: [
-      { icon: BookMarked, text: "Theory + Worksheets" },
+      { icon: BookMarked, text: "Theory + Worksheets Book" },
       { icon: FileQuestion, text: "Practice Exercises" },
       { icon: CheckCircle2, text: "Chapter Summaries" },
+      { icon: Award, text: "Activity Pages" },
     ],
   },
 ];
@@ -55,13 +61,13 @@ export function MobilePricing() {
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sunny/20 rounded-full mb-3">
           <Gift className="h-4 w-4 text-sunny" />
-          <span className="text-xs font-bold text-sunny">Special Launch Pricing</span>
+          <span className="text-xs font-bold text-sunny">Launch Pricing</span>
         </div>
         <h2 className="text-xl font-bold text-foreground mb-2 font-display">
-          Simple, <span className="text-gradient-primary">Affordable</span> Plans
+          Simple, <span className="text-gradient-primary">Transparent</span> Pricing
         </h2>
         <p className="text-sm text-muted-foreground">
-          Start with 7-day free trial, no card needed
+          7-day free trial, no credit card needed
         </p>
       </div>
 
@@ -97,7 +103,7 @@ export function MobilePricing() {
                   {plan.originalPrice && (
                     <p className="text-xs text-muted-foreground mt-0.5">
                       <span className="line-through">{plan.originalPrice}</span>
-                      <span className="text-lime font-semibold ml-1.5">Save 30%</span>
+                      <span className="text-lime font-bold ml-1.5">Save 30%</span>
                     </p>
                   )}
                 </div>
@@ -142,9 +148,9 @@ export function MobilePricing() {
 
       {/* School Partnership CTA */}
       <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-turquoise/10 to-lime/10 border border-turquoise/30">
-        <p className="text-sm font-bold text-foreground mb-1">🏫 Schools & Institutions</p>
+        <p className="text-sm font-bold text-foreground mb-1">Schools & Institutions</p>
         <p className="text-xs text-muted-foreground mb-3">
-          Special bulk pricing at ₹2,999/student with dedicated support
+          Bulk pricing at ₹2,999/student with dedicated support & training
         </p>
         <Button 
           variant="outline" 
