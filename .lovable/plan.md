@@ -1,271 +1,467 @@
 
-
-# Add Sample Coding Lessons for "Testing and Improving" Chapter
+# Interactive Digital Book System - Implementation Plan
 
 ## Overview
 
-Create a set of guided block-based coding lessons that teach the "Test and Improve" concept from your computational thinking curriculum. These lessons will help students practice the iterative process of building, testing, finding mistakes, and improving their code.
+Transform the current PDF-based ebook system into a fully native, visual, in-app digital book experience with 3 modules per chapter: Theory (Digital Book), Block-Based Coding, and Assessments.
 
 ---
 
-## Lesson Modules to Create
+## Current State Analysis
 
-### Lesson 1: "Say Hello!" (Beginner)
-**Objective**: Make the sprite say a greeting message
-**Blocks Used**: `when_start`, `say_message`, `text_value`
-**Concept**: Running a simple program and checking output
+**Existing Infrastructure:**
+- 8 courses (Class 3-10) with ~4 chapters each
+- Chapters linked to: Videos, PDF Ebooks, Quizzes, Coding Modules
+- Block-based coding playground already implemented
+- Quiz system with multiple choice and true/false questions
+- Gamification with XP, badges, and achievements
 
-**Starter Blocks**:
-```xml
-<xml>
-  <block type="when_start">
-    <next>
-      <!-- Empty: student adds say block -->
-    </next>
-  </block>
-</xml>
-```
-
-**Hints**:
-1. Drag a "Say" block from the Looks category
-2. Type your greeting in the text bubble
-3. Click "Run" to test your program
+**What Needs to Change:**
+- Replace PDF ebook viewer with native digital book component
+- Add content blocks for rich text, images, callouts, and visuals
+- Link coding theory directly to existing block playground
+- Integrate interactive worksheets beyond current quiz types
 
 ---
 
-### Lesson 2: "Move and Check" (Beginner)
-**Objective**: Move the sprite forward and observe what happens
-**Blocks Used**: `when_start`, `move_forward`, `math_number`
-**Concept**: Testing to see if your program does what you expect
-
-**Hints**:
-1. Drag a "Move forward" block
-2. Try different numbers of steps
-3. Did the star move where you expected?
-
----
-
-### Lesson 3: "Draw a Line" (Beginner)
-**Objective**: Use pen blocks to draw a line and verify the result
-**Blocks Used**: `pen_down`, `move_forward`, `pen_up`
-**Concept**: Testing visual output - does the drawing look right?
-
-**Hints**:
-1. Start with "Pen down" to begin drawing
-2. Move forward to create a line
-3. Test: Is the line the length you wanted?
-
----
-
-### Lesson 4: "Fix the Bug!" (Beginner)
-**Objective**: Find and correct the mistake in a pre-built program
-**Blocks Used**: Pre-loaded broken program
-**Concept**: Debugging - finding and fixing errors
-
-**Starter Blocks**: A program that moves the wrong direction - student must fix it
-
-**Hints**:
-1. Run the program to see what's wrong
-2. The sprite should move forward, not backward!
-3. Change the degrees to fix the turn
-
----
-
-### Lesson 5: "Repeat and Improve" (Intermediate)
-**Objective**: Draw a square using loops, then improve to draw a bigger one
-**Blocks Used**: `repeat_times`, `move_forward`, `turn_right`
-**Concept**: Iterative improvement - making things better step by step
-
-**Hints**:
-1. A square has 4 sides - use "Repeat 4 times"
-2. After each side, turn right 90 degrees
-3. To make it bigger, increase the step count
-
----
-
-## Database Entries
-
-For each lesson, we'll create entries in `coding_modules` with:
-- `chapter_id`: Linked to the "Testing and Improving" chapter
-- `title`: Lesson name
-- `description`: What students will learn
-- `difficulty_level`: beginner/intermediate/advanced
-- `objective_text`: Clear mission statement
-- `initial_blocks_xml`: Starter code (if any)
-- `validation_rules`: JSON with hints array
-- `xp_reward`: Points earned (10-30 XP based on difficulty)
-- `order_index`: Sequence within chapter
-
----
-
-## Implementation Steps
-
-1. **Create Sample Coding Modules**
-   - Add 5-6 lessons for the "Testing and Improving" concept
-   - Each lesson progressively builds on the previous
-   - Include starter blocks for guided exercises
-
-2. **Link to Existing Chapters**
-   - Query existing chapters to find appropriate ones
-   - Or create a dedicated "Testing & Improving" chapter if needed
-
-3. **Add Admin Interface** (Optional)
-   - Create a `CodingModuleEditor` component
-   - Allow admins to create/edit lessons
-   - Preview initial blocks and test lessons
-
-4. **Test the Flow**
-   - Navigate to a course chapter
-   - Click the "Coding" tab
-   - Launch a lesson and complete it
-   - Verify progress is tracked
-
----
-
-## Sample Lesson Data (SQL Insert)
-
-```sql
-INSERT INTO coding_modules (
-  chapter_id,
-  title,
-  description,
-  difficulty_level,
-  objective_text,
-  initial_blocks_xml,
-  validation_rules,
-  xp_reward,
-  order_index,
-  is_published
-) VALUES
-(
-  'CHAPTER_UUID_HERE',
-  'Say Hello!',
-  'Learn to make the sprite speak by using the Say block.',
-  'beginner',
-  'Make the star say "Hello, World!" when the program starts.',
-  '<xml><block type="when_start" x="50" y="50"></block></xml>',
-  '{"hints": ["Drag a Say block from the purple Looks category", "Connect it below the When program starts block", "Type Hello, World! in the text field"]}',
-  10,
-  1,
-  true
-),
-(
-  'CHAPTER_UUID_HERE',
-  'Move and Check',
-  'Practice testing your programs by moving the sprite and observing the result.',
-  'beginner',
-  'Move the star forward exactly 100 steps.',
-  '<xml><block type="when_start" x="50" y="50"></block></xml>',
-  '{"hints": ["Drag a Move forward block from the blue Motion category", "Change the number to 100", "Run the program and watch where the star moves!"]}',
-  10,
-  2,
-  true
-),
-(
-  'CHAPTER_UUID_HERE',
-  'Draw a Line',
-  'Use the pen tool to draw and verify your output matches expectations.',
-  'beginner',
-  'Draw a straight red line that is 150 steps long.',
-  '<xml><block type="when_start" x="50" y="50"></block></xml>',
-  '{"hints": ["First use Set pen color to red", "Then use Pen down to start drawing", "Move forward 150 steps to draw the line"]}',
-  15,
-  3,
-  true
-),
-(
-  'CHAPTER_UUID_HERE',
-  'Fix the Bug!',
-  'Practice debugging by finding and correcting mistakes in existing code.',
-  'beginner',
-  'The star should move forward, but it is turning instead! Fix the program.',
-  '<xml><block type="when_start" x="50" y="50"><next><block type="turn_right"><value name="DEGREES"><block type="math_number"><field name="NUM">90</field></block></value></block></next></block></xml>',
-  '{"hints": ["Run the program first to see what happens", "The star turns but should move forward", "Replace the Turn block with a Move forward block"]}',
-  20,
-  4,
-  true
-),
-(
-  'CHAPTER_UUID_HERE',
-  'Draw a Square',
-  'Learn iteration by drawing shapes with loops, then improve your solution.',
-  'intermediate',
-  'Draw a square using a repeat loop, then make it twice as big!',
-  '<xml><block type="when_start" x="50" y="50"><next><block type="pen_down"></block></next></block></xml>',
-  '{"hints": ["A square has 4 equal sides - use Repeat 4 times", "Inside the loop: Move forward, then Turn right 90 degrees", "To make it bigger, increase the steps number"]}',
-  25,
-  5,
-  true
-);
-```
-
----
-
-## Files to Create/Modify
-
-| File | Changes |
-|------|---------|
-| `src/pages/admin/CodingModuleManager.tsx` | New admin page to create/edit coding lessons |
-| `src/components/admin/CodingModuleEditor.tsx` | Form component for lesson creation |
-| `App.tsx` | Add admin route for coding module management |
-| Database migration | Insert sample lessons linked to existing chapters |
-
----
-
-## User Experience Flow
+## Architecture
 
 ```text
-Student Journey:
-┌─────────────────────────────────────────────────────────────┐
-│  Course → Chapter → "Coding" Tab                            │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  📚 Testing & Improving - Coding Activities         │   │
-│  ├─────────────────────────────────────────────────────┤   │
-│  │                                                     │   │
-│  │  ✓ Say Hello!          ★ 10 XP    [Completed]      │   │
-│  │  ○ Move and Check      ★ 10 XP    [Start →]        │   │
-│  │  ○ Draw a Line         ★ 15 XP    [Locked]         │   │
-│  │  ○ Fix the Bug!        ★ 20 XP    [Locked]         │   │
-│  │  ○ Draw a Square       ★ 25 XP    [Locked]         │   │
-│  │                                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+Chapter Structure (3 Modules)
+┌─────────────────────────────────────────────────────────────────┐
+│                         CHAPTER HOME                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │                 │  │                 │  │                 │ │
+│  │   MODULE 1      │  │   MODULE 2      │  │   MODULE 3      │ │
+│  │   THEORY        │  │   CODING        │  │   WORKSHEET     │ │
+│  │   (Digital      │  │   (Block-Based  │  │   (Interactive  │ │
+│  │    Book)        │  │    Coding)      │  │    Assessment)  │ │
+│  │                 │  │                 │  │                 │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 
-Lesson View:
-┌─────────────────────────────────────────────────────────────┐
-│  ← Back    Say Hello!                    [Save] [Run ▶]    │
-├─────────────┬───────────────────────────────────────────────┤
-│             │                                               │
-│  MISSION    │        ┌─────────────────────────────┐        │
-│  ─────────  │        │                             │        │
-│  Make the   │        │   BLOCKLY WORKSPACE         │        │
-│  star say   │        │                             │        │
-│  "Hello!"   │        │   [🚀 When program starts]  │        │
-│             │        │            ↓                │        │
-│  ⭐ 10 XP   │        │   [💬 Say "Hello!"]         │        │
-│             │        │                             │        │
-│  [💡 Hint]  │        └─────────────────────────────┘        │
-│             │                                               │
-│             ├───────────────────────────────────────────────┤
-│             │  OUTPUT CANVAS                                │
-│             │  ┌─────────────────────────────────────────┐  │
-│             │  │        💬 "Hello!"                      │  │
-│             │  │            ⭐                           │  │
-│             │  └─────────────────────────────────────────┘  │
-└─────────────┴───────────────────────────────────────────────┘
+Content Block Types
+┌─────────────────────────────────────────────────────────────────┐
+│  TEXT           │ Paragraphs, headings, lists                   │
+│  IMAGE          │ Illustrations, diagrams, photos               │
+│  CALLOUT        │ "Did you know?", "Think about this"           │
+│  BLOCK_VISUAL   │ Block coding explanation with visuals         │
+│  VIDEO_EMBED    │ Inline video clips                            │
+│  ACTIVITY       │ Interactive mini-tasks                        │
+│  DIVIDER        │ Visual breaks between sections                │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Database Schema Changes
+
+### New Tables
+
+**1. digital_books** (Main book container per chapter)
+```sql
+- id: UUID
+- chapter_id: UUID (FK to chapters)
+- title: TEXT
+- subtitle: TEXT
+- cover_image_url: TEXT
+- learning_objectives: JSONB (array of strings)
+- estimated_reading_time: INTEGER (minutes)
+- is_published: BOOLEAN
+- created_at, updated_at: TIMESTAMP
+```
+
+**2. book_pages** (Pages within a digital book)
+```sql
+- id: UUID
+- digital_book_id: UUID (FK to digital_books)
+- page_number: INTEGER
+- title: TEXT (section title)
+- is_published: BOOLEAN
+- order_index: INTEGER
+```
+
+**3. page_content_blocks** (Content blocks on each page)
+```sql
+- id: UUID
+- page_id: UUID (FK to book_pages)
+- block_type: ENUM (text, image, callout, block_visual, video_embed, activity, divider)
+- content: JSONB (flexible content based on type)
+- order_index: INTEGER
+- class_level_min: INTEGER (for adaptive content)
+- class_level_max: INTEGER
+```
+
+**4. book_reading_progress** (Student progress tracking)
+```sql
+- id: UUID
+- student_id: UUID (FK to students)
+- digital_book_id: UUID (FK to digital_books)
+- current_page: INTEGER
+- completed_pages: INTEGER[]
+- completed_at: TIMESTAMP
+- reading_time_minutes: INTEGER
+```
+
+**5. worksheet_questions** (Extended question types)
+```sql
+- id: UUID
+- chapter_id: UUID (FK to chapters)
+- question_type: ENUM (fill_blank, true_false, match_column, short_answer, ordering, block_reasoning)
+- question_data: JSONB (question text, options, correct answer, feedback)
+- difficulty_level: TEXT
+- xp_reward: INTEGER
+- order_index: INTEGER
+```
+
+**6. worksheet_progress** (Student worksheet progress)
+```sql
+- id: UUID
+- student_id: UUID
+- chapter_id: UUID
+- question_id: UUID
+- answer_data: JSONB
+- is_correct: BOOLEAN
+- attempted_at: TIMESTAMP
+```
+
+---
+
+## Component Structure
+
+### New Components to Create
+
+```text
+src/
+├── components/
+│   └── digitalbook/
+│       ├── DigitalBookReader.tsx       # Main reading interface
+│       ├── BookCoverPage.tsx           # Opening screen with overview
+│       ├── PageRenderer.tsx            # Renders page content
+│       ├── ContentBlocks/
+│       │   ├── TextBlock.tsx           # Rich text with headings
+│       │   ├── ImageBlock.tsx          # Images with captions
+│       │   ├── CalloutBlock.tsx        # Highlight boxes
+│       │   ├── BlockVisualBlock.tsx    # Coding block visuals
+│       │   ├── ActivityBlock.tsx       # Mini interactive tasks
+│       │   └── DividerBlock.tsx        # Section separators
+│       ├── BookNavigation.tsx          # Page navigation
+│       ├── ReadingProgress.tsx         # Progress indicator
+│       └── BookmarkManager.tsx         # Save reading position
+│
+│   └── worksheet/
+│       ├── WorksheetPlayer.tsx         # Main worksheet interface
+│       ├── QuestionTypes/
+│       │   ├── FillBlankQuestion.tsx   # Fill in the blanks
+│       │   ├── TrueFalseQuestion.tsx   # True/False
+│       │   ├── MatchColumnQuestion.tsx # Match the column
+│       │   ├── ShortAnswerQuestion.tsx # Short text answer
+│       │   ├── OrderingQuestion.tsx    # Order items correctly
+│       │   └── BlockReasoningQuestion.tsx # Block-based logic
+│       ├── QuestionFeedback.tsx        # Instant feedback display
+│       └── WorksheetProgress.tsx       # Progress bar
+│
+├── pages/
+│   └── student/
+│       ├── DigitalBook.tsx             # Book reader page
+│       ├── ChapterWorksheet.tsx        # Worksheet page
+│       └── ChapterHome.tsx             # Chapter module selection
+│
+├── pages/
+│   └── admin/
+│       ├── DigitalBookEditor.tsx       # Book content editor
+│       └── WorksheetEditor.tsx         # Worksheet question editor
+```
+
+---
+
+## Implementation Phases
+
+### Phase 1: Database Setup & Core Infrastructure
+**Duration: 1 session**
+
+1. Create database tables for digital books, pages, content blocks
+2. Create worksheet questions table with extended types
+3. Add RLS policies for security
+4. Create progress tracking tables
+
+### Phase 2: Digital Book Reader (Theory Module)
+**Duration: 2 sessions**
+
+1. Create `DigitalBookReader` component with scroll-based reading
+2. Implement all content block types (text, image, callout, etc.)
+3. Build `BookCoverPage` with learning objectives and intro
+4. Add reading progress tracking and bookmarks
+5. Implement content protection (disable copy/paste, right-click)
+
+### Phase 3: Chapter Home & Navigation
+**Duration: 1 session**
+
+1. Create `ChapterHome` page with 3 module buttons
+2. Update `CourseContentViewer` to show new structure
+3. Add progress indicators for each module
+4. Implement locked/unlocked logic (unlock based on completion)
+
+### Phase 4: Interactive Worksheets
+**Duration: 2 sessions**
+
+1. Create `WorksheetPlayer` component
+2. Implement all question types:
+   - Fill in the blanks
+   - True/False (existing, enhance)
+   - Match the column
+   - Short answer with AI grading hints
+   - Ordering/sequencing
+   - Block reasoning
+3. Add instant feedback with animations
+4. Track progress and XP rewards
+
+### Phase 5: Coding Module Enhancement
+**Duration: 1 session**
+
+1. Update existing block coding integration
+2. Add "Block Theory" section before practice
+3. Create visual block explanations
+4. Link "Try in Playground" CTA to existing CodeLab
+5. Add conditional banner for chapters without coding
+
+### Phase 6: Admin Editors
+**Duration: 2 sessions**
+
+1. Create `DigitalBookEditor` with drag-drop content blocks
+2. Build `WorksheetEditor` for question management
+3. Add preview functionality
+4. Integrate with existing admin panel
+
+### Phase 7: Content Generation (First 3 Chapters)
+**Duration: Content team**
+
+1. Generate theory content for Classes 3-10 (first 3 chapters each)
+2. Create age-appropriate illustrations and visuals
+3. Design block coding visuals per class level
+4. Create worksheet questions with varied types
+
+---
+
+## UI/UX Design Specifications
+
+### Digital Book Reader
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  ← Back    Ch.1: Smart Things                    Page 3 of 12  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│     ┌─────────────────────────────────────────────────┐        │
+│     │                                                 │        │
+│     │    🤖 What is Artificial Intelligence?          │        │
+│     │                                                 │        │
+│     │    AI is like a smart helper that can          │        │
+│     │    learn and make decisions, just like         │        │
+│     │    you learn new things at school!             │        │
+│     │                                                 │        │
+│     │    ┌───────────────────────────────┐           │        │
+│     │    │     [Robot Helper Image]       │           │        │
+│     │    └───────────────────────────────┘           │        │
+│     │                                                 │        │
+│     │    ┌─ 💡 Did you know? ──────────────┐         │        │
+│     │    │ Your phone uses AI to recognize │         │        │
+│     │    │ your face!                      │         │        │
+│     │    └─────────────────────────────────┘         │        │
+│     │                                                 │        │
+│     │    Think about machines you use every          │        │
+│     │    day. Which ones might have AI?              │        │
+│     │                                                 │        │
+│     └─────────────────────────────────────────────────┘        │
+│                                                                 │
+│     ○ ○ ● ○ ○ ○ ○ ○ ○ ○ ○ ○  (page dots)                       │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│           [← Previous]        [Next →]                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Worksheet Player
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  ← Back    Worksheet                    Question 3 of 10       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│     ┌─ Progress ────────────────────────────────────┐          │
+│     │ ████████████░░░░░░░░░░░░░░░░░░  30%           │          │
+│     └───────────────────────────────────────────────┘          │
+│                                                                 │
+│     ┌─────────────────────────────────────────────────┐        │
+│     │  Fill in the blank:                             │        │
+│     │                                                 │        │
+│     │  AI stands for _________ Intelligence.          │        │
+│     │                                                 │        │
+│     │  ┌───────────────────────────────────────────┐ │        │
+│     │  │                                           │ │        │
+│     │  └───────────────────────────────────────────┘ │        │
+│     │                                                 │        │
+│     │              [Check Answer ✓]                   │        │
+│     │                                                 │        │
+│     └─────────────────────────────────────────────────┘        │
+│                                                                 │
+│     ○ ○ ● ○ ○ ○ ○ ○ ○ ○  (question dots)                       │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Chapter Home
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  ← Course    Chapter 1: Smart Things Around Us                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│     ┌─────────────────────────────────────────────────┐        │
+│     │  [Hero Banner Image]                            │        │
+│     │                                                 │        │
+│     │  Smart Things Around Us                         │        │
+│     │  Learn about AI in everyday objects!            │        │
+│     └─────────────────────────────────────────────────┘        │
+│                                                                 │
+│     ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│     │             │  │             │  │             │          │
+│     │    📘       │  │    🧩       │  │    📝       │          │
+│     │  Theory     │  │  Coding     │  │  Worksheet  │          │
+│     │             │  │             │  │             │          │
+│     │  ✓ Done     │  │  3/5 Done   │  │  🔒 Locked  │          │
+│     │             │  │             │  │             │          │
+│     └─────────────┘  └─────────────┘  └─────────────┘          │
+│                                                                 │
+│     Progress: ████████░░░░░░░░░░  40%                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Content Block JSON Structures
+
+### Text Block
+```json
+{
+  "type": "text",
+  "content": {
+    "heading": "What is AI?",
+    "heading_level": 2,
+    "paragraphs": [
+      "AI stands for Artificial Intelligence.",
+      "It helps computers think and learn like humans!"
+    ],
+    "list": {
+      "type": "bullet",
+      "items": ["Smart", "Helpful", "Learning"]
+    }
+  }
+}
+```
+
+### Callout Block
+```json
+{
+  "type": "callout",
+  "content": {
+    "variant": "did_you_know",
+    "title": "Did you know?",
+    "text": "Your phone uses AI to recognize your face!",
+    "icon": "lightbulb"
+  }
+}
+```
+
+### Image Block
+```json
+{
+  "type": "image",
+  "content": {
+    "src": "/images/robot-helper.png",
+    "alt": "A friendly robot helper",
+    "caption": "Robots can be our helpful friends!",
+    "size": "medium"
+  }
+}
+```
+
+### Block Visual Block
+```json
+{
+  "type": "block_visual",
+  "content": {
+    "blocks": [
+      {"type": "when_start", "label": "When program starts"},
+      {"type": "say_message", "label": "Say 'Hello!'", "connected": true}
+    ],
+    "explanation": "This program makes the character say hello when you press play!",
+    "try_it_link": true
+  }
+}
+```
+
+---
+
+## Security Measures
+
+1. **Content Protection**
+   - Disable right-click on book pages
+   - Disable text selection and copy
+   - Block keyboard shortcuts (Ctrl+C, Ctrl+P)
+   - CSS user-select: none on content areas
+
+2. **Access Control**
+   - RLS policies to ensure students only access their enrolled content
+   - Chapter locking based on subscription status
+   - Progress must be earned (no skipping)
+
+3. **Data Integrity**
+   - Validation triggers for worksheet answers
+   - Anti-cheat measures for assessments
+
+---
+
+## Technical Considerations
+
+1. **Performance**
+   - Lazy load images within book pages
+   - Paginate content for smooth scrolling
+   - Cache reading progress locally
+
+2. **Responsiveness**
+   - Touch-friendly swipe navigation for mobile
+   - Responsive content scaling
+   - Collapsible navigation on small screens
+
+3. **Accessibility**
+   - Proper heading hierarchy
+   - Alt text for all images
+   - Keyboard navigation support
+   - Screen reader compatibility
 
 ---
 
 ## Expected Outcome
 
-After implementation:
-1. Students can access coding activities from chapter content view
-2. Each lesson has clear objectives, hints, and XP rewards
-3. Progress is tracked (attempts, completion, XP earned)
-4. Lessons build progressively on the "Test and Improve" concept
-5. Admins can create new lessons without code changes
+After full implementation:
 
+1. **Students will experience:**
+   - Native, non-PDF digital books with rich content
+   - Clear 3-module chapter structure (Theory > Coding > Worksheet)
+   - Age-appropriate content that adapts to their class level
+   - Interactive worksheets with instant feedback
+   - Seamless integration with block-based coding playground
+
+2. **Admins will be able to:**
+   - Create and manage digital book content visually
+   - Build worksheets with multiple question types
+   - Track student progress across all modules
+   - Generate content for additional chapters over time
+
+3. **System will provide:**
+   - Complete content protection (no downloads, no copy)
+   - Progress tracking and XP rewards
+   - Scalable architecture for all 8 classes
+   - First 3 chapters per class ready for launch
