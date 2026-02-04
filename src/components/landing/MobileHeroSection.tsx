@@ -7,15 +7,14 @@ import {
   ChevronRight, 
   Sparkles, 
   Star,
-  Users,
   BookOpen,
   Trophy,
   Brain,
   Zap,
-  CheckCircle2,
   GraduationCap
 } from "lucide-react";
 import kodiMascot from "@/assets/kodi-mascot-3d.png";
+import { ParticleBackground } from "./ParticleBackground";
 
 interface MobileHeroSectionProps {
   onGetStarted: () => void;
@@ -25,17 +24,20 @@ interface MobileHeroSectionProps {
 export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSectionProps) {
   return (
     <section className="relative py-8 px-4 overflow-hidden min-h-[95vh] flex flex-col justify-center">
-      {/* Animated Background */}
+      {/* Particle Background - Reduced count for mobile */}
+      <ParticleBackground particleCount={20} className="absolute inset-0" />
+      
+      {/* Animated Background Orbs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-0 w-56 h-56 bg-turquoise/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-sunny/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-orb-float" />
+        <div className="absolute bottom-20 left-0 w-56 h-56 bg-turquoise/15 rounded-full blur-3xl animate-orb-float" style={{ animationDelay: "5s" }} />
+        <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-sunny/10 rounded-full blur-2xl animate-orb-float" style={{ animationDelay: "10s" }} />
       </div>
 
       <div className="relative z-10">
-        {/* Badge */}
+        {/* Badge with glass effect */}
         <div className="flex justify-center mb-4">
-          <Badge className="bg-gradient-to-r from-primary/20 to-turquoise/20 text-primary border-primary/30 gap-1.5 px-4 py-2 shadow-sm">
+          <Badge className="glass-card bg-gradient-to-r from-primary/20 to-turquoise/20 text-primary border-primary/30 gap-1.5 px-4 py-2 shadow-sm animate-badge-float">
             <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
             <span className="text-xs font-bold">NEP 2020 Aligned • Classes 3-10</span>
           </Badge>
@@ -60,8 +62,9 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
           </p>
         </div>
 
-        {/* Mascot with Animation */}
+        {/* Mascot with Glass Card Background */}
         <div className="relative mx-auto w-40 h-40 mb-5">
+          <div className="absolute inset-0 glass-card rounded-full blur-sm" />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/25 via-secondary/15 to-turquoise/25 rounded-full blur-2xl animate-pulse" />
           <img 
             src={kodiMascot} 
@@ -69,15 +72,15 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
             className="relative w-full h-full object-contain animate-float drop-shadow-2xl"
           />
           {/* Floating Elements */}
-          <div className="absolute -top-2 -right-2 w-10 h-10 bg-sunny/20 rounded-xl flex items-center justify-center animate-bounce" style={{ animationDelay: "0.5s" }}>
+          <div className="absolute -top-2 -right-2 w-10 h-10 glass-card rounded-xl flex items-center justify-center animate-badge-float" style={{ animationDelay: "0.5s" }}>
             <Brain className="h-5 w-5 text-sunny" />
           </div>
-          <div className="absolute -bottom-1 -left-2 w-9 h-9 bg-turquoise/20 rounded-xl flex items-center justify-center animate-bounce" style={{ animationDelay: "1s" }}>
+          <div className="absolute -bottom-1 -left-2 w-9 h-9 glass-card rounded-xl flex items-center justify-center animate-badge-float" style={{ animationDelay: "1s" }}>
             <Trophy className="h-4 w-4 text-turquoise" />
           </div>
         </div>
 
-        {/* Quick Features Grid */}
+        {/* Quick Features Grid with Glass */}
         <div className="grid grid-cols-4 gap-2 mb-6 px-1">
           {[
             { icon: BookOpen, label: "Digital Books", color: "text-primary" },
@@ -87,7 +90,7 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
           ].map((feature, i) => (
             <div 
               key={i} 
-              className="bg-card/70 backdrop-blur-sm border border-border/40 rounded-xl p-2.5 text-center shadow-sm"
+              className="glass-card rounded-xl p-2.5 text-center shadow-sm"
             >
               <feature.icon className={`h-4 w-4 mx-auto mb-1 ${feature.color}`} />
               <p className="text-[8px] text-muted-foreground font-medium leading-tight">{feature.label}</p>
@@ -95,29 +98,33 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
           ))}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons with Shimmer */}
         <div className="space-y-3 px-2">
           <Button
             onClick={onGetStarted}
-            className="w-full h-14 gap-2 rounded-2xl text-base font-bold shadow-xl shadow-primary/25 bg-gradient-to-r from-primary via-primary to-secondary hover:opacity-95 transition-all active:scale-[0.98]"
+            className="w-full h-14 gap-2 rounded-2xl text-base font-bold shadow-xl shadow-primary/25 bg-gradient-to-r from-primary via-primary to-secondary hover:opacity-95 transition-all active:scale-[0.98] relative overflow-hidden"
           >
-            <Rocket className="h-5 w-5" />
-            Start 7-Day Free Trial
-            <ChevronRight className="h-5 w-5" />
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 overflow-hidden rounded-2xl">
+              <div className="absolute inset-0 -translate-x-full animate-shimmer-slide bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent" />
+            </div>
+            <Rocket className="h-5 w-5 relative z-10" />
+            <span className="relative z-10">Start 7-Day Free Trial</span>
+            <ChevronRight className="h-5 w-5 relative z-10" />
           </Button>
           <Button
             variant="outline"
             onClick={onTryDemo}
-            className="w-full h-12 gap-2 rounded-xl text-base font-semibold border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 active:scale-[0.98] transition-all"
+            className="w-full h-12 gap-2 rounded-xl text-base font-semibold glass-card border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 active:scale-[0.98] transition-all"
           >
             <Play className="h-4 w-4" />
             Try Free Demo
           </Button>
         </div>
 
-        {/* Trust Indicators */}
+        {/* Trust Indicators with Glass */}
         <div className="mt-6 flex flex-col items-center gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 glass-card px-4 py-2 rounded-full">
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((i) => (
                 <div 
@@ -143,14 +150,14 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
           </p>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats with Glass */}
         <div className="mt-6 grid grid-cols-3 gap-2 px-2">
           {[
             { value: "50+", label: "Video Lessons" },
             { value: "25+", label: "Partner Schools" },
             { value: "8", label: "Grade Levels" },
           ].map((stat, i) => (
-            <div key={i} className="text-center py-2 px-1 rounded-xl bg-muted/50">
+            <div key={i} className="text-center py-2 px-1 rounded-xl glass-card">
               <p className="text-lg font-bold text-foreground">{stat.value}</p>
               <p className="text-[9px] text-muted-foreground">{stat.label}</p>
             </div>

@@ -10,13 +10,14 @@ import {
   CheckCircle2
 } from "lucide-react";
 import kodiMascot from "@/assets/kodi-mascot-3d.png";
+import { GlassCard } from "./GlassCard";
 
 export function MobileCTASection() {
   const navigate = useNavigate();
 
   return (
     <section className="py-10 px-4">
-      {/* CTA Card */}
+      {/* CTA Card with Glass Effect */}
       <div className="relative rounded-3xl bg-gradient-to-br from-primary via-secondary to-turquoise p-6 overflow-hidden shadow-2xl">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -25,7 +26,7 @@ export function MobileCTASection() {
         </div>
 
         <div className="relative z-10 text-center">
-          {/* Mascot */}
+          {/* Mascot with Float Animation */}
           <div className="w-24 h-24 mx-auto mb-4">
             <img 
               src={kodiMascot} 
@@ -41,28 +42,31 @@ export function MobileCTASection() {
             Join 1000+ students learning AI & coding the fun way
           </p>
 
-          {/* Benefits List */}
+          {/* Benefits List with Glass Background */}
           <div className="space-y-2 mb-5">
             {[
               "7-day free trial, no card needed",
               "Cancel anytime, no questions asked",
               "Dedicated support for parents"
             ].map((item, i) => (
-              <div key={i} className="flex items-center justify-center gap-2">
+              <div key={i} className="flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg py-1.5 px-3 mx-auto max-w-fit">
                 <CheckCircle2 className="h-4 w-4 text-lime" />
                 <span className="text-white/95 text-xs font-medium">{item}</span>
               </div>
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Button with Shimmer */}
           <Button
             onClick={() => navigate("/student/signup")}
-            className="w-full h-14 bg-white text-primary hover:bg-white/95 rounded-xl text-base font-bold shadow-xl gap-2 mb-3"
+            className="w-full h-14 bg-white text-primary hover:bg-white/95 rounded-xl text-base font-bold shadow-xl gap-2 mb-3 relative overflow-hidden"
           >
-            <Sparkles className="h-5 w-5" />
-            Start Your Free Trial
-            <ChevronRight className="h-5 w-5" />
+            <div className="absolute inset-0 overflow-hidden rounded-xl">
+              <div className="absolute inset-0 -translate-x-full animate-shimmer-slide bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+            </div>
+            <Sparkles className="h-5 w-5 relative z-10" />
+            <span className="relative z-10">Start Your Free Trial</span>
+            <ChevronRight className="h-5 w-5 relative z-10" />
           </Button>
 
           <p className="text-white/70 text-xs">
@@ -77,11 +81,11 @@ export function MobileCTASection() {
         </div>
       </div>
 
-      {/* Contact Options */}
+      {/* Contact Options with Glass Cards */}
       <div className="mt-6 grid grid-cols-3 gap-3">
         <a
           href="tel:+919876543210"
-          className="flex flex-col items-center p-3 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-md transition-shadow"
+          className="flex flex-col items-center p-3 rounded-xl glass-card shadow-sm hover:shadow-md transition-shadow"
         >
           <Phone className="h-5 w-5 text-primary mb-1.5" />
           <span className="text-[10px] font-semibold text-foreground">Call Us</span>
@@ -90,14 +94,14 @@ export function MobileCTASection() {
           href="https://wa.me/919876543210"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center p-3 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-md transition-shadow"
+          className="flex flex-col items-center p-3 rounded-xl glass-card shadow-sm hover:shadow-md transition-shadow"
         >
           <MessageCircle className="h-5 w-5 text-lime mb-1.5" />
           <span className="text-[10px] font-semibold text-foreground">WhatsApp</span>
         </a>
         <a
           href="mailto:hello@kodeintel.com"
-          className="flex flex-col items-center p-3 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-md transition-shadow"
+          className="flex flex-col items-center p-3 rounded-xl glass-card shadow-sm hover:shadow-md transition-shadow"
         >
           <Mail className="h-5 w-5 text-coral mb-1.5" />
           <span className="text-[10px] font-semibold text-foreground">Email</span>
