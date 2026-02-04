@@ -19,41 +19,47 @@ const OutputCanvas = ({ sprite, canvas, width = 400, height = 400 }: OutputCanva
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, width, height);
 
-    // Draw grid
+    // Draw grid - adjust spacing based on canvas size
+    const gridSpacing = Math.max(15, Math.floor(width / 20));
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < width; x += 20) {
+    for (let x = 0; x < width; x += gridSpacing) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
-    for (let y = 0; y < height; y += 20) {
+    for (let y = 0; y < height; y += gridSpacing) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
       ctx.stroke();
     }
 
+    // Scale factor for sprite position (if canvas size differs from expected)
+    const scaleFactor = width / 400;
+
     // Draw pen lines
     canvas.drawings.forEach(drawing => {
       if (drawing.type === 'line') {
         ctx.strokeStyle = drawing.color;
-        ctx.lineWidth = drawing.width;
+        ctx.lineWidth = drawing.width * scaleFactor;
         ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.moveTo(drawing.fromX, drawing.fromY);
-        ctx.lineTo(drawing.toX, drawing.toY);
+        ctx.moveTo(drawing.fromX * scaleFactor, drawing.fromY * scaleFactor);
+        ctx.lineTo(drawing.toX * scaleFactor, drawing.toY * scaleFactor);
         ctx.stroke();
       }
     });
 
     // Draw sprite
     if (sprite.visible) {
-      const size = (sprite.size / 100) * 30;
+      const size = (sprite.size / 100) * 30 * scaleFactor;
+      const spriteX = sprite.x * scaleFactor;
+      const spriteY = sprite.y * scaleFactor;
       
       ctx.save();
-      ctx.translate(sprite.x, sprite.y);
+      ctx.translate(spriteX, spriteY);
       ctx.rotate((sprite.direction * Math.PI) / 180);
 
       // Draw sprite body (star shape)
@@ -77,7 +83,7 @@ const OutputCanvas = ({ sprite, canvas, width = 400, height = 400 }: OutputCanva
 
       // Draw direction indicator
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2 * scaleFactor;
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.lineTo(size + 5, 0);
@@ -96,10 +102,10 @@ const OutputCanvas = ({ sprite, canvas, width = 400, height = 400 }: OutputCanva
 
       // Draw speech bubble if message exists
       if (sprite.message) {
-        const bubbleX = sprite.x + size + 10;
-        const bubbleY = sprite.y - size - 30;
-        const padding = 10;
-        const fontSize = 14;
+        const bubbleX = spriteX + size + 10;
+        const bubbleY = spriteY - size - 30;
+        const padding = 8 * scaleFactor;
+        const fontSize = Math.max(10, 14 * scaleFactor);
         
         ctx.font = `${fontSize}px Nunito, sans-serif`;
         const textWidth = ctx.measureText(sprite.message).width;
@@ -119,7 +125,7 @@ const OutputCanvas = ({ sprite, canvas, width = 400, height = 400 }: OutputCanva
         // Bubble tail
         ctx.beginPath();
         ctx.moveTo(bubbleX, bubbleY + padding);
-        ctx.lineTo(sprite.x + size, sprite.y - size);
+        ctx.lineTo(spriteX + size, spriteY - size);
         ctx.lineTo(bubbleX + 15, bubbleY + padding);
         ctx.closePath();
         ctx.fill();
@@ -137,22 +143,24 @@ const OutputCanvas = ({ sprite, canvas, width = 400, height = 400 }: OutputCanva
     recentMessages.forEach(msg => {
       const alpha = Math.max(0, 1 - (Date.now() - msg.timestamp) / 3000);
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-      ctx.font = 'bold 14px Nunito, sans-serif';
-      ctx.fillText(msg.text, msg.x, msg.y);
+      const fontSize = Math.max(10, 14 * scaleFactor);
+      ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
+      ctx.fillText(msg.text, msg.x * scaleFactor, msg.y * scaleFactor);
     });
 
   }, [sprite, canvas, width, height]);
 
   return (
-    <div className="relative rounded-xl overflow-hidden shadow-lg border-4 border-primary/30">
+    <div className="relative rounded-xl overflow-hidden shadow-lg border-4 border-primary/30 max-w-full">
       <canvas
         ref={canvasRef}
         width={width}
         height={height}
-        className="block"
+        className="block w-full h-auto"
+        style={{ maxWidth: `${width}px` }}
       />
       {/* Coordinate display */}
-      <div className="absolute bottom-2 left-2 px-2 py-1 bg-background/80 rounded text-xs font-mono text-muted-foreground">
+      <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-background/80 rounded text-[10px] sm:text-xs font-mono text-muted-foreground">
         x: {Math.round(sprite.x)} y: {Math.round(sprite.y)} | {Math.round(sprite.direction)}°
       </div>
     </div>

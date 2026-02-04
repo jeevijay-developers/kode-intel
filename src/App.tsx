@@ -50,6 +50,7 @@ import GuestLeaderboard from "./pages/student/GuestLeaderboard";
 import StudentLeaderboard from "./pages/student/StudentLeaderboard";
 import GuestQuiz from "./pages/student/GuestQuiz";
 import GuestQuizList from "./pages/student/GuestQuizList";
+import GuestDigitalBook from "./pages/student/GuestDigitalBook";
 import InstitutionLogin from "./pages/institution/InstitutionLogin";
 import InstitutionSignup from "./pages/institution/InstitutionSignup";
 import InstitutionDashboard from "./pages/institution/InstitutionDashboard";
@@ -99,6 +100,9 @@ function App() {
               <Route path="quiz" element={<GuestQuizList />} />
               <Route path="quiz/:quizId" element={<GuestQuiz />} />
             </Route>
+            
+            {/* Guest Digital Book route (outside layout for full-screen reading) */}
+            <Route path="/guest/book/:bookId" element={<GuestDigitalBook />} />
 
             {/* Student routes with sidebar layout */}
             <Route path="/student" element={<StudentLayout />}>
