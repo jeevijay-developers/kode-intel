@@ -18,6 +18,7 @@ import Students from "./pages/Students";
 import Courses from "./pages/Courses";
 import CourseEditor from "./pages/CourseEditor";
 import QuizManagement from "./pages/QuizManagement";
+import CodingModuleManager from "./pages/admin/CodingModuleManager";
 import CourseDetail from "./pages/CourseDetail";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
@@ -188,6 +189,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <QuizManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/coding-modules"
+              element={
+                <ProtectedRoute>
+                  <CodingModuleManager />
                 </ProtectedRoute>
               }
             />
