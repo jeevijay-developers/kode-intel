@@ -1,227 +1,291 @@
 
-
-# Replace Sample PDF Books with Real Digital Books + Mobile Responsiveness Fixes
+# Landing Page Enhancement: Glassmorphism & Modern UI Overhaul
 
 ## Overview
 
-This plan addresses four key issues:
-1. **Book Store Section** - Currently showing sample PDF-based Class 7 books instead of real digital books
-2. **Guest Dashboard Book Section** - Same issue with sample PDF previews 
-3. **Mobile Responsiveness** - Various pages need mobile optimization
-4. **Code Lab (Blockly)** - Not fully visible on mobile devices
+This plan implements a comprehensive visual upgrade to the Landing page with animated particle backgrounds, glassmorphism cards, 3D hover effects, interactive mockups, and shimmer animations throughout.
 
 ---
 
-## Current Issues Identified
+## New Components to Create
 
-### 1. Sample E-Book Viewer (`SampleEbookViewer.tsx`)
-- Uses hardcoded PDF files from `/ebooks/class-4-chapter-1.pdf`, `/ebooks/class-6-chapter-1.pdf`, `/ebooks/class-7-chapter-1.pdf`
-- Not connected to the new `digital_books` database content
-- Shows only Classes 4, 6, 7 regardless of user's selected class
+### 1. ParticleBackground Component
+**File:** `src/components/landing/ParticleBackground.tsx`
 
-### 2. Guest Courses Page (`GuestCourses.tsx`)
-- Uses PDF-based ebook viewer (`GuestPdfPreview`)
-- References sample PDF files instead of digital book system
-- Opens external PDF viewer instead of native DigitalBookReader
+A canvas-based particle system with 50 floating particles that:
+- Animate independently with varying speeds and sizes
+- Create depth with parallax effect on mouse movement
+- Uses CSS-only implementation for performance (no canvas)
+- Particles have gradient colors matching brand palette
 
-### 3. Book Store (`EStore.tsx`)
-- Uses static `bookData.ts` for content structure
-- No integration with actual digital_books database
-- Physical book store is separate from digital content (expected behavior)
-
-### 4. Code Lab Mobile Issues
-- Blockly workspace not responsive
-- Output canvas fixed at 400x400, doesn't scale
-- Controls and panels overlap on small screens
-
----
-
-## Implementation Plan
-
-### Phase 1: Replace Sample Ebook Section with Real Digital Books
-
-**Files to Modify:**
-- `src/components/student/SampleEbookViewer.tsx`
-
-**Changes:**
-1. Fetch digital books from database instead of hardcoded PDFs
-2. Filter by guest's selected class level
-3. Navigate to native DigitalBookReader instead of PDF viewer
-4. Show actual book content previews with proper styling
-
-**New Logic:**
 ```text
-- Query: SELECT * FROM digital_books WHERE is_published = true
-- Filter by class (based on course/chapter relationship)
-- Display cards linking to /student/book/:bookId
-- Guest users can preview first few pages
+Technical approach:
+- Create 50 divs with absolute positioning
+- Random starting positions, sizes (2-6px), and animation delays
+- Use CSS keyframes for floating animation
+- Apply backdrop-blur for depth effect
+- Performance: will-change: transform for GPU acceleration
+```
+
+### 2. GlassCard Component
+**File:** `src/components/landing/GlassCard.tsx`
+
+A reusable glassmorphism card with:
+- Backdrop blur effect (blur-xl)
+- Semi-transparent background with gradient
+- 3D transform on hover (rotateX, rotateY based on mouse position)
+- Glow border effect on hover
+- Smooth transitions
+
+```text
+Props:
+- children: ReactNode
+- className?: string
+- glowColor?: 'primary' | 'secondary' | 'turquoise' | 'coral'
+- hover3D?: boolean
+- size?: 'sm' | 'md' | 'lg'
+```
+
+### 3. InteractiveMockup Component  
+**File:** `src/components/landing/InteractiveMockup.tsx`
+
+A live dashboard preview mockup showing:
+- Animated progress bars that fill up on scroll visibility
+- Career matches section with animated data
+- Gamification stats (XP, Badges, Streak)
+- Floating notification cards
+- Glass container with 3D perspective
+
+```text
+Elements to include:
+- Welcome header with student name
+- Progress ring showing 67% completion
+- 3 career match cards with hover states
+- XP counter with animated numbers
+- Badge unlock animation
+```
+
+### 4. FloatingGradientOrbs Component
+**File:** `src/components/landing/FloatingGradientOrbs.tsx`
+
+Enhanced gradient orbs that:
+- Float independently with different animation timings
+- Follow mouse position with lag (parallax)
+- Pulse with varying intensities
+- Create ambient glow effects
+
+---
+
+## Landing Page Section Updates
+
+### Hero Section Enhancement
+
+**Current:** Static hero image with floating cards
+**New:** 
+- ParticleBackground overlay
+- FloatingGradientOrbs behind content
+- InteractiveMockup replacing static image
+- Enhanced floating badges with glassmorphism
+- Shimmer animation on CTA buttons
+
+```text
+Layout changes:
+┌────────────────────────────────────────────────────┐
+│  [ParticleBackground - Full viewport overlay]      │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  [FloatingGradientOrbs - 3 animated blobs]   │  │
+│  ├──────────────────┬───────────────────────────┤  │
+│  │                  │                           │  │
+│  │  Title + Badge   │   InteractiveMockup       │  │
+│  │  Description     │   (3D perspective)        │  │
+│  │  [Shimmer CTAs]  │   + Floating Badges       │  │
+│  │  Trust Signals   │                           │  │
+│  │                  │                           │  │
+│  └──────────────────┴───────────────────────────┘  │
+└────────────────────────────────────────────────────┘
+```
+
+### Stats Section Enhancement
+
+**Current:** Solid gradient background with icon cards
+**New:**
+- Glassmorphism stat cards with 3D hover
+- Animated counters with number rolling effect
+- Subtle glow under each card
+- Floating particles behind stats
+
+### Features Section (Learning Modules)
+
+**Current:** Card grid with gradient icons
+**New:**
+- GlassCard components with 3D transforms
+- Image overlay on each card (fading in on hover)
+- Icon animation on hover (scale + rotate)
+- Staggered reveal animation
+
+### Benefits Section (Problems We Solve)
+
+**Current:** Simple cards with strikethrough text
+**New:**
+- Glass card containers
+- Hero image background for section
+- Before/After visual treatment
+- Animated checkmarks on scroll
+
+### How It Works Section
+
+**Current:** Horizontal step cards with arrows
+**New:**
+- Timeline with animated connector line
+- Glass step cards with 3D effects
+- Step numbers with glow animation
+- Progress indicator that fills as you scroll
+
+### CTA Sections
+
+**Current:** Gradient background with basic buttons
+**New:**
+- Shimmer animation on buttons (gradient sweep)
+- Glass overlay on entire section
+- Floating mascot with enhanced animation
+- Particle effect on hover
+
+---
+
+## CSS Additions to index.css
+
+```css
+/* Glassmorphism utilities */
+.glass-card {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+.glass-card-strong {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(30px);
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+/* Shimmer animation for CTAs */
+@keyframes shimmer-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    hsl(var(--primary-foreground) / 0.2), 
+    transparent
+  );
+  animation: shimmer-slide 2s infinite;
+}
+
+/* 3D hover transform */
+.hover-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.3s ease;
+}
+
+/* Floating badge animation */
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+.floating-badge {
+  animation: badge-float 4s ease-in-out infinite;
+}
+
+/* Particle animation */
+@keyframes particle-float {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  25% { 
+    transform: translate(10px, -20px) scale(1.1);
+    opacity: 0.5;
+  }
+  50% { 
+    transform: translate(-5px, -40px) scale(0.9);
+    opacity: 0.4;
+  }
+  75% { 
+    transform: translate(15px, -20px) scale(1.05);
+    opacity: 0.6;
+  }
+}
 ```
 
 ---
 
-### Phase 2: Update Guest Courses to Use Digital Books
+## Mobile Responsive Updates
 
-**Files to Modify:**
-- `src/pages/student/GuestCourses.tsx`
+### MobileHeroSection.tsx
+- Add particle overlay (reduced to 20 particles)
+- Glassmorphism feature cards
+- Shimmer on CTA button
+- Smaller floating orbs
 
-**Changes:**
-1. Replace PDF viewer with navigation to DigitalBookReader
-2. Query `digital_books` instead of `chapter_ebooks`
-3. Update ebook handling to open `/guest/book/:bookId` route
-4. Create guest-accessible book reader route
+### MobileFeaturesGrid.tsx  
+- Glass cards for feature grid
+- Simplified 3D hover (tap to activate)
+- Condensed animations for performance
 
-**New Route Needed:**
-- `/guest/book/:bookId` - Guest-accessible digital book reader
-
----
-
-### Phase 3: Create Guest Digital Book Access
-
-**Files to Create:**
-- `src/pages/student/GuestDigitalBook.tsx`
-
-**Features:**
-- Read-only digital book viewer for guests
-- Limited to first 2-3 pages as preview
-- Prompt to sign up for full access
-- Content protection (no copy/download)
-
----
-
-### Phase 4: Mobile-Responsive Code Lab
-
-**Files to Modify:**
-- `src/pages/student/BlockCodingLab.tsx`
-- `src/components/blockly/BlocklyWorkspace.tsx`
-- `src/components/blockly/OutputCanvas.tsx`
-
-**Mobile Layout Changes:**
-
-```text
-Desktop Layout (lg+):
-┌──────────────────────────────────────────────────────┐
-│  Header                                              │
-├─────────────────────────┬────────────────────────────┤
-│                         │                            │
-│   Blockly Workspace     │   Output Canvas/Console    │
-│   (60%)                 │   (40%)                    │
-│                         │                            │
-└─────────────────────────┴────────────────────────────┘
-
-Mobile Layout (< lg):
-┌──────────────────────────────┐
-│  Header + Controls           │
-├──────────────────────────────┤
-│                              │
-│   Blockly Workspace          │
-│   (Full width, 60vh height)  │
-│                              │
-├──────────────────────────────┤
-│   Output (Tabs: Stage/Console)│
-│   (Full width, auto height)  │
-│                              │
-└──────────────────────────────┘
-```
-
-**Specific Fixes:**
-1. **BlocklyWorkspace**: Set `min-height: 250px` on mobile, scale toolbox
-2. **OutputCanvas**: Dynamic sizing based on container width
-3. **Control buttons**: Stack vertically on mobile
-4. **Tabs for output**: Horizontal scroll if needed
-
----
-
-### Phase 5: General Mobile Responsiveness Improvements
-
-**Files to Review/Modify:**
-- `src/pages/student/GuestDashboard.tsx`
-- `src/pages/student/ChapterHome.tsx`
-- `src/components/digitalbook/DigitalBookReader.tsx`
-- `src/components/worksheet/WorksheetPlayer.tsx`
-
-**Common Mobile Patterns to Apply:**
-1. Reduce padding on small screens (`p-4 sm:p-6`)
-2. Stack horizontal layouts vertically on mobile
-3. Reduce font sizes (`text-sm sm:text-base`)
-4. Full-width buttons on mobile
-5. Collapsible navigation elements
-6. Touch-friendly tap targets (min 44px)
+### All Mobile Components
+- Reduce particle count for performance
+- Touch-friendly hover states
+- Respect prefers-reduced-motion
 
 ---
 
 ## File Changes Summary
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `SampleEbookViewer.tsx` | Major rewrite | Fetch real digital books from database |
-| `GuestCourses.tsx` | Update ebook handling | Navigate to digital reader instead of PDF |
-| `GuestDigitalBook.tsx` | Create new | Guest-accessible limited book preview |
-| `BlockCodingLab.tsx` | Mobile responsive | Stack layout, responsive controls |
-| `BlocklyWorkspace.tsx` | Mobile responsive | Reduce min-height, scale toolbox |
-| `OutputCanvas.tsx` | Mobile responsive | Dynamic canvas sizing |
-| `App.tsx` | Add route | `/guest/book/:bookId` route |
-| `GuestDashboard.tsx` | Minor tweaks | Mobile spacing improvements |
-| `DigitalBookReader.tsx` | Minor tweaks | Mobile touch navigation |
+| File | Action | Description |
+|------|--------|-------------|
+| `ParticleBackground.tsx` | Create | 50 floating particles with CSS animation |
+| `GlassCard.tsx` | Create | Reusable 3D glassmorphism card |
+| `InteractiveMockup.tsx` | Create | Live dashboard preview |
+| `FloatingGradientOrbs.tsx` | Create | Enhanced ambient background |
+| `Landing.tsx` | Major update | Integrate all new components |
+| `MobileHeroSection.tsx` | Update | Add glass effects, particles |
+| `MobileFeaturesGrid.tsx` | Update | Glass cards, animations |
+| `MobileCourseLevels.tsx` | Update | Timeline animation |
+| `MobilePricing.tsx` | Update | Glass pricing cards |
+| `MobileCTASection.tsx` | Update | Shimmer CTAs |
+| `index.css` | Update | Add new animation keyframes |
+| `tailwind.config.ts` | Update | Add new animation utilities |
 
 ---
 
-## Database Queries to Use
+## Performance Considerations
 
-**Fetch Digital Books for a Class:**
-```sql
-SELECT db.*, c.title as chapter_title, co.title as course_title
-FROM digital_books db
-JOIN chapters c ON db.chapter_id = c.id
-JOIN courses co ON c.course_id = co.id
-WHERE db.is_published = true
-  AND co.title ILIKE '%Class X%'
-ORDER BY c.order_index
-```
+1. **Particles**: Use CSS-only animation with will-change hints
+2. **3D Transforms**: Only apply on hover (not constantly)
+3. **Backdrop Blur**: Limited to visible cards only
+4. **Reduced Motion**: Respect user preferences with media query
+5. **Mobile**: Reduce particle count and animation complexity
 
 ---
 
-## Expected Outcome
+## Expected Visual Outcome
 
-After implementation:
+The landing page will have:
+- Floating particles creating ambient movement
+- Glassmorphism cards with depth and blur
+- 3D hover effects that respond to mouse position
+- Interactive dashboard mockup showing live data
+- Shimmer animations on all CTAs
+- Timeline animation for How It Works
+- Cohesive glass design language throughout
+- Smooth, performant animations
 
-1. **Sample E-Books Section**
-   - Shows real digital book previews from database
-   - Filters by guest's selected class
-   - Opens native in-app reader (not PDF)
-
-2. **Guest Courses**
-   - E-Books tab shows digital books from database
-   - Clicking opens native DigitalBookReader
-   - Guest gets preview of first few pages
-
-3. **Code Lab**
-   - Fully usable on mobile devices
-   - Blocks visible and draggable
-   - Output canvas scales to screen size
-   - Controls accessible without scrolling
-
-4. **Mobile Experience**
-   - All pages fully responsive
-   - Touch-friendly navigation
-   - No horizontal scrolling issues
-   - Consistent spacing and typography
-
----
-
-## Technical Considerations
-
-1. **Guest Access Control**
-   - Digital books should work without authentication
-   - Limit guest preview to first 2-3 pages
-   - Encourage signup for full access
-
-2. **Performance**
-   - Lazy load book pages
-   - Cache digital book data
-   - Optimize Blockly workspace rendering on mobile
-
-3. **Content Protection**
-   - Maintain no-copy, no-download restrictions
-   - Disable right-click on book content
-   - Block keyboard shortcuts for saving
-
+This creates a premium, modern feel that distinguishes KodeIntel from generic educational platforms while maintaining excellent performance.
