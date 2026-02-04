@@ -81,6 +81,14 @@ import { MobileTestimonials } from "@/components/landing/MobileTestimonials";
 import { MobilePricing } from "@/components/landing/MobilePricing";
 import { MobileCTASection } from "@/components/landing/MobileCTASection";
 
+// New glassmorphism components
+import { ParticleBackground } from "@/components/landing/ParticleBackground";
+import { GlassCard } from "@/components/landing/GlassCard";
+import { FloatingGradientOrbs } from "@/components/landing/FloatingGradientOrbs";
+import { InteractiveMockup } from "@/components/landing/InteractiveMockup";
+import { ShimmerButton } from "@/components/landing/ShimmerButton";
+import { TimelineSection } from "@/components/landing/TimelineSection";
+
 // Animated counter with intersection observer
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number; duration?: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -177,7 +185,7 @@ export default function Landing() {
       <div className="min-h-screen bg-background">
         <MobileHeroSection 
           onGetStarted={() => navigate("/student/login")} 
-          onTryDemo={() => navigate("/student/guest")} 
+          onTryDemo={() => navigate("/guest")} 
         />
         <MobileCourseLevels />
         <MobileFeaturesGrid />
@@ -309,27 +317,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
-      {/* Animated Mesh Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-20"
-          style={{
-            background: `radial-gradient(circle, hsl(var(--primary) / 0.5) 0%, transparent 70%)`,
-            left: `${mousePosition.x * 0.3}%`,
-            top: `${mousePosition.y * 0.2}%`,
-            transition: 'left 0.5s ease-out, top 0.5s ease-out'
-          }}
-        />
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-20"
-          style={{
-            background: `radial-gradient(circle, hsl(var(--turquoise) / 0.4) 0%, transparent 70%)`,
-            right: `${(100 - mousePosition.x) * 0.2}%`,
-            bottom: `${(100 - mousePosition.y) * 0.2}%`,
-            transition: 'right 0.8s ease-out, bottom 0.8s ease-out'
-          }}
-        />
-      </div>
+      {/* Particle Background - Fixed */}
+      <ParticleBackground particleCount={50} className="fixed z-0" />
+      
+      {/* Floating Gradient Orbs - Fixed */}
+      <FloatingGradientOrbs className="fixed z-0" enableParallax={true} />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center py-16 px-4">
@@ -337,8 +329,8 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left Content */}
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-8 shadow-lg border border-primary/20">
+              {/* Badge with glow */}
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass-card rounded-full text-sm font-bold mb-8 shadow-lg border border-primary/20 animate-badge-float">
                 <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse" />
                 <span className="text-foreground">NEP 2020 Aligned</span>
                 <span className="text-muted-foreground">•</span>
@@ -367,30 +359,30 @@ export default function Landing() {
                 everything your child needs to become future-ready.
               </p>
 
-              {/* CTA Buttons */}
+              {/* CTA Buttons with Shimmer */}
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <Button
-                  size="lg"
+                <ShimmerButton
                   onClick={() => navigate("/student/login")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold shadow-2xl hover:shadow-primary/25 transition-all hover:scale-105 btn-glow group relative overflow-hidden"
+                  variant="primary"
+                  size="lg"
                 >
-                  <Rocket className="h-6 w-6 group-hover:animate-bounce" />
+                  <Rocket className="h-6 w-6" />
                   Start 7-Day Free Trial
-                  <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                  <ChevronRight className="h-5 w-5" />
+                </ShimmerButton>
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate("/student/guest")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-semibold border-2 border-border hover:border-primary/50 hover:bg-primary/5 group"
+                  onClick={() => navigate("/guest")}
+                  className="gap-3 rounded-full px-10 py-7 text-lg font-semibold border-2 border-border hover:border-primary/50 hover:bg-primary/5 group glass-card"
                 >
                   <Play className="h-5 w-5 group-hover:text-primary transition-colors" />
                   Try Demo Free
                 </Button>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center gap-6 flex-wrap p-5 glass rounded-2xl">
+              {/* Trust Indicators with glass effect */}
+              <div className="flex items-center gap-6 flex-wrap p-5 glass-card rounded-2xl">
                 <div className="flex -space-x-3">
                   {[man1, woman2, man3, woman4].map((avatar, i) => (
                     <div 
@@ -416,54 +408,16 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right Content - Hero Image */}
+            {/* Right Content - Interactive Dashboard Mockup */}
             <div className={`relative transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-turquoise/30 rounded-[2rem] blur-[60px] scale-110 animate-pulse" />
+              <InteractiveMockup className="w-full max-w-lg mx-auto" />
               
-              <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-border/30 hover:border-primary/30 transition-all duration-500 group">
-                <img 
-                  src={heroAiLearning} 
-                  alt="Kids learning AI with holographic displays" 
-                  className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-700" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
-              </div>
-              
-              {/* Floating Cards */}
-              <FloatingElement delay={0} className="absolute -top-6 -right-6 z-20">
-                <div className="glass rounded-2xl shadow-2xl p-4 border border-turquoise/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-turquoise to-lime flex items-center justify-center shadow-lg">
-                      <CheckCircle2 className="h-7 w-7 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">Quiz Passed!</p>
-                      <p className="text-sm text-turquoise font-semibold">Score: 95%</p>
-                    </div>
-                  </div>
-                </div>
-              </FloatingElement>
-              
-              <FloatingElement delay={1.2} className="absolute -bottom-6 -left-6 z-20">
-                <div className="glass rounded-2xl shadow-2xl p-4 border border-sunny/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-sunny to-coral flex items-center justify-center shadow-lg">
-                      <Award className="h-7 w-7 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">New Badge!</p>
-                      <p className="text-sm text-sunny font-semibold">Code Master</p>
-                    </div>
-                  </div>
-                </div>
-              </FloatingElement>
-
               {/* Mascot */}
-              <FloatingElement delay={0.3} className="absolute -bottom-2 right-10 z-30 hidden lg:block">
+              <FloatingElement delay={0.3} className="absolute -bottom-4 -left-4 z-30 hidden lg:block">
                 <img 
                   src={kodiMascot3d} 
                   alt="KODI Mascot" 
-                  className="w-32 h-32 object-contain drop-shadow-2xl hover:scale-110 transition-transform cursor-pointer" 
+                  className="w-28 h-28 object-contain drop-shadow-2xl hover:scale-110 transition-transform cursor-pointer" 
                 />
               </FloatingElement>
             </div>
@@ -473,13 +427,13 @@ export default function Landing() {
         {/* Scroll Indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2">
           <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
-          <div className="w-8 h-14 border-2 border-muted-foreground/40 rounded-full flex justify-center pt-3">
+          <div className="w-8 h-14 border-2 border-muted-foreground/40 rounded-full flex justify-center pt-3 glass-card">
             <div className="w-2 h-3 bg-primary rounded-full animate-bounce" />
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section with Glassmorphism */}
       <section className="py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 gradient-primary" />
         <div className="absolute inset-0 pattern-dots opacity-20" />
@@ -489,7 +443,7 @@ export default function Landing() {
             {stats.map((stat, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
                 <div className="text-center group">
-                  <div className="w-20 h-20 rounded-3xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform shadow-xl">
+                  <div className="w-20 h-20 rounded-3xl bg-primary-foreground/20 backdrop-blur-xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform shadow-xl border border-primary-foreground/10">
                     <stat.icon className="h-10 w-10 text-primary-foreground" />
                   </div>
                   <div className="text-5xl md:text-6xl font-bold text-primary-foreground mb-2 font-display">
@@ -525,22 +479,25 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-6">
             {learningModules.map((module, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
-                <Card className="card-playful overflow-hidden group h-full border-2 hover:border-primary/30 transition-all">
-                  <CardContent className="p-8">
-                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xl`}>
-                      <module.icon className="h-10 w-10 text-primary-foreground" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-3 font-display">{module.title}</h3>
-                    <p className="text-muted-foreground mb-6 leading-relaxed">{module.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {module.features.map((feature, i) => (
-                        <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                <GlassCard 
+                  glowColor={index === 0 ? 'primary' : index === 1 ? 'turquoise' : index === 2 ? 'sunny' : 'coral'}
+                  hover3D={true}
+                  size="lg"
+                  className="h-full"
+                >
+                  <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center mb-6 shadow-xl transition-transform group-hover:scale-110`}>
+                    <module.icon className="h-10 w-10 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3 font-display">{module.title}</h3>
+                  <p className="text-muted-foreground mb-6 leading-relaxed">{module.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {module.features.map((feature, i) => (
+                      <span key={i} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-muted/80 text-muted-foreground backdrop-blur-sm">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </GlassCard>
               </RevealOnScroll>
             ))}
           </div>
@@ -552,7 +509,7 @@ export default function Landing() {
         <div className="container mx-auto">
           <RevealOnScroll>
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass-card rounded-full text-sm font-bold mb-6">
                 <Target className="h-5 w-5 text-coral" />
                 <span>Problems We Solve</span>
               </div>
@@ -568,9 +525,13 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {problemsSolved.map((item, index) => (
               <RevealOnScroll key={index} delay={index * 80}>
-                <div className="bg-card rounded-2xl p-6 border-2 border-border hover:border-primary/30 transition-all group hover:shadow-xl hover:-translate-y-1">
+                <GlassCard 
+                  glowColor={index % 3 === 0 ? 'primary' : index % 3 === 1 ? 'turquoise' : 'coral'}
+                  hover3D={true}
+                  size="md"
+                >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-muted/80 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                       <item.icon className={`h-6 w-6 ${item.color}`} />
                     </div>
                     <div>
@@ -578,7 +539,7 @@ export default function Landing() {
                       <p className="font-bold text-foreground">{item.solution}</p>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
               </RevealOnScroll>
             ))}
           </div>
@@ -590,7 +551,7 @@ export default function Landing() {
         <div className="container mx-auto">
           <RevealOnScroll>
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass rounded-full text-sm font-bold mb-6">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 glass-card rounded-full text-sm font-bold mb-6">
                 <Workflow className="h-5 w-5 text-secondary" />
                 <span>Simple Process</span>
               </div>
@@ -600,29 +561,7 @@ export default function Landing() {
             </div>
           </RevealOnScroll>
 
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-4">
-            {howItWorks.map((step, index) => (
-              <RevealOnScroll key={index} delay={index * 100}>
-                <div className="flex items-center">
-                  <div className="flex flex-col items-center text-center group">
-                    <div className={`relative w-24 h-24 rounded-3xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all`}>
-                      <step.icon className="h-12 w-12 text-primary-foreground" />
-                      <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-lg shadow-lg border-4 border-background">
-                        {step.step}
-                      </div>
-                    </div>
-                    <h3 className="font-bold text-lg text-foreground mb-1 font-display">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground max-w-[140px]">{step.description}</p>
-                  </div>
-                  {index < howItWorks.length - 1 && (
-                    <div className="hidden lg:block mx-4">
-                      <ArrowRight className="h-10 w-10 text-primary/50 animate-pulse" />
-                    </div>
-                  )}
-                </div>
-              </RevealOnScroll>
-            ))}
-          </div>
+          <TimelineSection />
         </div>
       </section>
 
