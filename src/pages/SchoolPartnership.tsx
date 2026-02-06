@@ -78,12 +78,12 @@ const whyKodeIntel = [
 
 const comparison = [
   { feature: "Curriculum aligned with NEP 2020", kodeintel: true, others: false },
-  { feature: "Physical workbooks included", kodeintel: true, others: false },
+  { feature: "Interactive Digital Textbooks", kodeintel: true, others: false },
   { feature: "Built-in code compiler", kodeintel: true, others: false },
   { feature: "Teacher training & support", kodeintel: true, others: "Paid Extra" },
   { feature: "Bulk student onboarding", kodeintel: true, others: "Limited" },
   { feature: "Progress analytics dashboard", kodeintel: true, others: "Basic" },
-  { feature: "Offline workbook practice", kodeintel: true, others: false },
+  { feature: "Gamified learning with badges", kodeintel: true, others: false },
   { feature: "Certification included", kodeintel: true, others: "Paid Extra" },
   { feature: "40-minute structured lessons", kodeintel: true, others: false },
   { feature: "Dedicated account manager", kodeintel: true, others: false },
@@ -358,7 +358,7 @@ export default function SchoolPartnership() {
                   { icon: Play, text: "HD Video Lessons by Expert Teachers" },
                   { icon: Code, text: "Built-in Python, C++, Java Compiler" },
                   { icon: Target, text: "Gamified Quizzes with Instant Feedback" },
-                  { icon: BookOpen, text: "Physical Workbook for Offline Practice" },
+                  { icon: BookOpen, text: "Interactive Digital Textbooks" },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-4 p-4 glass rounded-xl">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -621,7 +621,7 @@ export default function SchoolPartnership() {
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                    <Star key={i} className="h-5 w-5 text-sunny fill-sunny" />
                   ))}
                 </div>
                 <p className="text-foreground mb-6 leading-relaxed">"{testimonial.quote}"</p>

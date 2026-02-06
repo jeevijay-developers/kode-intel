@@ -24,9 +24,7 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import PublicCourses from "./pages/PublicCourses";
 import About from "./pages/About";
-import EStore from "./pages/EStore";
-import BookDetail from "./pages/BookDetail";
-import OrderConfirmation from "./pages/OrderConfirmation";
+
 import SchoolPartnership from "./pages/SchoolPartnership";
 import Contact from "./pages/Contact";
 import StudentLogin from "./pages/student/StudentLogin";
@@ -80,9 +78,6 @@ function App() {
               <Route path="/public-courses" element={<PublicCourses />} />
               <Route path="/course/:slug" element={<CourseDetail />} />
               <Route path="/about" element={<About />} />
-              <Route path="/store" element={<EStore />} />
-              <Route path="/store/book/:bookId" element={<BookDetail />} />
-              <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/schools" element={<SchoolPartnership />} />
               <Route path="/contact" element={<Contact />} />
             </Route>
