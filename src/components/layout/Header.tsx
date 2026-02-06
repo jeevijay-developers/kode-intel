@@ -8,10 +8,10 @@ import {
   X, 
   BookOpen, 
   Building2, 
-  ShoppingBag, 
   Phone,
   Code,
-  ChevronRight
+  ChevronRight,
+  Info
 } from "lucide-react";
 import brainLogo from "@/assets/brain-logo.png";
 import mascotKodi from "@/assets/mascot-kodi.png";
@@ -21,8 +21,8 @@ const navLinks = [
   { href: "/", label: "Home", icon: null },
   { href: "/courses", label: "Courses", icon: BookOpen },
   { href: "/schools", label: "For Schools", icon: Building2 },
-  { href: "/store", label: "Book Store", icon: ShoppingBag },
-  { href: "/compiler", label: "Compiler", icon: Code },
+  { href: "/compiler", label: "Code Lab", icon: Code },
+  { href: "/about", label: "About", icon: GraduationCap },
   { href: "/contact", label: "Contact", icon: Phone },
 ];
 

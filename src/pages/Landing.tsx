@@ -241,7 +241,7 @@ export default function Landing() {
   const products = [
     {
       name: "Complete Learning Pack",
-      price: "₹3,499",
+      price: "₹2,999",
       originalPrice: "₹4,999",
       period: "/year",
       popular: true,
@@ -253,26 +253,26 @@ export default function Landing() {
         { icon: FileQuestion, text: "Adaptive Worksheets & Quizzes" },
         { icon: Blocks, text: "10+ Hands-on Projects" },
         { icon: TrendingUp, text: "Progress Analytics Dashboard" },
-        { icon: BookMarked, text: "Physical Workbook (Delivered)" },
         { icon: Trophy, text: "Certificates & Badges" },
+        { icon: Headphones, text: "Priority Support" },
       ],
       buttonText: "Start 7-Day Free Trial",
       gradient: "gradient-primary",
     },
     {
-      name: "Workbook Only",
-      price: "₹999",
-      originalPrice: null,
-      period: "",
+      name: "Basic Plan",
+      price: "₹1,499",
+      originalPrice: "₹2,499",
+      period: "/year",
       popular: false,
-      description: "Physical theory book + worksheets for offline learning",
+      description: "Essential digital learning for self-paced students",
       features: [
-        { icon: BookMarked, text: "Comprehensive Theory Book" },
-        { icon: FileText, text: "Practice Worksheets" },
-        { icon: CheckCircle2, text: "Chapter Summaries" },
-        { icon: Award, text: "Activity Pages" },
+        { icon: CirclePlay, text: "All Video Lectures" },
+        { icon: BookOpen, text: "Digital Textbook Access" },
+        { icon: Code, text: "Code Lab Access" },
+        { icon: FileQuestion, text: "Practice Quizzes" },
       ],
-      buttonText: "Buy Workbook",
+      buttonText: "Get Started",
       gradient: "bg-secondary",
     },
   ];
@@ -301,9 +301,9 @@ export default function Landing() {
   const faqs = [
     { question: "What exactly is KodeIntel?", answer: "KodeIntel is India's first comprehensive AI & Computational Thinking platform for school students (Classes 3-10). We combine interactive digital textbooks, a visual coding lab, HD video lectures, and gamified worksheets to make learning fun and effective." },
     { question: "How is the curriculum structured?", answer: "Each grade has 10 months of content with 4 sessions per month. Each session is 40 minutes—perfect for young learners. The curriculum follows NEP 2020 guidelines and progressively builds from logical thinking to actual programming." },
-    { question: "What's included in the Complete Learning Pack?", answer: "You get access to all digital content (videos, interactive textbook, code lab, quizzes, projects, analytics) PLUS a physical workbook delivered to your doorstep. All for ₹3,499/year with a 7-day free trial." },
+    { question: "What's included in the Complete Learning Pack?", answer: "You get full access to all digital content: HD video lectures, interactive digital textbooks, Code Lab, quizzes, hands-on projects, progress analytics, and certificates. All for ₹2,999/year with a 7-day free trial." },
     { question: "Is the coding suitable for complete beginners?", answer: "Absolutely! Classes 3-6 use block-based coding (like Scratch) which requires no typing. Higher classes transition to Python and Java with step-by-step guidance. Every student succeeds regardless of background." },
-    { question: "How does school partnership work?", answer: "Schools get bulk pricing at ₹2,999/student/year, a centralized analytics dashboard, teacher training, and dedicated support. We handle everything from onboarding to progress reports." },
+    { question: "How does school partnership work?", answer: "Schools get bulk pricing at ₹2,499/student/year, a centralized analytics dashboard, teacher training, and dedicated support. We handle everything from onboarding to progress reports." },
     { question: "Can parents track their child's progress?", answer: "Yes! Our analytics dashboard shows completed lessons, quiz scores, time spent, streak days, badges earned, and areas that need improvement. You'll always know how your child is progressing." },
   ];
 
@@ -748,7 +748,7 @@ export default function Landing() {
                       className={`w-full rounded-full py-7 text-lg font-bold ${product.popular ? 'shadow-xl hover:shadow-2xl' : ''}`}
                       variant={product.popular ? "default" : "outline"}
                       size="lg"
-                      onClick={() => navigate(product.popular ? "/student/signup" : "/store")}
+                      onClick={() => navigate("/student/signup")}
                     >
                       {product.buttonText}
                       <ArrowRight className="h-5 w-5 ml-2" />
