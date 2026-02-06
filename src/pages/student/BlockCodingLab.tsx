@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import BlocklyWorkspace, { BlocklyWorkspaceRef } from '@/components/blockly/BlocklyWorkspace';
 import OutputCanvas from '@/components/blockly/OutputCanvas';
 import ConsoleOutput from '@/components/blockly/ConsoleOutput';
+import { CodeLabGuide } from '@/components/blockly/CodeLabGuide';
+import { CodeLabWelcome } from '@/components/blockly/CodeLabWelcome';
+import { ExampleLoader } from '@/components/blockly/ExampleLoader';
 import { useBlockly } from '@/hooks/useBlockly';
 import { useStudentAuth } from '@/hooks/useStudentAuth';
 import { normalizeClassValue } from '@/lib/classLevel';
@@ -23,7 +26,9 @@ import {
   Lightbulb,
   Save,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  HelpCircle,
+  BookOpen
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import kodiMascot from '@/assets/kodi-mascot-3d.png';
@@ -96,6 +101,7 @@ export default function BlockCodingLab() {
   const [selectedClass, setSelectedClass] = useState(initialClass);
   const [activeOutputTab, setActiveOutputTab] = useState<'animation' | 'console'>('animation');
   const [showTipsDrawer, setShowTipsDrawer] = useState(false);
+  const [showGuideDrawer, setShowGuideDrawer] = useState(false);
   const [mobileOutputExpanded, setMobileOutputExpanded] = useState(false);
   
   const classLevel = parseInt(selectedClass, 10) || 5;
@@ -155,10 +161,22 @@ export default function BlockCodingLab() {
     }
   }, []);
 
+  // Load example into workspace
+  const handleLoadExample = (xml: string) => {
+    if (workspaceRef.current) {
+      workspaceRef.current.loadBlocksXml(xml);
+      setShowGuideDrawer(false);
+      setShowTipsDrawer(false);
+    }
+  };
+
   const tips = TIPS_BY_CLASS[selectedClass] || TIPS_BY_CLASS['5'];
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Welcome modal for first-time users */}
+      <CodeLabWelcome classLevel={classLevel} onComplete={() => {}} />
+
       {/* Header */}
       <header className="h-12 sm:h-14 border-b border-border/50 bg-card/95 backdrop-blur-xl sticky top-0 z-50 flex items-center justify-between px-2 sm:px-4">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -184,6 +202,12 @@ export default function BlockCodingLab() {
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Example loader dropdown */}
+          <ExampleLoader 
+            classLevel={classLevel} 
+            onLoadExample={handleLoadExample}
+          />
+
           {/* Class selector */}
           <Select value={selectedClass} onValueChange={setSelectedClass}>
             <SelectTrigger className="w-[90px] sm:w-[110px] h-8 sm:h-9 text-xs sm:text-sm">
@@ -198,29 +222,57 @@ export default function BlockCodingLab() {
             </SelectContent>
           </Select>
 
-          {/* Mobile tips button */}
+          {/* Guide drawer button */}
+          <Sheet open={showGuideDrawer} onOpenChange={setShowGuideDrawer}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
+                <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[320px] sm:w-[380px] p-0">
+              <CodeLabGuide 
+                classLevel={classLevel}
+                onLoadExample={handleLoadExample}
+              />
+            </SheetContent>
+          </Sheet>
+
+          {/* Tips drawer button */}
           <Sheet open={showTipsDrawer} onOpenChange={setShowTipsDrawer}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5 text-sunny" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px] sm:w-[320px]">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-primary" />
-                  Tips for Class {selectedClass}
+                  <Lightbulb className="h-5 w-5 text-sunny" />
+                  Quick Tips - Class {selectedClass}
                 </SheetTitle>
               </SheetHeader>
               <div className="mt-4 space-y-3">
                 {tips.map((tip, index) => (
                   <div
                     key={index}
-                    className="p-3 rounded-lg bg-muted/50 text-sm"
+                    className="p-3 rounded-lg bg-sunny/10 border border-sunny/20 text-sm"
                   >
                     {tip}
                   </div>
                 ))}
+                <div className="pt-4 border-t">
+                  <Button 
+                    variant="outline" 
+                    className="w-full gap-2"
+                    onClick={() => {
+                      setShowTipsDrawer(false);
+                      setShowGuideDrawer(true);
+                    }}
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Open Full Guide
+                  </Button>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
