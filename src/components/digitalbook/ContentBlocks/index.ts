@@ -4,3 +4,6 @@ export { CalloutBlock } from "./CalloutBlock";
 export { BlockVisualBlock } from "./BlockVisualBlock";
 export { DividerBlock } from "./DividerBlock";
 export { ActivityBlock } from "./ActivityBlock";
+export { StepByStepBlock } from "./StepByStepBlock";
+export { KeyTermBlock } from "./KeyTermBlock";
+export { ComparisonBlock } from "./ComparisonBlock";
