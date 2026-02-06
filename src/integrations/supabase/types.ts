@@ -1547,6 +1547,9 @@ export type Database = {
         | "video_embed"
         | "activity"
         | "divider"
+        | "step_by_step"
+        | "key_term"
+        | "comparison"
       institution_type: "school" | "corporate" | "coaching" | "other"
       question_type: "multiple_choice" | "true_false"
       worksheet_question_type:
@@ -1692,6 +1695,9 @@ export const Constants = {
         "video_embed",
         "activity",
         "divider",
+        "step_by_step",
+        "key_term",
+        "comparison",
       ],
       institution_type: ["school", "corporate", "coaching", "other"],
       question_type: ["multiple_choice", "true_false"],
