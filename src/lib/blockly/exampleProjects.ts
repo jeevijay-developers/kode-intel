@@ -196,6 +196,294 @@ export const exampleProjects: ClassExamples[] = [
             </next>
           </block>
         </xml>`
+      },
+      {
+        id: 'class3-zigzag',
+        title: '⚡ Zigzag Walk',
+        description: 'Make your sprite walk in a zigzag pattern!',
+        difficulty: 'easy',
+        xpReward: 20,
+        objective: 'Create a zigzag path by alternating turns',
+        hints: [
+          'Move forward first',
+          'Turn right, then move again',
+          'Turn left to go the other way!'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="move_forward">
+                    <value name="STEPS">
+                      <block type="math_number">
+                        <field name="NUM">40</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="turn_right">
+                        <value name="DEGREES">
+                          <block type="math_number">
+                            <field name="NUM">60</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="move_forward">
+                            <value name="STEPS">
+                              <block type="math_number">
+                                <field name="NUM">40</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="turn_left">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">120</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="move_forward">
+                                    <value name="STEPS">
+                                      <block type="math_number">
+                                        <field name="NUM">40</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="turn_right">
+                                        <value name="DEGREES">
+                                          <block type="math_number">
+                                            <field name="NUM">60</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="move_forward">
+                                            <value name="STEPS">
+                                              <block type="math_number">
+                                                <field name="NUM">40</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class3-happy-jump',
+        title: '🎉 Happy Jump',
+        description: 'Make your sprite jump up and down!',
+        difficulty: 'easy',
+        xpReward: 15,
+        objective: 'Animate a jumping motion with waits',
+        hints: [
+          'Move up first (use negative turn or special move)',
+          'Add a wait between movements',
+          'Come back down the same way!'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="say_message">
+                <value name="MESSAGE">
+                  <block type="text_value">
+                    <field name="TEXT">Watch me jump! 🎉</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="change_size">
+                    <value name="SIZE">
+                      <block type="math_number">
+                        <field name="NUM">120</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="wait_seconds">
+                        <value name="SECONDS">
+                          <block type="math_number">
+                            <field name="NUM">0.3</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="change_size">
+                            <value name="SIZE">
+                              <block type="math_number">
+                                <field name="NUM">80</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="wait_seconds">
+                                <value name="SECONDS">
+                                  <block type="math_number">
+                                    <field name="NUM">0.3</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="change_size">
+                                    <value name="SIZE">
+                                      <block type="math_number">
+                                        <field name="NUM">100</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="say_message">
+                                        <value name="MESSAGE">
+                                          <block type="text_value">
+                                            <field name="TEXT">That was fun!</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class3-circle-spin',
+        title: '🔄 Spinning Circle',
+        description: 'Draw a circle by making tiny turns!',
+        difficulty: 'medium',
+        xpReward: 30,
+        objective: 'Use repeat to draw a smooth circle',
+        hints: [
+          'A circle needs many small steps',
+          'Turn just a little bit each time (10 degrees)',
+          'Repeat 36 times to make a full circle!'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="pen_color">
+                    <field name="COLOR">#9B59B6</field>
+                    <next>
+                      <block type="repeat_times">
+                        <value name="TIMES">
+                          <block type="math_number">
+                            <field name="NUM">36</field>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="move_forward">
+                            <value name="STEPS">
+                              <block type="math_number">
+                                <field name="NUM">10</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="turn_right">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">10</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class3-flower-petals',
+        title: '🌸 Simple Flower',
+        description: 'Draw flower petals using loops!',
+        difficulty: 'hard',
+        xpReward: 40,
+        objective: 'Create a simple flower with 6 petals',
+        hints: [
+          'Draw one petal shape first',
+          'Turn 60 degrees between petals',
+          'Repeat 6 times for all petals'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="pen_color">
+                    <field name="COLOR">#E91E63</field>
+                    <next>
+                      <block type="repeat_times">
+                        <value name="TIMES">
+                          <block type="math_number">
+                            <field name="NUM">6</field>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="move_forward">
+                            <value name="STEPS">
+                              <block type="math_number">
+                                <field name="NUM">50</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="turn_right">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">60</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="move_forward">
+                                    <value name="STEPS">
+                                      <block type="math_number">
+                                        <field name="NUM">50</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="turn_right">
+                                        <value name="DEGREES">
+                                          <block type="math_number">
+                                            <field name="NUM">120</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
       }
     ]
   },
@@ -456,6 +744,373 @@ export const exampleProjects: ClassExamples[] = [
                             </next>
                           </block>
                         </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class4-house',
+        title: '🏠 Draw a House',
+        description: 'Combine a square and triangle to make a house!',
+        difficulty: 'medium',
+        xpReward: 35,
+        objective: 'Draw a simple house shape',
+        hints: [
+          'First draw a square for the walls',
+          'Then draw a triangle on top for the roof',
+          'Use pen up/down to move between shapes'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="pen_color">
+                    <field name="COLOR">#8B4513</field>
+                    <next>
+                      <block type="repeat_times">
+                        <value name="TIMES">
+                          <block type="math_number">
+                            <field name="NUM">4</field>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="move_forward">
+                            <value name="STEPS">
+                              <block type="math_number">
+                                <field name="NUM">50</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="turn_right">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">90</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                        <next>
+                          <block type="pen_color">
+                            <field name="COLOR">#DC143C</field>
+                            <next>
+                              <block type="turn_left">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">30</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="repeat_times">
+                                    <value name="TIMES">
+                                      <block type="math_number">
+                                        <field name="NUM">3</field>
+                                      </block>
+                                    </value>
+                                    <statement name="DO">
+                                      <block type="move_forward">
+                                        <value name="STEPS">
+                                          <block type="math_number">
+                                            <field name="NUM">50</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="turn_right">
+                                            <value name="DEGREES">
+                                              <block type="math_number">
+                                                <field name="NUM">120</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class4-spiral-square',
+        title: '🌀 Spiral Square',
+        description: 'Draw a growing spiral pattern!',
+        difficulty: 'hard',
+        xpReward: 50,
+        objective: 'Create a spiral by increasing step size each time',
+        hints: [
+          'Start with small steps',
+          'Make each step a little bigger',
+          'Turn 90 degrees after each step'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="pen_color">
+                    <field name="COLOR">#3498DB</field>
+                    <next>
+                      <block type="move_forward">
+                        <value name="STEPS">
+                          <block type="math_number">
+                            <field name="NUM">10</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="turn_right">
+                            <value name="DEGREES">
+                              <block type="math_number">
+                                <field name="NUM">90</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="move_forward">
+                                <value name="STEPS">
+                                  <block type="math_number">
+                                    <field name="NUM">20</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="turn_right">
+                                    <value name="DEGREES">
+                                      <block type="math_number">
+                                        <field name="NUM">90</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="move_forward">
+                                        <value name="STEPS">
+                                          <block type="math_number">
+                                            <field name="NUM">30</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="turn_right">
+                                            <value name="DEGREES">
+                                              <block type="math_number">
+                                                <field name="NUM">90</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="move_forward">
+                                                <value name="STEPS">
+                                                  <block type="math_number">
+                                                    <field name="NUM">40</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="turn_right">
+                                                    <value name="DEGREES">
+                                                      <block type="math_number">
+                                                        <field name="NUM">90</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+                                                      <block type="move_forward">
+                                                        <value name="STEPS">
+                                                          <block type="math_number">
+                                                            <field name="NUM">50</field>
+                                                          </block>
+                                                        </value>
+                                                        <next>
+                                                          <block type="turn_right">
+                                                            <value name="DEGREES">
+                                                              <block type="math_number">
+                                                                <field name="NUM">90</field>
+                                                              </block>
+                                                            </value>
+                                                            <next>
+                                                              <block type="move_forward">
+                                                                <value name="STEPS">
+                                                                  <block type="math_number">
+                                                                    <field name="NUM">60</field>
+                                                                  </block>
+                                                                </value>
+                                                              </block>
+                                                            </next>
+                                                          </block>
+                                                        </next>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class4-traffic-light',
+        title: '🚦 Traffic Light',
+        description: 'Animate a traffic light sequence!',
+        difficulty: 'medium',
+        xpReward: 40,
+        objective: 'Show red, yellow, green colors with waits',
+        hints: [
+          'Use change color to show different lights',
+          'Add wait blocks between each color',
+          'Make sprite say the color name too!'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="change_color">
+                <field name="COLOR">#FF0000</field>
+                <next>
+                  <block type="say_message">
+                    <value name="MESSAGE">
+                      <block type="text_value">
+                        <field name="TEXT">🔴 STOP!</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="wait_seconds">
+                        <value name="SECONDS">
+                          <block type="math_number">
+                            <field name="NUM">2</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="change_color">
+                            <field name="COLOR">#FFFF00</field>
+                            <next>
+                              <block type="say_message">
+                                <value name="MESSAGE">
+                                  <block type="text_value">
+                                    <field name="TEXT">🟡 Get Ready...</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="wait_seconds">
+                                    <value name="SECONDS">
+                                      <block type="math_number">
+                                        <field name="NUM">1</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="change_color">
+                                        <field name="COLOR">#00FF00</field>
+                                        <next>
+                                          <block type="say_message">
+                                            <value name="MESSAGE">
+                                              <block type="text_value">
+                                                <field name="TEXT">🟢 GO GO GO!</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </xml>`
+      },
+      {
+        id: 'class4-staircase',
+        title: '🪜 Draw Stairs',
+        description: 'Create a staircase pattern step by step!',
+        difficulty: 'easy',
+        xpReward: 25,
+        objective: 'Draw stairs going up and to the right',
+        hints: [
+          'Each stair has two parts: horizontal and vertical',
+          'Move forward then turn up',
+          'Repeat the pattern!'
+        ],
+        blocksXml: `<xml xmlns="https://developers.google.com/blockly/xml">
+          <block type="when_start" x="50" y="50">
+            <next>
+              <block type="pen_down">
+                <next>
+                  <block type="pen_color">
+                    <field name="COLOR">#2ECC71</field>
+                    <next>
+                      <block type="repeat_times">
+                        <value name="TIMES">
+                          <block type="math_number">
+                            <field name="NUM">5</field>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="move_forward">
+                            <value name="STEPS">
+                              <block type="math_number">
+                                <field name="NUM">25</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="turn_left">
+                                <value name="DEGREES">
+                                  <block type="math_number">
+                                    <field name="NUM">90</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="move_forward">
+                                    <value name="STEPS">
+                                      <block type="math_number">
+                                        <field name="NUM">25</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="turn_right">
+                                        <value name="DEGREES">
+                                          <block type="math_number">
+                                            <field name="NUM">90</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
                       </block>
                     </next>
                   </block>
