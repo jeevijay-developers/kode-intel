@@ -1,11 +1,13 @@
 export interface ContentBlock {
-  type: "text" | "callout" | "key_term" | "step_by_step" | "comparison" | "activity" | "summary";
+  type: "text" | "callout" | "key_term" | "step_by_step" | "comparison" | "activity" | "summary" | "image";
   title?: string;
   content?: string;
   items?: string[];
   columns?: { left: string[]; right: string[]; leftTitle?: string; rightTitle?: string };
   variant?: "info" | "tip" | "warning" | "fun_fact";
   icon?: string;
+  imageSrc?: string;
+  imageAlt?: string;
 }
 
 export interface SampleChapter {
@@ -22,6 +24,7 @@ export const sampleBookChapters: SampleChapter[] = [
     subtitle: "Your New Digital Friend!",
     blocks: [
       { type: "text", title: "What is a Computer?", content: "A computer is an electronic machine that helps us do many things — like drawing, writing stories, playing games, watching videos, and even talking to friends far away! Just like how we use our brain to think and solve problems, a computer uses its own 'brain' called a processor to follow instructions and get things done really fast." },
+      { type: "image", imageSrc: "/images/thinking-brain.png", imageAlt: "A colorful illustration of a brain connected to a computer", title: "The Computer Brain" },
       { type: "callout", variant: "fun_fact", content: "Did you know? The first computer was so big that it filled an entire room — bigger than your classroom! Today, computers are small enough to fit in your pocket (like a smartphone).", icon: "🤯" },
       { type: "key_term", title: "Processor (CPU)", content: "The 'brain' of the computer that thinks and works very fast. CPU stands for Central Processing Unit." },
       { type: "text", title: "Parts of a Computer", content: "Just like our body has different parts — eyes to see, ears to hear, hands to touch — a computer also has different parts that help it work. Let's learn about each one!" },
@@ -41,6 +44,7 @@ export const sampleBookChapters: SampleChapter[] = [
     subtitle: "Discovering Sequences & Repetition",
     blocks: [
       { type: "text", title: "What Are Patterns?", content: "Patterns are things that repeat in a predictable way. You see patterns everywhere — in the tiles on your floor, the stripes on a zebra, the petals of a flower, and even in the songs you sing! Recognizing patterns is one of the most important skills in computing and mathematics." },
+      { type: "image", imageSrc: "/images/nature-patterns.png", imageAlt: "Beautiful patterns found in nature — spirals, symmetry, and fractals", title: "Patterns in Nature" },
       { type: "callout", variant: "fun_fact", content: "Nature is full of patterns! Sunflowers arrange their seeds in a special spiral pattern called the Fibonacci sequence. Each number is the sum of the two before it: 1, 1, 2, 3, 5, 8, 13...", icon: "🌻" },
       { type: "key_term", title: "Pattern", content: "A set of shapes, colors, numbers, or actions that repeat in a regular and predictable way. Patterns help us predict what comes next." },
       { type: "text", title: "Types of Patterns", content: "Patterns can be found in many forms. Some are visual (like colors and shapes), some are numerical (like counting sequences), and some are even in sounds and movements!" },
@@ -59,6 +63,7 @@ export const sampleBookChapters: SampleChapter[] = [
     subtitle: "Introduction to Computational Thinking",
     blocks: [
       { type: "text", title: "What is Computational Thinking?", content: "Computational Thinking (CT) is a way of solving problems step by step — just like a computer does! But you don't need a computer to use it. You can use computational thinking to solve everyday problems like organizing your school bag, planning a birthday party, or even making a sandwich!" },
+      { type: "image", imageSrc: "/images/ct-pillars.png", imageAlt: "The four pillars of computational thinking illustrated", title: "Four Pillars of CT" },
       { type: "callout", variant: "info", content: "Computational Thinking is not about thinking like a robot. It's about breaking big problems into smaller, manageable pieces and finding smart solutions — something humans are naturally great at!", icon: "🧠" },
       { type: "key_term", title: "Computational Thinking", content: "A problem-solving approach that involves breaking problems down, finding patterns, focusing on what's important, and creating step-by-step solutions." },
       { type: "text", title: "The Four Pillars of Computational Thinking", content: "Computational Thinking has four main skills, often called 'pillars.' Think of them as four superpowers that help you solve any problem!" },
@@ -83,6 +88,7 @@ export const sampleBookChapters: SampleChapter[] = [
       { type: "text", title: "Properties of a Good Algorithm", content: "Not every set of instructions qualifies as a good algorithm. A proper algorithm must be clear, have a definite start and end, produce the correct output, and work for all valid inputs." },
       { type: "step_by_step", title: "Five Properties of a Good Algorithm", items: ["Input — It takes zero or more inputs (information it needs to work with).", "Output — It produces at least one output (the result or answer).", "Definiteness — Every step must be clear and unambiguous. No guessing!", "Finiteness — It must end after a finite number of steps. It cannot run forever!", "Effectiveness — Each step must be doable and practical. No impossible tasks!"] },
       { type: "text", title: "Flowcharts: Visualizing Algorithms", content: "A flowchart is a diagram that shows the steps of an algorithm using special shapes. It's like a map for your solution — making it easy to see the path from start to finish. Flowcharts are especially useful when algorithms have decisions (yes/no choices)." },
+      { type: "image", imageSrc: "/images/flowchart-symbols.png", imageAlt: "Common flowchart symbols — oval, rectangle, diamond, parallelogram", title: "Flowchart Symbols Guide" },
       { type: "step_by_step", title: "Flowchart Symbols", items: ["Oval (Rounded Rectangle) — Start and End points of the algorithm.", "Rectangle — A process step or action (e.g., 'Add two numbers').", "Diamond — A decision point with Yes/No branches (e.g., 'Is the number greater than 10?').", "Parallelogram — Input or Output (e.g., 'Read a number' or 'Display result').", "Arrow — Shows the flow direction from one step to the next."] },
       { type: "comparison", title: "Algorithm vs Flowchart vs Pseudocode", columns: { leftTitle: "Format", rightTitle: "Description", left: ["Algorithm (plain text)", "Flowchart (visual diagram)", "Pseudocode (structured text)"], right: ["Written steps in simple language — easy to write", "Shapes and arrows showing the flow — easy to visualize", "Code-like language but not real code — bridge between human and computer language"] } },
       { type: "key_term", title: "Pseudocode", content: "A way of writing algorithm steps in a structured format that looks like code but is written in plain language. It helps plan the logic before writing real code." },
@@ -120,6 +126,7 @@ export const sampleBookChapters: SampleChapter[] = [
       { type: "callout", variant: "info", content: "AI doesn't mean robots walking around like humans (that's science fiction — for now!). Most AI today is 'narrow AI' — it's really good at ONE specific task, like recognizing faces, translating languages, or recommending songs.", icon: "🤖" },
       { type: "key_term", title: "Artificial Intelligence (AI)", content: "The field of computer science focused on creating systems that can perform tasks that normally require human intelligence — such as understanding language, recognizing images, making decisions, and learning from experience." },
       { type: "text", title: "AI in Your Daily Life", content: "You might think AI is something futuristic, but you're already using it every day! Here are some common examples that might surprise you." },
+      { type: "image", imageSrc: "/images/ai-applications.png", imageAlt: "AI applications in daily life — voice assistants, self-driving cars, smart home", title: "AI in Everyday Life" },
       { type: "step_by_step", title: "AI Examples You Use Daily", items: ["Voice Assistants — Siri, Alexa, Google Assistant understand your voice and respond intelligently.", "Auto-Correct & Predictive Text — Your phone predicts what you're typing and fixes spelling mistakes.", "YouTube & Netflix Recommendations — AI analyzes what you watch and suggests videos you might like.", "Face Unlock — Your phone recognizes YOUR face among billions of possible faces.", "Google Search — AI understands your question, even if you type it with mistakes, and finds the best answers.", "Instagram & Snapchat Filters — AI detects your face and adds fun effects in real-time."] },
       { type: "comparison", title: "Human Intelligence vs Artificial Intelligence", columns: { leftTitle: "Human Intelligence", rightTitle: "Artificial Intelligence", left: ["Learns from experience and emotions", "Can be creative and imaginative", "Gets tired and needs rest", "Makes mistakes due to feelings", "Can do many different tasks"], right: ["Learns from data and patterns", "Follows rules and patterns (limited creativity)", "Never gets tired, works 24/7", "Consistent but can have data bias", "Usually excels at one specific task"] } },
       { type: "key_term", title: "Machine Learning (ML)", content: "A subset of AI where machines learn from data and improve over time WITHOUT being explicitly programmed for every scenario. Instead of writing rules, we give the machine examples and it learns the rules itself!" },
@@ -140,6 +147,7 @@ export const sampleBookChapters: SampleChapter[] = [
       { type: "key_term", title: "Machine Learning", content: "A branch of AI where computers learn patterns from data and make predictions or decisions without being explicitly programmed with rules for every scenario." },
       { type: "key_term", title: "Training Data", content: "The collection of examples (data) used to teach a machine learning model. The quality and quantity of training data directly affects how well the model learns." },
       { type: "text", title: "Types of Machine Learning", content: "Just like there are different ways humans learn (from teachers, from experience, from trial and error), machines also have different learning approaches. The three main types are supervised, unsupervised, and reinforcement learning." },
+      { type: "image", imageSrc: "/images/brain-thinking.png", imageAlt: "Machine learning types — supervised, unsupervised, reinforcement learning", title: "Types of Machine Learning" },
       { type: "step_by_step", title: "Three Types of Machine Learning", items: ["Supervised Learning — The machine learns from labeled examples. Like a teacher showing you solved problems. Example: Showing 1000 photos labeled 'cat' or 'dog' so the machine learns to tell them apart.", "Unsupervised Learning — The machine finds hidden patterns in data WITHOUT labels. Like sorting a bag of mixed candies into groups by color/shape without being told the categories. Example: Customer grouping in marketing.", "Reinforcement Learning — The machine learns by trial and error, getting rewards for good actions and penalties for bad ones. Like training a puppy — treats for sitting, no treats for jumping. Example: Teaching a game-playing AI."] },
       { type: "comparison", title: "Supervised vs Unsupervised Learning", columns: { leftTitle: "Supervised Learning", rightTitle: "Unsupervised Learning", left: ["Uses labeled data (answers given)", "Teacher guides the learning", "Predicts specific outcomes", "Example: Email spam detection", "Example: Image classification"], right: ["Uses unlabeled data (no answers)", "Machine discovers patterns alone", "Finds hidden structures in data", "Example: Customer segmentation", "Example: Anomaly detection"] } },
       { type: "text", title: "How a Model Learns: The Training Process", content: "Training a machine learning model is like studying for an exam. First, the model sees many examples (training). Then it's tested on new examples it hasn't seen before (testing). If it makes mistakes, it adjusts its understanding and tries again. This cycle repeats thousands of times until the model becomes accurate!" },
