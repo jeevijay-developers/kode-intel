@@ -542,7 +542,7 @@ export default function SchoolPartnership() {
                       "HD Video Lectures",
                       "Interactive Quizzes",
                       "Code Compiler Access",
-                      "Physical Workbook",
+                      "Interactive Digital Textbook",
                       "Completion Certificate",
                     ].map((item, index) => (
                       <div key={index} className="flex items-center gap-3">
