@@ -1,4 +1,5 @@
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState, useCallback } from "react";
+import html2pdf from "html2pdf.js";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import {
   AlertCircle,
   Sparkles,
   ListOrdered,
+  Loader2,
   ArrowLeftRight,
   PenTool,
   FileText,
@@ -218,11 +220,19 @@ function renderBlock(block: ContentBlock, index: number) {
   }
 }
 
+// Map of classes that have pre-built PDF files
+const pdfFileMap: Record<number, string> = {
+  4: "/ebooks/class-4-chapter-1.pdf",
+  6: "/ebooks/class-6-chapter-1.pdf",
+  7: "/ebooks/class-7-chapter-1.pdf",
+};
+
 export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const chapter = getSampleChapterForClass(classNum);
   const [tocOpen, setTocOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Build TOC entries from blocks that have titles
   const tocEntries = useMemo(() => {
@@ -236,6 +246,38 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
       .filter((entry) => entry.title && entry.type !== "image");
   }, [chapter]);
 
+  const handleDownload = useCallback(async () => {
+    const pdfPath = pdfFileMap[classNum];
+    if (pdfPath) {
+      const link = document.createElement("a");
+      link.href = pdfPath;
+      link.download = `KodeIntel-Class-${classNum}-Chapter-1-Sample.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    // Generate PDF from rendered content
+    const element = contentRef.current;
+    if (!element) return;
+
+    setIsGenerating(true);
+    try {
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `KodeIntel-Class-${classNum}-Chapter-1-Sample.pdf`,
+        image: { type: "jpeg", quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+      };
+      await html2pdf().set(opt).from(element).save();
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [classNum]);
+
   if (!chapter) {
     return (
       <Card className="p-8 text-center border-dashed">
@@ -244,31 +286,6 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
       </Card>
     );
   }
-
-  // Map of classes that have pre-built PDF files
-  const pdfFileMap: Record<number, string> = {
-    4: "/ebooks/class-4-chapter-1.pdf",
-    6: "/ebooks/class-6-chapter-1.pdf",
-    7: "/ebooks/class-7-chapter-1.pdf",
-  };
-
-  const hasPdfFile = !!pdfFileMap[classNum];
-
-  const handleDownload = () => {
-    const pdfPath = pdfFileMap[classNum];
-    if (pdfPath) {
-      // Direct download for classes with PDF files
-      const link = document.createElement("a");
-      link.href = pdfPath;
-      link.download = `KodeIntel-Class-${classNum}-Chapter-1-Sample.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      // Fallback to browser print-to-PDF
-      window.print();
-    }
-  };
 
   const scrollToSection = (index: number) => {
     const el = document.getElementById(`section-${index}`);
@@ -292,9 +309,18 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
             <span className="hidden sm:inline">Contents</span>
           </button>
         </div>
-        <Button onClick={handleDownload} size="sm" className="gap-2 bg-gradient-to-r from-primary to-secondary">
-          <Download className="h-4 w-4" />
-          Download PDF
+        <Button onClick={handleDownload} size="sm" disabled={isGenerating} className="gap-2 bg-gradient-to-r from-primary to-secondary">
+          {isGenerating ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Generating…
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Download PDF
+            </>
+          )}
         </Button>
       </div>
 
