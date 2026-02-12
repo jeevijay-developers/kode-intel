@@ -1,5 +1,4 @@
 import { useRef, useMemo, useState, useCallback } from "react";
-import html2pdf from "html2pdf.js";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import {
   AlertCircle,
   Sparkles,
   ListOrdered,
-  Loader2,
   ArrowLeftRight,
   PenTool,
   FileText,
@@ -24,6 +22,7 @@ import {
 } from "lucide-react";
 import { getSampleChapterForClass, type ContentBlock } from "@/lib/sampleBookContent";
 import brainLogo from "@/assets/brain-logo.png";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SampleBookViewerProps {
   classNum: number;
@@ -220,19 +219,21 @@ function renderBlock(block: ContentBlock, index: number) {
   }
 }
 
-// Map of classes that have pre-built PDF files
+// Map of classes that have pre-built PDF files (static in public/ or in storage)
 const pdfFileMap: Record<number, string> = {
   4: "/ebooks/class-4-chapter-1.pdf",
   6: "/ebooks/class-6-chapter-1.pdf",
   7: "/ebooks/class-7-chapter-1.pdf",
 };
 
+// Classes with PDFs pre-generated in storage
+const storagePdfClasses = [3, 5, 8, 9, 10];
+
 export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const chapter = getSampleChapterForClass(classNum);
   const [tocOpen, setTocOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<number | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   // Build TOC entries from blocks that have titles
   const tocEntries = useMemo(() => {
@@ -246,7 +247,8 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
       .filter((entry) => entry.title && entry.type !== "image");
   }, [chapter]);
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = useCallback(() => {
+    // Check static files first
     const pdfPath = pdfFileMap[classNum];
     if (pdfPath) {
       const link = document.createElement("a");
@@ -258,105 +260,22 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
       return;
     }
 
-    const element = contentRef.current;
-    if (!element) return;
-
-    setIsGenerating(true);
-    try {
-      // Build a standalone PDF-ready container with headers/footers and page breaks
-      const wrapper = document.createElement("div");
-      wrapper.style.cssText = "font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; padding: 0;";
-
-      // Inject print styles for page breaks and repeating headers/footers
-      const style = document.createElement("style");
-      style.textContent = `
-        .pdf-page-header {
-          display: flex; align-items: center; justify-content: space-between;
-          border-bottom: 2px solid #6C63FF; padding: 8px 0 6px; margin-bottom: 16px;
-          font-size: 10px; color: #6C63FF;
-        }
-        .pdf-page-header img { height: 22px; }
-        .pdf-page-footer {
-          border-top: 1px solid #e0e0e0; margin-top: 20px; padding-top: 8px;
-          display: flex; justify-content: space-between; font-size: 8px; color: #999;
-        }
-        .pdf-block { page-break-inside: avoid; margin-bottom: 14px; }
-        .pdf-section-break { page-break-before: always; }
-        .pdf-title-page { text-align: center; padding: 60px 20px; page-break-after: always; }
-        .pdf-title-page h1 { font-size: 28px; color: #1a1a2e; margin: 12px 0 6px; }
-        .pdf-title-page .subtitle { font-size: 14px; color: #666; }
-        .pdf-title-page .badge { display: inline-block; background: #6C63FF22; color: #6C63FF; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
-        .pdf-title-page .meta { font-size: 10px; color: #999; margin-top: 20px; }
-      `;
-      wrapper.appendChild(style);
-
-      // Title page
-      const titlePage = document.createElement("div");
-      titlePage.className = "pdf-title-page";
-      titlePage.innerHTML = [
-        '<div style="margin-bottom:24px">',
-        '<img src="' + brainLogo + '" style="height:48px;margin:0 auto" />',
-        '</div>',
-        '<div class="badge">Class ' + chapter!.classNum + '</div>',
-        '<h1>' + chapter!.title + '</h1>',
-        '<p class="subtitle">' + chapter!.subtitle + '</p>',
-        '<p class="meta">KodeIntel Learning Platform &bull; Chapter 1 &bull; Sample Preview</p>',
-        '<p class="meta" style="margin-top:8px">&copy; KodeIntel &mdash; AI &amp; Computational Thinking for Young Learners</p>',
-      ].join("");
-      wrapper.appendChild(titlePage);
-
-      // Clone content blocks and wrap each with page-break-inside: avoid
-      const contentClone = element.cloneNode(true) as HTMLElement;
-      // Remove the branded header & footer from the clone (already on title page)
-      const brandedHeader = contentClone.querySelector(".rounded-3xl");
-      brandedHeader?.parentElement?.removeChild(brandedHeader);
-      const footerBranding = contentClone.querySelector(".border-t.border-border\\/50");
-      footerBranding?.parentElement?.removeChild(footerBranding);
-
-      // Add page-break-inside: avoid to every sample-book-block
-      contentClone.querySelectorAll(".sample-book-block").forEach((block) => {
-        (block as HTMLElement).style.pageBreakInside = "avoid";
-        (block as HTMLElement).classList.add("pdf-block");
-      });
-
-      // Add header at top of content section
-      const contentHeader = document.createElement("div");
-      contentHeader.className = "pdf-page-header";
-      contentHeader.innerHTML =
-        '<span style="font-weight:600">KodeIntel &mdash; Class ' + chapter!.classNum + '</span>' +
-        '<span>' + chapter!.title + ' &bull; Chapter 1</span>';
-      contentClone.insertBefore(contentHeader, contentClone.firstChild);
-
-      // Add footer at bottom
-      const contentFooter = document.createElement("div");
-      contentFooter.className = "pdf-page-footer";
-      contentFooter.innerHTML =
-        '<span>&copy; KodeIntel Learning Platform</span>' +
-        '<span>Sample Preview &mdash; For full content, visit kodeintel.com</span>';
-      contentClone.appendChild(contentFooter);
-
-      wrapper.appendChild(contentClone);
-
-      // Temporarily add to DOM for rendering
-      wrapper.style.position = "absolute";
-      wrapper.style.left = "-9999px";
-      wrapper.style.width = "210mm";
-      document.body.appendChild(wrapper);
-
-      const opt = {
-        margin: [12, 12, 14, 12],
-        filename: "KodeIntel-Class-" + classNum + "-Chapter-1-Sample.pdf",
-        image: { type: "jpeg", quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, width: 794 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
-        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-      };
-      await html2pdf().set(opt).from(wrapper).save();
-      document.body.removeChild(wrapper);
-    } finally {
-      setIsGenerating(false);
+    // For storage-hosted PDFs (classes 3, 5, 8, 9, 10)
+    if (storagePdfClasses.includes(classNum)) {
+      const { data } = supabase.storage
+        .from("sample-books")
+        .getPublicUrl(`class-${classNum}-chapter-1.pdf`);
+      
+      const link = document.createElement("a");
+      link.href = data.publicUrl;
+      link.download = `KodeIntel-Class-${classNum}-Chapter-1-Sample.pdf`;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
     }
-  }, [classNum, chapter]);
+  }, [classNum]);
 
   if (!chapter) {
     return (
@@ -389,18 +308,9 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
             <span className="hidden sm:inline">Contents</span>
           </button>
         </div>
-        <Button onClick={handleDownload} size="sm" disabled={isGenerating} className="gap-2 bg-gradient-to-r from-primary to-secondary">
-          {isGenerating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Generating…
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4" />
-              Download PDF
-            </>
-          )}
+        <Button onClick={handleDownload} size="sm" className="gap-2 bg-gradient-to-r from-primary to-secondary">
+          <Download className="h-4 w-4" />
+          Download PDF
         </Button>
       </div>
 
