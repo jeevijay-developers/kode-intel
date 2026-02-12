@@ -1,115 +1,99 @@
 
 
-# Redesign Sample Book PDFs: Colorful, Playful, Kids-Book Style
+# Enhanced PDF Book: AI Images, TOC, Color Me Page, and Better Design
 
-## Current Problem
-The generated PDFs are plain text-only documents with no colors, no illustrations, no visual design. They look like raw text dumps, not educational books for children.
+## Overview
+Transform the sample book PDFs into truly stunning children's educational books by adding AI-generated illustrations, a Table of Contents page, a "Color Me!" activity page, larger inline illustrations, and improved typography with bolder headings and better alignment.
 
-## What We Need (Based on Reference Image)
-- Vibrant colored backgrounds and page designs
-- Illustrated decorative elements (leaf borders, character mascots, speech bubbles)
-- Colorful section boxes: note boxes, fun fact callouts, tip boxes
-- Worksheet sections with write-in lines for kids to fill
-- Playful typography with varied sizes, colors, and weights
-- Icons and bullet points with visual markers
-- Educational images/illustrations on every page
-- Comparison tables with colored columns
-- Activity boxes with checkboxes and dashed lines
+## What Changes
 
-## Solution: Rebuild PDF Generator with jsPDF
+### 1. AI-Generated Images via Lovable AI
+Use the Lovable AI image generation API (google/gemini-2.5-flash-image) to create topic-relevant illustrations for each class. The edge function will call the AI to generate images at build time, then embed them as base64 into the PDF.
 
-Replace the plain-text PDF builder in the edge function with a rich, visual PDF generator using **jsPDF** (available via esm.sh in Deno). jsPDF supports:
-- Colored rectangles, rounded boxes, and shapes
-- Multiple fonts, sizes, and colors
-- Drawing lines, circles, and decorative elements
-- Embedded images (base64-encoded PNG/JPEG)
+**Images per class (2-3 per chapter):**
+- Class 3: A friendly cartoon computer with eyes, kids using a keyboard
+- Class 5: A child thinking with gears above their head, puzzle pieces connecting
+- Class 8: A cute robot waving, AI brain with circuits
+- Class 9: Data flowing into a machine, a puppy learning tricks (reinforcement learning metaphor)
+- Class 10: Futuristic city with AI, diverse students collaborating
 
-## Implementation Plan
+Images will be placed:
+- One large hero image after the title page (full-width, ~80mm tall)
+- One medium image mid-chapter between content blocks (~60mm wide)
+- One small image near the worksheet section
 
-### Step 1: Add Decorative Image Assets
-Create small base64-encoded illustrations to embed in PDFs:
-- KodeIntel mascot/logo for headers
-- Decorative corner elements (leaves, stars, gears)
-- Section icons (lightbulb for tips, brain for key terms, pencil for activities, star for fun facts)
-- Simple kid-friendly illustrations per class theme (computer for Class 3, gears for Class 5, robot for Class 8, etc.)
+### 2. Table of Contents (TOC) Page
+Add a beautifully designed TOC page right after the title page:
+- Colored section entries with page numbers
+- Each section type gets a small icon (text icon, star for fun facts, book for key terms, checkmark for worksheet)
+- Dotted leader lines connecting section names to page numbers
+- Themed border matching the class color palette
 
-### Step 2: Rewrite the Edge Function PDF Builder
-Complete rewrite of `supabase/functions/generate-sample-pdf/index.ts` using jsPDF:
+### 3. "Color Me!" Activity Page
+Add before the "End of Sample" page:
+- Large outlined illustrations (drawn with jsPDF strokes only, no fill) themed per class
+- Class 3: Computer with parts labeled, keyboard outline
+- Class 5: Brain with four pillars labeled, puzzle pieces
+- Class 8: Robot figure, circuit board pattern
+- Class 9: Data flow diagram outline, neural network
+- Class 10: Globe with AI connections, ethical balance scale
+- Title banner: "Color Me! -- Make It Your Own"
+- Instructions for kids to color and decorate
 
-**Page Design System:**
-- Colorful page border (different accent color per class)
-- Branded header bar with KodeIntel logo + class info
-- Playful footer with page numbers in colored circles
-- Subtle background pattern (dots or grid)
+### 4. Bigger, Bolder Headings and Better Alignment
+- Increase main section headings from 15pt to 20pt bold
+- Add decorative left-border accent bars next to headings (4mm colored bar)
+- Increase the underline width under headings
+- Add 2mm more left padding for consistent text alignment
+- Increase callout box text from 10pt to 11pt
+- Make worksheet title bar taller with bigger text (15pt)
+- Ensure all text blocks start at the same left margin (17mm)
 
-**Block Renderers (one for each content type):**
+### 5. Larger Inline Illustrations
+- Increase inline illustration size from 10px to 22px (more than double)
+- Position them centered between content blocks instead of overlapping margins
+- Add a light circular background behind each illustration
+- Add 8mm spacing around illustrations so they stand out
 
-| Block Type | Visual Treatment |
-|---|---|
-| **Title Page** | Full-page colored background, large title, mascot illustration, class badge |
-| **Text** | Clean paragraphs with colored heading, decorative underline |
-| **Callout (Fun Fact)** | Yellow/orange rounded box with star icon, wavy border |
-| **Callout (Tip)** | Green rounded box with lightbulb icon |
-| **Callout (Info)** | Blue rounded box with info icon |
-| **Key Term** | Purple/indigo box with book icon, term in bold, definition below |
-| **Step-by-Step** | Numbered circles (colored) with connecting line, each step in a mini card |
-| **Comparison** | Two-column colored table with headers in contrasting colors |
-| **Activity** | Green dashed-border box with pencil icon, checklist items |
-| **Worksheet** | Lined writing area with dashed lines, fill-in-the-blank spaces |
-| **Summary** | Gradient box with checkmark icon, key takeaways as bullets |
-| **Image Placeholder** | Decorative frame with themed illustration |
+## Technical Approach
 
-**Color Themes Per Class:**
-- Class 3: Bright green + yellow (nature/friendly)
-- Class 5: Sky blue + orange (thinking/creativity)
-- Class 8: Purple + teal (technology/AI)
-- Class 9: Deep blue + coral (science/learning)
-- Class 10: Indigo + gold (advanced/professional)
+### AI Image Generation Flow
+The edge function will:
+1. For each class, define 2-3 image prompts (kid-friendly, cartoon style)
+2. Call the Lovable AI API (`https://ai.gateway.lovable.dev/v1/chat/completions`) with `google/gemini-2.5-flash-image`
+3. Receive base64 image data
+4. Embed directly into the PDF using `doc.addImage(base64, 'PNG', x, y, w, h)`
 
-### Step 3: Add Worksheet Content to Each Chapter
-Enhance the content data to include worksheet-style questions:
-- Fill in the blanks with dashed lines
-- True/False questions with checkbox circles
-- Match-the-column with connecting lines
-- Short answer questions with ruled lines
-- "Draw and label" activity boxes
+Since generation takes time, images will be generated once and cached in storage as separate files. On subsequent PDF builds, the function checks if cached images exist before regenerating.
 
-These will be added as new block types (`worksheet`, `fill_blank`, `true_false`) in the chapter data within the edge function.
-
-### Step 4: Add Themed Illustrations
-Create simple geometric/vector-style illustrations as base64 images:
-- Each class gets 2-3 themed illustrations
-- Small decorative elements (stars, arrows, speech bubbles) scattered throughout
-- Character mascot appearing in activity sections
-
-### Step 5: Regenerate All PDFs
-After deploying the updated edge function, trigger regeneration for all classes (3, 5, 8, 9, 10) to replace the plain-text PDFs in storage with the new colorful versions.
-
-### Step 6: Update Frontend (if needed)
-The `SampleBookViewer.tsx` download logic should remain the same since it already fetches from storage. No frontend changes expected.
-
-## Technical Details
-
-**jsPDF Usage in Deno Edge Function:**
+### Image Caching Strategy
 ```
-import jsPDF from "https://esm.sh/jspdf@2.5.2";
+sample-books/
+  images/
+    class-3-hero.png
+    class-3-mid.png
+    class-5-hero.png
+    ...
+  class-3-chapter-1.pdf
+  class-5-chapter-1.pdf
+  ...
 ```
 
-**Key jsPDF Methods We Will Use:**
-- `doc.setFillColor(r, g, b)` + `doc.roundedRect()` -- colored boxes
-- `doc.setTextColor(r, g, b)` + `doc.text()` -- colored text
-- `doc.setFontSize()`, `doc.setFont("helvetica", "bold")` -- typography
-- `doc.addImage(base64, "PNG", x, y, w, h)` -- embedded images
-- `doc.setDrawColor()` + `doc.line()` -- decorative lines and worksheet rules
-- `doc.circle()`, `doc.rect()` -- shapes for bullets, checkboxes
-- `doc.addPage()` -- multi-page with automatic page breaks
+### Page Order (Updated)
+1. Title Page (cover)
+2. Table of Contents (new)
+3. Content Pages (improved headings, larger illustrations, AI images between blocks)
+4. My Notes Page (existing)
+5. Color Me! Page (new)
+6. End of Sample Page (existing)
 
-**Page Layout (A4: 210mm x 297mm):**
-- Margins: 15mm sides, 25mm top (for header), 20mm bottom (for footer)
-- Content area: 180mm wide
-- Auto page-break detection: track Y position, add new page when near bottom
-
-**Files Changed:**
-- `supabase/functions/generate-sample-pdf/index.ts` -- complete rewrite with jsPDF + rich visual rendering
-- No frontend changes needed
+## Files Changed
+- `supabase/functions/generate-sample-pdf/index.ts` -- Major update:
+  - Add `generateAiImage()` helper that calls Lovable AI API
+  - Add `renderTocPage()` for Table of Contents
+  - Add `renderColorMePage()` for coloring activity
+  - Update all heading sizes and alignment in existing renderers
+  - Increase inline illustration sizes
+  - Add image embedding logic with `doc.addImage()`
+  - Add image caching/retrieval from storage
 
