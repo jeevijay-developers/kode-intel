@@ -197,6 +197,170 @@ function drawDecorativeDots(doc: any, x: number, y: number, w: number, count: nu
   }
 }
 
+// ============= MINI ILLUSTRATIONS (vector-drawn) =============
+type IllustrationName = 'computer' | 'robot' | 'brain' | 'lightbulb' | 'rocket' | 'book' | 'gear' | 'star' | 'atom' | 'trophy';
+
+function drawIllustration(doc: any, name: IllustrationName, cx: number, cy: number, size: number, color: number[], opacity = 1) {
+  if (opacity < 1) doc.setGState(new doc.GState({ opacity }));
+  const s = size;
+  switch (name) {
+    case 'computer': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.6, cy-s*0.5, s*1.2, s*0.8, s*0.1);
+      doc.setFillColor(200, 230, 255);
+      drawRoundedRect(doc, cx-s*0.45, cy-s*0.35, s*0.9, s*0.5, s*0.05);
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.rect(cx-s*0.1, cy+s*0.3, s*0.2, s*0.15, 'F');
+      drawRoundedRect(doc, cx-s*0.3, cy+s*0.45, s*0.6, s*0.08, s*0.03);
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx-s*0.25, cy-s*0.15, s*0.06, 'F');
+      break;
+    }
+    case 'robot': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.35, cy-s*0.5, s*0.7, s*0.5, s*0.1);
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx-s*0.12, cy-s*0.3, s*0.1, 'F');
+      doc.circle(cx+s*0.12, cy-s*0.3, s*0.1, 'F');
+      doc.setFillColor(40, 40, 40);
+      doc.circle(cx-s*0.1, cy-s*0.28, s*0.04, 'F');
+      doc.circle(cx+s*0.14, cy-s*0.28, s*0.04, 'F');
+      doc.setFillColor(255, 200, 100);
+      drawRoundedRect(doc, cx-s*0.15, cy-s*0.1, s*0.3, s*0.06, s*0.02);
+      doc.setDrawColor(color[0], color[1], color[2]);
+      doc.setLineWidth(s*0.04);
+      doc.line(cx, cy-s*0.5, cx, cy-s*0.65);
+      doc.setFillColor(255, 80, 80);
+      doc.circle(cx, cy-s*0.67, s*0.06, 'F');
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.3, cy+s*0.05, s*0.6, s*0.4, s*0.05);
+      break;
+    }
+    case 'brain': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.circle(cx-s*0.15, cy-s*0.2, s*0.25, 'F');
+      doc.circle(cx+s*0.15, cy-s*0.2, s*0.25, 'F');
+      doc.circle(cx-s*0.25, cy+s*0.05, s*0.2, 'F');
+      doc.circle(cx+s*0.25, cy+s*0.05, s*0.2, 'F');
+      doc.circle(cx, cy+s*0.15, s*0.22, 'F');
+      doc.circle(cx, cy-s*0.35, s*0.18, 'F');
+      doc.setDrawColor(255, 255, 255);
+      doc.setLineWidth(s*0.04);
+      doc.line(cx, cy-s*0.4, cx, cy+s*0.3);
+      break;
+    }
+    case 'lightbulb': {
+      doc.setFillColor(255, 235, 59);
+      doc.circle(cx, cy-s*0.1, s*0.3, 'F');
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.12, cy+s*0.2, s*0.24, s*0.18, s*0.05);
+      doc.setDrawColor(255, 200, 0);
+      doc.setLineWidth(s*0.03);
+      for (let i = 0; i < 6; i++) {
+        const a = (i/6)*Math.PI*2, r1 = s*0.35, r2 = s*0.45;
+        doc.line(cx+Math.cos(a)*r1, cy-s*0.1+Math.sin(a)*r1, cx+Math.cos(a)*r2, cy-s*0.1+Math.sin(a)*r2);
+      }
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx-s*0.08, cy-s*0.2, s*0.06, 'F');
+      break;
+    }
+    case 'rocket': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.12, cy-s*0.4, s*0.24, s*0.7, s*0.1);
+      doc.setFillColor(255, 80, 80);
+      doc.triangle(cx-s*0.12, cy-s*0.4, cx+s*0.12, cy-s*0.4, cx, cy-s*0.6, 'F');
+      doc.setFillColor(200, 230, 255);
+      doc.circle(cx, cy-s*0.15, s*0.08, 'F');
+      doc.setFillColor(255, 150, 50);
+      doc.triangle(cx-s*0.12, cy+s*0.25, cx-s*0.3, cy+s*0.4, cx-s*0.12, cy+s*0.15, 'F');
+      doc.triangle(cx+s*0.12, cy+s*0.25, cx+s*0.3, cy+s*0.4, cx+s*0.12, cy+s*0.15, 'F');
+      doc.setFillColor(255, 200, 50);
+      doc.triangle(cx-s*0.08, cy+s*0.3, cx+s*0.08, cy+s*0.3, cx, cy+s*0.5, 'F');
+      break;
+    }
+    case 'book': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      drawRoundedRect(doc, cx-s*0.35, cy-s*0.3, s*0.65, s*0.7, s*0.05);
+      doc.setFillColor(Math.min(255,color[0]+40), Math.min(255,color[1]+40), Math.min(255,color[2]+40));
+      drawRoundedRect(doc, cx-s*0.25, cy-s*0.35, s*0.65, s*0.7, s*0.05);
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.rect(cx-s*0.25, cy-s*0.35, s*0.06, s*0.7, 'F');
+      doc.setFillColor(255, 255, 255);
+      doc.rect(cx-s*0.05, cy-s*0.15, s*0.3, s*0.04, 'F');
+      doc.rect(cx-s*0.05, cy-s*0.05, s*0.2, s*0.04, 'F');
+      break;
+    }
+    case 'gear': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.circle(cx, cy, s*0.35, 'F');
+      for (let i = 0; i < 8; i++) {
+        const a = (i/8)*Math.PI*2;
+        doc.circle(cx+Math.cos(a)*s*0.35, cy+Math.sin(a)*s*0.35, s*0.08, 'F');
+      }
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx, cy, s*0.15, 'F');
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.circle(cx, cy, s*0.06, 'F');
+      break;
+    }
+    case 'star': {
+      doc.setFillColor(255, 200, 50);
+      doc.circle(cx, cy-s*0.3, s*0.15, 'F');
+      doc.circle(cx-s*0.28, cy-s*0.08, s*0.15, 'F');
+      doc.circle(cx+s*0.28, cy-s*0.08, s*0.15, 'F');
+      doc.circle(cx-s*0.17, cy+s*0.25, s*0.15, 'F');
+      doc.circle(cx+s*0.17, cy+s*0.25, s*0.15, 'F');
+      doc.circle(cx, cy, s*0.2, 'F');
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx-s*0.06, cy-s*0.1, s*0.05, 'F');
+      break;
+    }
+    case 'atom': {
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.circle(cx, cy, s*0.12, 'F');
+      doc.setDrawColor(color[0], color[1], color[2]);
+      doc.setLineWidth(s*0.03);
+      doc.circle(cx, cy, s*0.35, 'S');
+      doc.setFillColor(255, 100, 100);
+      doc.circle(cx+s*0.35, cy, s*0.06, 'F');
+      doc.circle(cx-s*0.2, cy-s*0.28, s*0.06, 'F');
+      break;
+    }
+    case 'trophy': {
+      doc.setFillColor(255, 200, 50);
+      drawRoundedRect(doc, cx-s*0.25, cy-s*0.35, s*0.5, s*0.45, s*0.08);
+      doc.setDrawColor(255, 180, 0);
+      doc.setLineWidth(s*0.05);
+      doc.circle(cx-s*0.35, cy-s*0.15, s*0.12, 'S');
+      doc.circle(cx+s*0.35, cy-s*0.15, s*0.12, 'S');
+      doc.setFillColor(200, 160, 40);
+      doc.rect(cx-s*0.06, cy+s*0.1, s*0.12, s*0.2, 'F');
+      doc.setFillColor(255, 180, 0);
+      drawRoundedRect(doc, cx-s*0.2, cy+s*0.3, s*0.4, s*0.1, s*0.03);
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx, cy-s*0.15, s*0.08, 'F');
+      break;
+    }
+  }
+  if (opacity < 1) doc.setGState(new doc.GState({ opacity: 1 }));
+}
+
+const classIllustrations: Record<number, IllustrationName[]> = {
+  3: ['computer', 'star', 'lightbulb', 'book', 'trophy'],
+  5: ['brain', 'lightbulb', 'gear', 'rocket', 'star'],
+  8: ['robot', 'brain', 'atom', 'gear', 'rocket'],
+  9: ['atom', 'brain', 'rocket', 'gear', 'book'],
+  10: ['robot', 'atom', 'trophy', 'gear', 'brain'],
+};
+
+let illustrationIndex = 0;
+function getNextIllustration(classNum: number): IllustrationName {
+  const pool = classIllustrations[classNum] || classIllustrations[3];
+  const ill = pool[illustrationIndex % pool.length];
+  illustrationIndex++;
+  return ill;
+}
+
 function wrapText(doc: any, text: string, maxWidth: number, fontSize: number): string[] {
   doc.setFontSize(fontSize);
   const words = text.split(' ');
@@ -228,12 +392,12 @@ function checkPageBreak(doc: any, y: number, needed: number, theme: any, classNu
 function addNewPage(doc: any, theme: any, classNum: number, title: string, pageNum: { value: number }) {
   doc.addPage();
   pageNum.value++;
-  drawPageBackground(doc, theme);
+  drawPageBackground(doc, theme, classNum, pageNum.value);
   drawHeader(doc, theme, classNum, title);
   drawFooter(doc, theme, pageNum.value);
 }
 
-function drawPageBackground(doc: any, theme: any) {
+function drawPageBackground(doc: any, theme: any, classNum: number, pageNum: number) {
   // Subtle tinted background
   doc.setFillColor(theme.bgTint[0], theme.bgTint[1], theme.bgTint[2]);
   doc.rect(0, 0, 210, 297, 'F');
@@ -255,6 +419,15 @@ function drawPageBackground(doc: any, theme: any) {
   doc.circle(200, 10, 25, 'F');
   doc.circle(195, 280, 18, 'F');
   doc.setGState(new doc.GState({ opacity: 1 }));
+
+  // Watermark illustration (subtle, different per page)
+  const pool = classIllustrations[classNum] || classIllustrations[3];
+  const illName = pool[(pageNum - 1) % pool.length];
+  // Bottom-right watermark
+  drawIllustration(doc, illName, 185, 265, 12, theme.primary, 0.06);
+  // Top-right small decoration (alternating position)
+  const illName2 = pool[pageNum % pool.length];
+  drawIllustration(doc, illName2, 190, 35, 8, theme.secondary, 0.07);
 }
 
 function drawHeader(doc: any, theme: any, classNum: number, title: string) {
@@ -381,6 +554,15 @@ function renderTitlePage(doc: any, chapter: SampleChapter, theme: any) {
   doc.setFontSize(9);
   doc.setTextColor(255, 255, 255);
   doc.text("SAMPLE PREVIEW", 105, 173, { align: 'center' });
+
+  // Themed illustrations on title page
+  const pool = classIllustrations[chapter.classNum] || classIllustrations[3];
+  drawIllustration(doc, pool[0], 40, 210, 18, [255, 255, 255], 0.25);
+  drawIllustration(doc, pool[1], 170, 210, 16, [255, 255, 255], 0.2);
+  drawIllustration(doc, pool[2], 105, 245, 14, [255, 255, 255], 0.18);
+  // Small scattered decorations
+  drawIllustration(doc, pool[3], 30, 270, 8, [255, 255, 255], 0.12);
+  drawIllustration(doc, pool[4 % pool.length], 180, 265, 9, [255, 255, 255], 0.12);
 
   // Bottom branding
   doc.setFontSize(12);
@@ -985,6 +1167,7 @@ function buildColorfulPdf(chapter: SampleChapter): Uint8Array {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const theme = classThemes[chapter.classNum] || classThemes[3];
   const pageNum = { value: 1 };
+  illustrationIndex = 0; // reset per PDF
 
   // ===== TITLE PAGE =====
   renderTitlePage(doc, chapter, theme);
@@ -992,6 +1175,7 @@ function buildColorfulPdf(chapter: SampleChapter): Uint8Array {
   // ===== CONTENT PAGES =====
   addNewPage(doc, theme, chapter.classNum, chapter.title, pageNum);
   let y = 32;
+  let blockIdx = 0;
 
   for (const block of chapter.blocks) {
     switch (block.type) {
@@ -1019,6 +1203,25 @@ function buildColorfulPdf(chapter: SampleChapter): Uint8Array {
       case 'summary':
         y = renderSummaryBlock(doc, block, y, theme, pageNum, chapter.classNum, chapter.title);
         break;
+    }
+
+    blockIdx++;
+
+    // Add inline illustration every 2-3 blocks (between content sections)
+    if (blockIdx % 2 === 0 && block.type !== 'worksheet' && block.type !== 'summary') {
+      // Only if there's enough space (don't force page break for illustration)
+      if (y < 245) {
+        const illName = getNextIllustration(chapter.classNum);
+        // Alternate between left and right placement
+        const illX = blockIdx % 4 === 0 ? 30 : 180;
+        const illSize = 10;
+        drawIllustration(doc, illName, illX, y + 5, illSize, theme.secondary, 0.15);
+        // Also add a small one on the opposite side
+        const illName2 = getNextIllustration(chapter.classNum);
+        const illX2 = blockIdx % 4 === 0 ? 180 : 25;
+        drawIllustration(doc, illName2, illX2, y + 3, 7, theme.primary, 0.1);
+        y += 4; // tiny spacing
+      }
     }
   }
 
