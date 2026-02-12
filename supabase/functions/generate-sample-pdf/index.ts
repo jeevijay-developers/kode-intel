@@ -1022,6 +1022,82 @@ function buildColorfulPdf(chapter: SampleChapter): Uint8Array {
     }
   }
 
+  // ===== NOTES PAGE =====
+  addNewPage(doc, theme, chapter.classNum, chapter.title, pageNum);
+
+  // Header banner
+  doc.setFillColor(theme.light[0], theme.light[1], theme.light[2]);
+  drawRoundedRect(doc, 15, 28, 180, 22, 6);
+  doc.setFillColor(theme.primary[0], theme.primary[1], theme.primary[2]);
+  drawRoundedRect(doc, 15, 28, 6, 22, 3);
+
+  // Pencil icon (drawn as simple shapes)
+  doc.setFillColor(theme.secondary[0], theme.secondary[1], theme.secondary[2]);
+  doc.rect(25, 33, 3, 12, 'F');
+  doc.setFillColor(theme.accent[0], theme.accent[1], theme.accent[2]);
+  doc.triangle(25, 45, 28, 45, 26.5, 49, 'F');
+  doc.setFillColor(255, 220, 180);
+  doc.rect(25, 31, 3, 3, 'F');
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(theme.dark[0], theme.dark[1], theme.dark[2]);
+  doc.text("My Notes", 36, 43);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(150, 150, 150);
+  doc.text("Write down your thoughts, ideas, and questions here!", 80, 43);
+
+  // Decorative corner stars
+  doc.setFontSize(14);
+  doc.setTextColor(theme.secondary[0], theme.secondary[1], theme.secondary[2]);
+  doc.text("*", 180, 35);
+  doc.text("*", 175, 45);
+
+  // Lined paper area
+  let noteY = 58;
+  const lineSpacing = 10;
+  const leftMargin = 20;
+  const rightEnd = 195;
+  let lineCount = 0;
+
+  // Red margin line (like a real notebook)
+  doc.setDrawColor(255, 180, 180);
+  doc.setLineWidth(0.5);
+  doc.line(leftMargin + 5, 55, leftMargin + 5, 270);
+
+  while (noteY < 268) {
+    // Alternating subtle background tint every other line
+    if (lineCount % 2 === 0) {
+      doc.setFillColor(theme.bgTint[0], theme.bgTint[1], theme.bgTint[2]);
+      doc.rect(leftMargin, noteY - 4, rightEnd - leftMargin, lineSpacing, 'F');
+    }
+    // Dotted horizontal rule
+    doc.setDrawColor(200, 210, 220);
+    doc.setLineWidth(0.3);
+    doc.setLineDashPattern([1, 2], 0);
+    doc.line(leftMargin, noteY, rightEnd, noteY);
+    doc.setLineDashPattern([], 0);
+
+    // Small bullet dot at start of every 3rd line
+    if (lineCount % 3 === 0) {
+      doc.setFillColor(theme.primary[0], theme.primary[1], theme.primary[2]);
+      doc.circle(leftMargin + 2, noteY - 2, 1, 'F');
+    }
+
+    noteY += lineSpacing;
+    lineCount++;
+  }
+
+  // Bottom encouragement note
+  doc.setFillColor(theme.secondary[0], theme.secondary[1], theme.secondary[2]);
+  drawRoundedRect(doc, 50, 274, 110, 10, 5);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Keep learning, keep exploring! You're doing great!", 105, 280, { align: 'center' });
+
   // Final page - "End of Sample" page
   addNewPage(doc, theme, chapter.classNum, chapter.title, pageNum);
   
