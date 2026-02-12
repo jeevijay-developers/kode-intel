@@ -245,8 +245,29 @@ export function SampleBookViewer({ classNum }: SampleBookViewerProps) {
     );
   }
 
+  // Map of classes that have pre-built PDF files
+  const pdfFileMap: Record<number, string> = {
+    4: "/ebooks/class-4-chapter-1.pdf",
+    6: "/ebooks/class-6-chapter-1.pdf",
+    7: "/ebooks/class-7-chapter-1.pdf",
+  };
+
+  const hasPdfFile = !!pdfFileMap[classNum];
+
   const handleDownload = () => {
-    window.print();
+    const pdfPath = pdfFileMap[classNum];
+    if (pdfPath) {
+      // Direct download for classes with PDF files
+      const link = document.createElement("a");
+      link.href = pdfPath;
+      link.download = `KodeIntel-Class-${classNum}-Chapter-1-Sample.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // Fallback to browser print-to-PDF
+      window.print();
+    }
   };
 
   const scrollToSection = (index: number) => {
