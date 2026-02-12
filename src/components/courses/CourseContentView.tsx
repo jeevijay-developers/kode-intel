@@ -19,7 +19,10 @@ import {
   CheckCircle,
   XCircle,
   Layers,
+  FileDown,
 } from "lucide-react";
+import { SampleBookViewer } from "./SampleBookViewer";
+import { getSampleChapterForClass } from "@/lib/sampleBookContent";
 
 // Course banner imports
 import bannerClass3 from "@/assets/course-banner-class3.png";
@@ -73,11 +76,13 @@ export function CourseContentView({
 }: CourseContentViewProps) {
   const navigate = useNavigate();
   const [selectedChapterIndex, setSelectedChapterIndex] = useState<number | null>(null);
-  const [contentTab, setContentTab] = useState<"videos" | "quizzes" | "books">("videos");
+  const [contentTab, setContentTab] = useState<"videos" | "quizzes" | "books" | "sample">("videos");
 
   const classMatch = course.title.match(/class\s*(\d+)/i);
   const classNum = classMatch ? classMatch[1] : "3";
+  const classNumInt = parseInt(classNum);
   const gradient = gradientMap[classNum] || gradientMap["3"];
+  const hasSampleBook = getSampleChapterForClass(classNumInt) !== undefined;
 
   const selectedChapter = selectedChapterIndex !== null ? chapters[selectedChapterIndex] : null;
   const videos = selectedChapter ? getChapterVideos(selectedChapter.id) : [];
@@ -228,6 +233,19 @@ export function CourseContentView({
               <BookOpen className="h-3.5 w-3.5" />
               Books
             </button>
+            {hasSampleBook && selectedChapterIndex === 0 && (
+              <button
+                onClick={() => setContentTab("sample")}
+                className={`flex-1 py-2.5 flex items-center justify-center gap-1.5 text-xs font-medium transition-all border-b-2 ${
+                  contentTab === "sample"
+                    ? "border-sunny text-sunny bg-sunny/10"
+                    : "border-transparent text-muted-foreground"
+                }`}
+              >
+                <FileDown className="h-3.5 w-3.5" />
+                Sample
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -442,32 +460,13 @@ export function CourseContentView({
                   </Card>
                 )}
 
-                <Card className="p-3 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
-                  <div className="flex items-start gap-2.5">
-                    <BookOpen className="h-5 w-5 text-sunny shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium flex items-center gap-2 flex-wrap">
-                        Physical Books
-                        <Badge className="bg-coral/20 text-coral text-[9px] px-1.5">Hard Copy</Badge>
-                      </p>
-                      <p className="text-muted-foreground text-[11px] mt-1">
-                        Theory + Worksheets available for purchase
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate("/store");
-                        }}
-                        className="mt-2 h-8 text-xs gap-1 border-coral/30 text-coral hover:bg-coral hover:text-primary-foreground"
-                      >
-                        <BookOpen className="h-3 w-3" />
-                        Buy Books
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+              </div>
+            )}
+
+            {/* Sample Book Tab Content */}
+            {contentTab === "sample" && hasSampleBook && selectedChapterIndex === 0 && (
+              <div className="h-[calc(100vh-200px)]">
+                <SampleBookViewer classNum={classNumInt} />
               </div>
             )}
           </div>
@@ -576,6 +575,19 @@ export function CourseContentView({
                       <BookOpen className="h-4 w-4 inline mr-1.5" />
                       Books
                     </button>
+                    {hasSampleBook && selectedChapterIndex === 0 && (
+                      <button
+                        onClick={() => setContentTab("sample")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          contentTab === "sample"
+                            ? "bg-sunny/10 text-sunny"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <FileDown className="h-4 w-4 inline mr-1.5" />
+                        Sample Book
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -673,26 +685,13 @@ export function CourseContentView({
                             <p className="text-muted-foreground">No digital books in this chapter yet</p>
                           </Card>
                         )}
-                        <Card className="p-4 bg-gradient-to-r from-sunny/10 to-coral/10 border-sunny/30">
-                          <div className="flex items-start gap-3">
-                            <BookOpen className="h-5 w-5 text-sunny shrink-0 mt-0.5" />
-                            <div>
-                              <p className="font-medium flex items-center gap-2">
-                                Physical Books <Badge className="bg-coral/20 text-coral text-[10px]">Hard Copy</Badge>
-                              </p>
-                              <p className="text-muted-foreground text-sm mt-1">Theory + Worksheets available for purchase</p>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={(e) => { e.stopPropagation(); navigate("/store"); }}
-                                className="mt-3 gap-1 border-coral/30 text-coral hover:bg-coral hover:text-primary-foreground"
-                              >
-                                <BookOpen className="h-3 w-3" /> Buy Books
-                              </Button>
-                            </div>
-                          </div>
-                        </Card>
                       </>
+                    )}
+
+                    {contentTab === "sample" && hasSampleBook && selectedChapterIndex === 0 && (
+                      <div className="h-[calc(100vh-200px)]">
+                        <SampleBookViewer classNum={classNumInt} />
+                      </div>
                     )}
 
                     {contentTab === "videos" && videos.length === 0 && (

@@ -626,3 +626,40 @@
     border-radius: inherit;
   }
 }
+
+/* Print styles for Sample Book PDF download */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #sample-book-content,
+  #sample-book-content * {
+    visibility: visible;
+  }
+
+  #sample-book-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .sample-book-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+}

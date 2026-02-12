@@ -33,7 +33,7 @@ const plans = [
       { icon: FileQuestion, text: "Adaptive Worksheets" },
       { icon: Blocks, text: "10+ Hands-on Projects" },
       { icon: TrendingUp, text: "Progress Analytics" },
-      { icon: BookMarked, text: "Physical Workbook" },
+      { icon: BookMarked, text: "Interactive Digital Textbook" },
       { icon: Trophy, text: "Badges & Certificates" },
     ],
   },
@@ -126,7 +126,7 @@ export function MobilePricing() {
 
               {/* CTA with Shimmer */}
               <Button
-                onClick={() => navigate(plan.popular ? "/student/signup" : "/store")}
+                onClick={() => navigate(plan.popular ? "/student/signup" : "/student/signup")}
                 className={`w-full h-12 gap-2 rounded-xl font-bold relative overflow-hidden ${
                   plan.popular 
                     ? "bg-gradient-to-r from-primary to-secondary hover:opacity-95 shadow-lg shadow-primary/20" 
