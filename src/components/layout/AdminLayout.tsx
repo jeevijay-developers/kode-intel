@@ -13,7 +13,9 @@ import {
   LogOut,
   BookOpen,
   HelpCircle,
+  Code,
 } from "lucide-react";
+import brainLogo from "@/assets/brain-logo.png";
 
 interface NavItem {
   title: string;
@@ -26,6 +28,7 @@ const navItems: NavItem[] = [
   { title: "Schools", href: "/admin/schools", icon: Building2 },
   { title: "Courses", href: "/admin/courses", icon: BookOpen },
   { title: "Quiz Bank", href: "/admin/quizzes", icon: HelpCircle },
+  { title: "Coding Modules", href: "/admin/coding-modules", icon: Code },
   { title: "Bulk Upload", href: "/admin/bulk-upload", icon: Upload },
   { title: "Students", href: "/admin/students", icon: Users },
 ];
@@ -72,7 +75,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="border-b border-border">
           <div className="flex h-12 mt-5 items-center  px-6 gap-1">
             <img
-              src="/src/assets/brain-logo.png"
+              src={brainLogo}
               alt="Logo"
               className="h-8 w-12"
             />

@@ -113,7 +113,10 @@ export function GuestSidebar() {
       const updatedInfo = { ...guestInfo, selectedClass: newClass };
       localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
       setGuestInfo(updatedInfo);
-      window.location.reload();
+      // Dispatch storage event to notify other components without full reload
+      window.dispatchEvent(new StorageEvent('storage', { key: 'guestInfo' }));
+      // Navigate to dashboard to refresh content
+      navigate("/guest");
     }
     setShowChangeClass(false);
   };

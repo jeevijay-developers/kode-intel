@@ -52,10 +52,10 @@ export default function Dashboard() {
 
   // Quick actions
   const quickActions = [
-    { title: "Add School", icon: Building2, onClick: () => navigate("/schools"), color: "primary" },
-    { title: "Add Student", icon: Users, onClick: () => navigate("/students"), color: "turquoise" },
-    { title: "Create Course", icon: BookOpen, onClick: () => navigate("/courses"), color: "sunny" },
-    { title: "Bulk Upload", icon: Upload, onClick: () => navigate("/bulk-upload"), color: "purple" },
+    { title: "Add School", icon: Building2, onClick: () => navigate("/admin/schools"), color: "primary" },
+    { title: "Add Student", icon: Users, onClick: () => navigate("/admin/students"), color: "turquoise" },
+    { title: "Create Course", icon: BookOpen, onClick: () => navigate("/admin/courses"), color: "sunny" },
+    { title: "Bulk Upload", icon: Upload, onClick: () => navigate("/admin/bulk-upload"), color: "purple" },
   ];
 
   return (
@@ -241,7 +241,7 @@ export default function Dashboard() {
                   <Building2 className="h-5 w-5 text-primary" />
                   Recent Schools
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate("/schools")}>
+                <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate("/admin/schools")}>
                   View All <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </div>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                 <div className="text-center py-8">
                   <Building2 className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
                   <p className="text-muted-foreground text-sm">No schools added yet</p>
-                  <Button size="sm" variant="outline" className="mt-3" onClick={() => navigate("/schools")}>
+                  <Button size="sm" variant="outline" className="mt-3" onClick={() => navigate("/admin/schools")}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add School
                   </Button>
@@ -268,7 +268,7 @@ export default function Dashboard() {
                     <div
                       key={school.id}
                       className="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => navigate("/schools")}
+                      onClick={() => navigate("/admin/schools")}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -305,7 +305,7 @@ export default function Dashboard() {
                   <Users className="h-5 w-5 text-turquoise" />
                   Recent Students
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate("/students")}>
+                <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate("/admin/students")}>
                   View All <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </div>
@@ -321,7 +321,7 @@ export default function Dashboard() {
                 <div className="text-center py-8">
                   <Users className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
                   <p className="text-muted-foreground text-sm">No students added yet</p>
-                  <Button size="sm" variant="outline" className="mt-3" onClick={() => navigate("/students")}>
+                  <Button size="sm" variant="outline" className="mt-3" onClick={() => navigate("/admin/students")}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Student
                   </Button>
@@ -332,7 +332,7 @@ export default function Dashboard() {
                     <div
                       key={student.id}
                       className="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => navigate("/students")}
+                      onClick={() => navigate("/admin/students")}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-turquoise/10 flex items-center justify-center">
