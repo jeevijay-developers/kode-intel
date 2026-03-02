@@ -1,99 +1,93 @@
 
+# Bug Audit and Fix Plan: Full Website
 
-# Enhanced PDF Book: AI Images, TOC, Color Me Page, and Better Design
+## Bugs Identified
 
-## Overview
-Transform the sample book PDFs into truly stunning children's educational books by adding AI-generated illustrations, a Table of Contents page, a "Color Me!" activity page, larger inline illustrations, and improved typography with bolder headings and better alignment.
+### Bug 1: Admin Dashboard Quick Action Routes Are Wrong
+**File:** `src/pages/Dashboard.tsx` (lines 55-58)
+**Issue:** Quick action buttons navigate to `/schools`, `/students`, `/courses`, `/bulk-upload` instead of `/admin/schools`, `/admin/students`, `/admin/courses`, `/admin/bulk-upload`. These routes don't exist -- they'll hit the 404 page.
+**Fix:** Update all four `onClick` navigations to include the `/admin` prefix.
 
-## What Changes
+### Bug 2: Admin Dashboard "Recent Schools/Students" Links Wrong
+**File:** `src/pages/Dashboard.tsx` (lines 244, 260, 308)
+**Issue:** "View All" and row click handlers navigate to `/schools` and `/students` instead of `/admin/schools` and `/admin/students`.
+**Fix:** Add `/admin` prefix to all navigate calls in the Recent Schools and Recent Students sections.
 
-### 1. AI-Generated Images via Lovable AI
-Use the Lovable AI image generation API (google/gemini-2.5-flash-image) to create topic-relevant illustrations for each class. The edge function will call the AI to generate images at build time, then embed them as base64 into the PDF.
+### Bug 3: Admin Logo Uses Non-Bundled Asset Path
+**File:** `src/components/layout/AdminLayout.tsx` (line 75)
+**Issue:** `src="/src/assets/brain-logo.png"` -- this absolute path to a source file won't work in production builds. Should use an import.
+**Fix:** Import the asset at the top of the file and use the import variable in the `src` attribute.
 
-**Images per class (2-3 per chapter):**
-- Class 3: A friendly cartoon computer with eyes, kids using a keyboard
-- Class 5: A child thinking with gears above their head, puzzle pieces connecting
-- Class 8: A cute robot waving, AI brain with circuits
-- Class 9: Data flowing into a machine, a puppy learning tricks (reinforcement learning metaphor)
-- Class 10: Futuristic city with AI, diverse students collaborating
+### Bug 4: Class Selection Bug -- Course Matching Uses `getClassNumber` With Fallback to "3"
+**File:** `src/pages/student/GuestDashboard.tsx` (lines 91-94)
+**Issue:** The `getClassNumber` function returns `"3"` as default when no class match is found in the course title. This means any course without "class X" in its title will incorrectly appear under Class 3. More critically, if a user selects Class 7 but the course title format doesn't match the regex, they could see wrong courses.
+**Fix:** Change the default return to `""` (empty string) so non-matching courses are excluded from filtered views rather than falsely shown.
 
-Images will be placed:
-- One large hero image after the title page (full-width, ~80mm tall)
-- One medium image mid-chapter between content blocks (~60mm wide)
-- One small image near the worksheet section
+### Bug 5: GuestSidebar Class Change Triggers Full Page Reload
+**File:** `src/components/student/GuestSidebar.tsx` (line 116)  
+**File:** `src/components/student/GuestLayout.tsx` (line 81)
+**Issue:** `window.location.reload()` causes a full page reload which is jarring UX and loses all React state. The GuestDashboard and GuestCourses components already read from localStorage on mount, but the sidebar/layout don't trigger React re-renders.
+**Fix:** Instead of `window.location.reload()`, use React state or a custom event to trigger re-renders. Dispatch a `storage` event or use a shared context/state to propagate class changes across components without reloading.
 
-### 2. Table of Contents (TOC) Page
-Add a beautifully designed TOC page right after the title page:
-- Colored section entries with page numbers
-- Each section type gets a small icon (text icon, star for fun facts, book for key terms, checkmark for worksheet)
-- Dotted leader lines connecting section names to page numbers
-- Themed border matching the class color palette
+### Bug 6: GuestDashboard `selectedClass` Default Mismatch
+**File:** `src/pages/student/GuestDashboard.tsx` (line 114)
+**Issue:** The registration form defaults to `selectedClass = "5"`, but the dashboard UI shows `Class {guestInfo?.selectedClass || "5"}` everywhere as fallback. If a user picks Class 7 and the `getClassNumber` regex fails on some courses, they see a mismatched experience.
+**Fix:** Ensure consistent defaults and that the `getClassNumber` function handles all course title formats in the database (verified: titles like "Class 7 -- Algorithms" will match correctly). The fallback `"5"` in display text should use the actual `guestInfo.selectedClass` instead.
 
-### 3. "Color Me!" Activity Page
-Add before the "End of Sample" page:
-- Large outlined illustrations (drawn with jsPDF strokes only, no fill) themed per class
-- Class 3: Computer with parts labeled, keyboard outline
-- Class 5: Brain with four pillars labeled, puzzle pieces
-- Class 8: Robot figure, circuit board pattern
-- Class 9: Data flow diagram outline, neural network
-- Class 10: Globe with AI connections, ethical balance scale
-- Title banner: "Color Me! -- Make It Your Own"
-- Instructions for kids to color and decorate
+### Bug 7: GuestCourses Has Duplicate Registration Handlers
+**File:** `src/pages/student/GuestCourses.tsx` (lines 290-302 and 315-327)
+**Issue:** Two nearly identical registration handlers: `handleRegistration` and `handleRegistrationSimple`. The form button calls `handleRegistrationSimple` (line 628) but both exist. This is dead code causing confusion.
+**Fix:** Remove `handleRegistration` and keep only `handleRegistrationSimple` (or consolidate into one).
 
-### 4. Bigger, Bolder Headings and Better Alignment
-- Increase main section headings from 15pt to 20pt bold
-- Add decorative left-border accent bars next to headings (4mm colored bar)
-- Increase the underline width under headings
-- Add 2mm more left padding for consistent text alignment
-- Increase callout box text from 10pt to 11pt
-- Make worksheet title bar taller with bigger text (15pt)
-- Ensure all text blocks start at the same left margin (17mm)
+### Bug 8: Admin Sidebar Missing "Coding Modules" Nav Item
+**File:** `src/components/layout/AdminLayout.tsx` (lines 24-31)
+**Issue:** The route `/admin/coding-modules` exists in App.tsx but there's no nav item for it in the admin sidebar. Users can't navigate to it.
+**Fix:** Add a nav item for Coding Modules with the Code icon.
 
-### 5. Larger Inline Illustrations
-- Increase inline illustration size from 10px to 22px (more than double)
-- Position them centered between content blocks instead of overlapping margins
-- Add a light circular background behind each illustration
-- Add 8mm spacing around illustrations so they stand out
+### Bug 9: Schools Page Has No Pagination
+**File:** `src/pages/Schools.tsx`
+**Issue:** Unlike the Students page which has proper pagination, the Schools page loads all schools with no pagination. If many schools exist, this could be slow.
+**Fix:** Add pagination similar to the Students page pattern, or at minimum add a note that this is acceptable for the expected data volume.
 
-## Technical Approach
+### Bug 10: Student Dashboard Route `/admin` Not Under ProtectedRoute Correctly
+**File:** `src/App.tsx` (lines 147-153)
+**Issue:** Admin routes use individual `ProtectedRoute` wrappers on each route instead of a nested route group. While functional, it's verbose. Not a bug per se, but the real issue is that no admin role check exists -- any authenticated user can access admin pages.
+**Impact:** Low priority for now, but noted.
 
-### AI Image Generation Flow
-The edge function will:
-1. For each class, define 2-3 image prompts (kid-friendly, cartoon style)
-2. Call the Lovable AI API (`https://ai.gateway.lovable.dev/v1/chat/completions`) with `google/gemini-2.5-flash-image`
-3. Receive base64 image data
-4. Embed directly into the PDF using `doc.addImage(base64, 'PNG', x, y, w, h)`
+---
 
-Since generation takes time, images will be generated once and cached in storage as separate files. On subsequent PDF builds, the function checks if cached images exist before regenerating.
+## Implementation Plan
 
-### Image Caching Strategy
-```
-sample-books/
-  images/
-    class-3-hero.png
-    class-3-mid.png
-    class-5-hero.png
-    ...
-  class-3-chapter-1.pdf
-  class-5-chapter-1.pdf
-  ...
-```
+### Step 1: Fix Admin Dashboard Navigation Routes
+Update `src/pages/Dashboard.tsx`:
+- Change `/schools` to `/admin/schools`
+- Change `/students` to `/admin/students`  
+- Change `/courses` to `/admin/courses`
+- Change `/bulk-upload` to `/admin/bulk-upload`
+- Fix all "View All" and row click navigations similarly
 
-### Page Order (Updated)
-1. Title Page (cover)
-2. Table of Contents (new)
-3. Content Pages (improved headings, larger illustrations, AI images between blocks)
-4. My Notes Page (existing)
-5. Color Me! Page (new)
-6. End of Sample Page (existing)
+### Step 2: Fix Admin Layout Logo Import
+Update `src/components/layout/AdminLayout.tsx`:
+- Add `import brainLogo from "@/assets/brain-logo.png";`
+- Replace `src="/src/assets/brain-logo.png"` with `src={brainLogo}`
+- Add Coding Modules nav item
+
+### Step 3: Fix Class Matching Default
+Update `src/pages/student/GuestDashboard.tsx`:
+- Change `getClassNumber` fallback from `"3"` to `""`
+
+### Step 4: Clean Up GuestCourses
+Update `src/pages/student/GuestCourses.tsx`:
+- Remove duplicate `handleRegistration` function
+
+### Step 5: Improve Class Change Without Full Reload
+Update `src/components/student/GuestSidebar.tsx` and `src/components/student/GuestLayout.tsx`:
+- Replace `window.location.reload()` with a React-friendly approach using a key prop or custom event that triggers re-render without losing the entire app state
 
 ## Files Changed
-- `supabase/functions/generate-sample-pdf/index.ts` -- Major update:
-  - Add `generateAiImage()` helper that calls Lovable AI API
-  - Add `renderTocPage()` for Table of Contents
-  - Add `renderColorMePage()` for coloring activity
-  - Update all heading sizes and alignment in existing renderers
-  - Increase inline illustration sizes
-  - Add image embedding logic with `doc.addImage()`
-  - Add image caching/retrieval from storage
-
+- `src/pages/Dashboard.tsx` -- Fix 8+ broken navigation routes
+- `src/components/layout/AdminLayout.tsx` -- Fix logo import, add missing nav item
+- `src/pages/student/GuestDashboard.tsx` -- Fix class matching default
+- `src/pages/student/GuestCourses.tsx` -- Remove duplicate handler
+- `src/components/student/GuestSidebar.tsx` -- Replace window.location.reload
+- `src/components/student/GuestLayout.tsx` -- Replace window.location.reload with state-driven refresh
