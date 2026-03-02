@@ -74,11 +74,14 @@ export default function GuestLayout() {
 
   const handleClassChange = (newClass: string) => {
     if (guestInfo) {
-      const updatedInfo = { ...guestInfo, selectedClass: normalizeClassValue(newClass) || newClass };
+      const normalized = normalizeClassValue(newClass) || newClass;
+      const updatedInfo = { ...guestInfo, selectedClass: normalized };
       localStorage.setItem("guestInfo", JSON.stringify(updatedInfo));
       setGuestInfo(updatedInfo);
-      // Reload the page to refresh course content
-      window.location.reload();
+      // Dispatch storage event to notify other components without full reload
+      window.dispatchEvent(new StorageEvent('storage', { key: 'guestInfo' }));
+      // Navigate to dashboard to refresh content
+      navigate("/guest");
     }
     setShowChangeClass(false);
   };

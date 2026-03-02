@@ -90,7 +90,7 @@ const classOptions = [
 
 const getClassNumber = (title: string): string => {
   const match = title.match(/class\s*(\d+)/i);
-  return match ? match[1] : "3";
+  return match ? match[1] : "";
 };
 
 const getCourseBanner = (title: string): string => {

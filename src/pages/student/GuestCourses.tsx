@@ -287,20 +287,6 @@ export default function GuestCourses() {
   const getChapterEbooks = (chapterId: string) => 
     allChapterEbooks.filter((e: any) => e.chapter_id === chapterId);
 
-  const handleRegistration = () => {
-    if (!name.trim() || !mobile.trim() || !selectedClass) return;
-    
-    const info: GuestInfo = {
-      name: name.trim(),
-      mobile: mobile.trim(),
-      selectedClass,
-      registeredAt: new Date(),
-    };
-    localStorage.setItem("guestInfo", JSON.stringify(info));
-    setGuestInfo(info);
-    setShowRegistration(false);
-  };
-
   const handleClassChange = (newClass: string) => {
     if (guestInfo) {
       const normalized = normalizeClassValue(newClass) || newClass;
@@ -361,7 +347,7 @@ export default function GuestCourses() {
   // Get class number from course title
   const getClassNumFromCourse = (title: string): string => {
     const match = title.match(/class\s*(\d+)/i);
-    return match ? match[1] : "3";
+    return match ? match[1] : "";
   };
 
 
