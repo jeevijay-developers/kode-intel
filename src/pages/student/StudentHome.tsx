@@ -475,7 +475,7 @@ export default function StudentHome() {
                   <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-sunny" />
                   Your Badges
                 </span>
-                <Button variant="ghost" size="sm" className="text-xs h-7">
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/student/achievements")}>
                   All <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </CardTitle>

@@ -1,4 +1,5 @@
 import { useOutletContext } from "react-router-dom";
+import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,10 +25,14 @@ import {
   TrendingUp,
   Calendar,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { Institution } from "@/hooks/useInstitutionAuth";
 
 export default function InstitutionPayments() {
+  const navigate = useNavigate();
   const { institution } = useOutletContext<{ institution: Institution }>();
+  const { toast } = useToast();
+  const paymentMethodsRef = useRef<HTMLDivElement>(null);
 
   // Fetch payments
   const { data: payments = [], isLoading } = useQuery({
@@ -89,7 +94,7 @@ export default function InstitutionPayments() {
             Manage payments and view invoices
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => paymentMethodsRef.current?.scrollIntoView({ behavior: "smooth" })}>
           <Plus className="h-4 w-4" />
           Make Payment
         </Button>
@@ -152,7 +157,28 @@ export default function InstitutionPayments() {
               <CreditCard className="h-5 w-5" />
               Payment History
             </CardTitle>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => {
+                if (payments.length === 0) return;
+                const csv = [
+                  "Date,Invoice,Amount,Method,Status",
+                  ...payments.map((p: { created_at: string; invoice_number?: string; id: string; amount: number; payment_method?: string; status: string }) =>
+                    `${new Date(p.created_at).toLocaleDateString()},${p.invoice_number || `INV-${p.id.slice(0, 8).toUpperCase()}`},₹${p.amount},${p.payment_method || "Bank Transfer"},${p.status}`
+                  )
+                ].join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${institution.institution_name.replace(/\s+/g, "_")}_payments.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast({ title: "Payment history exported!" });
+              }}
+            >
               <Download className="h-4 w-4" />
               Export
             </Button>
@@ -210,7 +236,15 @@ export default function InstitutionPayments() {
                       </TableCell>
                       <TableCell>{getStatusBadge(payment.status)}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => {
+                            const invoiceId = payment.invoice_number || `INV-${payment.id.slice(0, 8).toUpperCase()}`;
+                            toast({ title: `Invoice ${invoiceId}`, description: `Amount: ₹${payment.amount?.toLocaleString()} | Status: ${payment.status} | Date: ${new Date(payment.created_at).toLocaleDateString('en-IN')}` });
+                          }}
+                        >
                           <FileText className="h-4 w-4" />
                           Invoice
                         </Button>
@@ -225,6 +259,7 @@ export default function InstitutionPayments() {
       </Card>
 
       {/* Payment Methods */}
+      <div ref={paymentMethodsRef}>
       <Card>
         <CardHeader>
           <CardTitle>Payment Methods</CardTitle>

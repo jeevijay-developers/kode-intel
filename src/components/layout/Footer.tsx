@@ -27,19 +27,19 @@ const quickLinks = [
 ];
 
 const resourceLinks = [
-  { label: "About NEP 2020", href: "/about" },
-  { label: "Student Login", href: "/student/login" },
-  { label: "Admin Login", href: "/auth" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms of Service", href: "#" },
+  { label: "About NEP 2020", href: "https://www.education.gov.in/nep/about-nep", external: true },
+  { label: "Student Login", href: "/student/login", external: false },
+  { label: "Admin Login", href: "/auth", external: false },
+  { label: "Privacy Policy", href: "#", external: false },
+  { label: "Terms of Service", href: "#", external: false },
 ];
 
 const socialLinks = [
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Youtube, href: "#", label: "YouTube" },
+  { icon: Facebook, href: "https://www.facebook.com/kodeintel", label: "Facebook" },
+  { icon: Twitter, href: "https://twitter.com/kodeintel", label: "Twitter" },
+  { icon: Instagram, href: "https://www.instagram.com/kodeintel", label: "Instagram" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/kodeintel", label: "LinkedIn" },
+  { icon: Youtube, href: "https://www.youtube.com/@kodeintel", label: "YouTube" },
 ];
 
 export default function Footer() {
@@ -112,6 +112,8 @@ export default function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
                   aria-label={social.label}
                 >
@@ -151,13 +153,25 @@ export default function Footer() {
             <ul className="space-y-3">
               {resourceLinks.map((link) => (
                 <li key={link.label}>
-                  <button
-                    onClick={() => navigate(link.href)}
-                    className="text-background/70 hover:text-secondary transition-colors flex items-center gap-2 group"
-                  >
-                    <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </button>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-background/70 hover:text-secondary transition-colors flex items-center gap-2 group"
+                    >
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {link.label}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => navigate(link.href)}
+                      className="text-background/70 hover:text-secondary transition-colors flex items-center gap-2 group"
+                    >
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

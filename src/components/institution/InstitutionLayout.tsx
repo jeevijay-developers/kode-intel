@@ -65,7 +65,7 @@ export default function InstitutionLayout() {
       <div className="p-4 border-b border-border/50">
         <div
           className="flex items-center gap-3 cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/institution")}
         >
           <img src={brainLogo} alt="Logo" className="h-10 w-10" />
           <div>

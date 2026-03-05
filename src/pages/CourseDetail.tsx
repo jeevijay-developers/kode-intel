@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useStudentAuth } from "@/hooks/useStudentAuth";
 
 // Import course banners
 import courseBannerAiIntro from "@/assets/course-banner-ai-intro.png";
@@ -80,6 +81,7 @@ const levelLabels: Record<string, string> = {
 export default function CourseDetail() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
+  const { student } = useStudentAuth();
 
   // Fetch course with chapters
   const { data: course, isLoading } = useQuery({
@@ -391,10 +393,16 @@ export default function CourseDetail() {
                   <Button 
                     size="lg" 
                     className="w-full h-14 text-lg gap-2 rounded-xl btn-glow"
-                    onClick={() => navigate("/student/login")}
+                    onClick={() => {
+                      if (student) {
+                        navigate(`/student/course/${course?.id}`);
+                      } else {
+                        navigate("/student/login");
+                      }
+                    }}
                   >
                     <GraduationCap className="h-5 w-5" />
-                    Start Learning
+                    {student ? "Continue Learning" : "Start Learning"}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
 

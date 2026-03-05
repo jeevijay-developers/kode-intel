@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import DevToolsBlocker from "@/components/DevToolsBlocker";
@@ -47,6 +47,7 @@ const GuestCourses = lazy(() => import("./pages/student/GuestCourses"));
 const GuestAchievements = lazy(() => import("./pages/student/GuestAchievements"));
 const GuestLeaderboard = lazy(() => import("./pages/student/GuestLeaderboard"));
 const StudentLeaderboard = lazy(() => import("./pages/student/StudentLeaderboard"));
+const StudentAchievements = lazy(() => import("./pages/student/StudentAchievements"));
 const GuestQuiz = lazy(() => import("./pages/student/GuestQuiz"));
 const GuestQuizList = lazy(() => import("./pages/student/GuestQuizList"));
 const GuestDigitalBook = lazy(() => import("./pages/student/GuestDigitalBook"));
@@ -86,7 +87,7 @@ function App() {
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/courses" element={<PublicCourses />} />
-                <Route path="/public-courses" element={<PublicCourses />} />
+                <Route path="/public-courses" element={<Navigate to="/courses" replace />} />
                 <Route path="/course/:slug" element={<CourseDetail />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/schools" element={<SchoolPartnership />} />
@@ -115,7 +116,7 @@ function App() {
                 <Route index element={<StudentHome />} />
                 <Route path="my-courses" element={<StudentMyCourses />} />
                 <Route path="profile" element={<StudentProfile />} />
-                <Route path="achievements" element={<StudentHome />} />
+                <Route path="achievements" element={<StudentAchievements />} />
                 <Route path="leaderboard" element={<StudentLeaderboard />} />
               </Route>
 

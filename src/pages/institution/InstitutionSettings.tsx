@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,7 @@ export default function InstitutionSettings() {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -188,7 +189,19 @@ export default function InstitutionSettings() {
               )}
             </div>
             <div>
-              <Button variant="outline" className="gap-2">
+              <input
+                type="file"
+                ref={logoFileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    toast({ title: "Logo selected", description: `"${file.name}" ready. Save profile to apply.` });
+                  }
+                }}
+              />
+              <Button variant="outline" className="gap-2" onClick={() => logoFileInputRef.current?.click()}>
                 <Camera className="h-4 w-4" />
                 Upload Logo
               </Button>
@@ -275,11 +288,16 @@ export default function InstitutionSettings() {
                 <Input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => updateField("phone", e.target.value)}
-                  placeholder="+91 XXXXXXXXXX"
+                  maxLength={10}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    updateField("phone", val);
+                  }}
+                  placeholder="10-digit mobile number"
                   className="pl-10"
                 />
               </div>
+              <p className="text-xs text-muted-foreground">{formData.phone.length}/10 digits</p>
             </div>
           </div>
 

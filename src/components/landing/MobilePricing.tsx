@@ -126,7 +126,7 @@ export function MobilePricing() {
 
               {/* CTA with Shimmer */}
               <Button
-                onClick={() => navigate(plan.popular ? "/student/signup" : "/student/signup")}
+                onClick={() => navigate(plan.popular ? "/student/signup" : "/store")}
                 className={`w-full h-12 gap-2 rounded-xl font-bold relative overflow-hidden ${
                   plan.popular 
                     ? "bg-gradient-to-r from-primary to-secondary hover:opacity-95 shadow-lg shadow-primary/20" 

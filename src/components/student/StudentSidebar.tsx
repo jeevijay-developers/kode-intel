@@ -49,7 +49,7 @@ export function StudentSidebar({
   totalPoints,
   streakDays,
 }: StudentSidebarProps) {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,13 +61,13 @@ export function StudentSidebar({
     >
       <SidebarContent className="bg-gradient-to-b from-card via-card to-primary/5">
         {/* Logo Section */}
-        <div className="p-4 border-b border-border/50">
+        <div className={`border-b border-border/50 flex justify-center ${collapsed ? 'p-2' : 'p-4'}`}>
           <div
             className="flex items-center gap-3 cursor-pointer group"
             onClick={() => navigate("/")}
           >
-            <div className="relative transition-transform duration-300 group-hover:scale-110">
-              <img src={brainLogo} alt="Logo" className="h-10 w-10" />
+            <div className={`relative transition-all duration-300 group-hover:scale-110 ${collapsed ? 'mx-auto' : ''}`}>
+              <img src={brainLogo} alt="Logo" className={`${collapsed ? 'h-8 w-8' : 'h-10 w-10'} transition-all`} />
               <Sparkles className="h-3 w-3 text-sunny absolute -top-1 -right-1 animate-pulse" />
             </div>
             {!collapsed && (
@@ -83,11 +83,11 @@ export function StudentSidebar({
           <div className="p-4 border-b border-border/50">
             <div className="bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg transition-transform duration-300 hover:rotate-6">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg transition-transform duration-300 hover:rotate-6 shrink-0">
                   <GraduationCap className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground truncate max-w-[120px]">
+                <div className="min-w-0">
+                  <p className="font-semibold text-foreground truncate">
                     {studentName.split(" ")[0]}
                   </p>
                   <p className="text-xs text-muted-foreground">Level {currentLevel}</p>
@@ -133,6 +133,11 @@ export function StudentSidebar({
                       <NavLink
                         to={item.url}
                         end
+                        onClick={() => {
+                          if (isMobile) {
+                            setOpenMobile(false);
+                          }
+                        }}
                         className={`group/item flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"

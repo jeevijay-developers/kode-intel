@@ -18,7 +18,7 @@ import { ParticleBackground } from "./ParticleBackground";
 
 interface MobileHeroSectionProps {
   onGetStarted: () => void;
-  onTryDemo: () => void;
+  onTryDemo?: () => void;
 }
 
 export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSectionProps) {
@@ -112,14 +112,16 @@ export function MobileHeroSection({ onGetStarted, onTryDemo }: MobileHeroSection
             <span className="relative z-10">Start 7-Day Free Trial</span>
             <ChevronRight className="h-5 w-5 relative z-10" />
           </Button>
-          <Button
-            variant="outline"
-            onClick={onTryDemo}
-            className="w-full h-12 gap-2 rounded-xl text-base font-semibold glass-card border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 active:scale-[0.98] transition-all"
-          >
-            <Play className="h-4 w-4" />
-            Try Free Demo
-          </Button>
+          {onTryDemo && (
+            <Button
+              variant="outline"
+              onClick={onTryDemo}
+              className="w-full h-12 gap-2 rounded-xl text-base font-semibold glass-card border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 active:scale-[0.98] transition-all"
+            >
+              <Play className="h-4 w-4" />
+              Try Free Demo
+            </Button>
+          )}
         </div>
 
         {/* Trust Indicators with Glass */}

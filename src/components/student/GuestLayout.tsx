@@ -144,7 +144,7 @@ export default function GuestLayout() {
                 </Badge>
                 
                 {/* Free Trial Badge - Hidden on small mobile */}
-                <Badge className="hidden sm:flex bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border-primary/30 text-xs px-2.5 py-1 gap-1">
+                <Badge className="hidden sm:flex bg-gradient-to-r from-primary to-secondary text-white border-0 text-xs px-2.5 py-1 gap-1 shadow-sm">
                   <Sparkles className="h-3 w-3" />
                   Free Trial
                 </Badge>

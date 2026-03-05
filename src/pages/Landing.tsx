@@ -185,7 +185,7 @@ export default function Landing() {
       <div className="min-h-screen bg-background">
         <MobileHeroSection 
           onGetStarted={() => navigate("/student/login")} 
-          onTryDemo={() => navigate("/guest")} 
+          onTryDemo={student ? undefined : () => navigate("/guest")} 
         />
         <MobileCourseLevels />
         <MobileFeaturesGrid />
@@ -370,15 +370,17 @@ export default function Landing() {
                   Start 7-Day Free Trial
                   <ChevronRight className="h-5 w-5" />
                 </ShimmerButton>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => navigate("/guest")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-semibold border-2 border-border hover:border-primary/50 hover:bg-primary/5 group glass-card"
-                >
-                  <Play className="h-5 w-5 group-hover:text-primary transition-colors" />
-                  Try Demo Free
-                </Button>
+                {!student && (
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate("/guest")}
+                    className="gap-3 rounded-full px-10 py-7 text-lg font-semibold border-2 border-border hover:border-primary/50 hover:bg-primary/5 group glass-card"
+                  >
+                    <Play className="h-5 w-5 group-hover:text-primary transition-colors" />
+                    Try Demo Free
+                  </Button>
+                )}
               </div>
 
               {/* Trust Indicators with glass effect */}
@@ -934,55 +936,57 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-primary" />
-        <div className="absolute inset-0 pattern-dots opacity-20" />
-        
-        <div className="container mx-auto relative z-10">
-          <RevealOnScroll>
-            <div className="text-center max-w-4xl mx-auto">
-              <FloatingElement className="inline-block mb-6">
-                <img src={kodiMascot3d} alt="KODI Mascot" className="w-24 h-24 object-contain mx-auto" />
-              </FloatingElement>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 font-display leading-tight">
-                Ready to Shape Your Child's{" "}
-                <span className="relative">
-                  Future?
-                  <Sparkles className="absolute -top-4 -right-8 h-8 w-8 text-sunny animate-pulse" />
-                </span>
-              </h2>
-              <p className="text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-                Join thousands of students mastering AI & Coding. Start your 7-day free trial today!
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  size="lg"
-                  onClick={() => navigate("/student/login")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold bg-background text-foreground hover:bg-background/90 shadow-2xl group"
-                >
-                  <Rocket className="h-6 w-6" />
-                  Start Free Trial
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => navigate("/student/guest")}
-                  className="gap-3 rounded-full px-10 py-7 text-lg font-bold border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 group"
-                >
-                  <Play className="h-5 w-5" />
-                  Explore Demo
-                </Button>
-              </div>
+      {!student && (
+        <section className="py-24 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 gradient-primary" />
+          <div className="absolute inset-0 pattern-dots opacity-20" />
+          
+          <div className="container mx-auto relative z-10">
+            <RevealOnScroll>
+              <div className="text-center max-w-4xl mx-auto">
+                <FloatingElement className="inline-block mb-6">
+                  <img src={kodiMascot3d} alt="KODI Mascot" className="w-24 h-24 object-contain mx-auto" />
+                </FloatingElement>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 font-display leading-tight">
+                  Ready to Shape Your Child's{" "}
+                  <span className="relative">
+                    Future?
+                    <Sparkles className="absolute -top-4 -right-8 h-8 w-8 text-sunny animate-pulse" />
+                  </span>
+                </h2>
+                <p className="text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
+                  Join thousands of students mastering AI & Coding. Start your 7-day free trial today!
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={() => navigate("/student/login")}
+                    className="gap-3 rounded-full px-10 py-7 text-lg font-bold bg-background text-foreground hover:bg-background/90 shadow-2xl group"
+                  >
+                    <Rocket className="h-6 w-6" />
+                    Start Free Trial
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate("/student/guest")}
+                    className="gap-3 rounded-full px-10 py-7 text-lg font-bold border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 group"
+                  >
+                    <Play className="h-5 w-5" />
+                    Explore Demo
+                  </Button>
+                </div>
 
-              <p className="mt-8 text-primary-foreground/70 text-sm">
-                No credit card required • Cancel anytime • Full access for 7 days
-              </p>
-            </div>
-          </RevealOnScroll>
-        </div>
-      </section>
+                <p className="mt-8 text-primary-foreground/70 text-sm">
+                  No credit card required • Cancel anytime • Full access for 7 days
+                </p>
+              </div>
+            </RevealOnScroll>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -108,11 +108,31 @@ export default function GuestDashboard() {
   const navigate = useNavigate();
   const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  const [showRegistration, setShowRegistration] = useState(false);
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [showClassPicker, setShowClassPicker] = useState(false);
   const [selectedClass, setSelectedClass] = useState("5");
   const { courses: allCourses = [], isLoading: coursesLoading } = useCourses();
+
+  // Generate a random guest name
+  const generateGuestName = () => {
+    const adjectives = ["Curious", "Bright", "Swift", "Clever", "Bold", "Sharp", "Quick", "Smart"];
+    const nouns = ["Coder", "Explorer", "Learner", "Builder", "Thinker", "Maker", "Hacker", "Wizard"];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    return `${adj} ${noun}`;
+  };
+
+  // Create an auto guest session (no form needed)
+  const autoStartGuest = (cls = "5") => {
+    const info: GuestInfo = {
+      name: generateGuestName(),
+      mobile: "",
+      selectedClass: cls,
+      registeredAt: new Date(),
+    };
+    localStorage.setItem("guestInfo", JSON.stringify(info));
+    setGuestInfo(info);
+    setShowClassPicker(false);
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem("guestInfo");
@@ -135,11 +155,14 @@ export default function GuestDashboard() {
         setGuestInfo(normalizedGuest);
       } else {
         localStorage.removeItem("guestInfo");
-        setShowRegistration(true);
+        // Auto-start a new guest session
+        autoStartGuest();
       }
     } else {
-      setShowRegistration(true);
+      // No prior session: show class picker then auto-start
+      setShowClassPicker(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -166,17 +189,7 @@ export default function GuestDashboard() {
   }, [guestInfo]);
 
   const handleRegistration = () => {
-    if (!name.trim() || !mobile.trim() || !selectedClass) return;
-    
-    const info: GuestInfo = {
-      name: name.trim(),
-      mobile: mobile.trim(),
-      selectedClass,
-      registeredAt: new Date(),
-    };
-    localStorage.setItem("guestInfo", JSON.stringify(info));
-    setGuestInfo(info);
-    setShowRegistration(false);
+    autoStartGuest(selectedClass);
   };
 
   const publishedCourses = allCourses.filter((c) => c.is_published);
@@ -201,9 +214,17 @@ export default function GuestDashboard() {
 
   return (
     <div className="min-h-screen">
-      {/* Registration Modal */}
-      <Dialog open={showRegistration} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
+      {/* Class Picker Modal — optional, dismissible */}
+      <Dialog
+        open={showClassPicker}
+        onOpenChange={(open) => {
+          if (!open) {
+            // User closed without choosing — auto-start with default class
+            autoStartGuest(selectedClass);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-2xl">
           <DialogHeader className="text-center pb-2">
             <div className="mx-auto mb-2 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-full blur-2xl scale-150" />
@@ -213,7 +234,7 @@ export default function GuestDashboard() {
               Welcome to KodeIntel! 🎉
             </DialogTitle>
             <DialogDescription className="text-center text-base">
-              Start your <span className="text-primary font-bold">FREE 24-Hour</span> trial and explore all courses!
+              Start your <span className="text-primary font-bold">FREE 24-Hour</span> trial — no signup needed!
             </DialogDescription>
           </DialogHeader>
 
@@ -233,67 +254,35 @@ export default function GuestDashboard() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
-                  <User className="h-4 w-4 text-primary" />
-                  Your Name
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-12 text-base border-2 focus:border-primary"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="mobile" className="text-sm font-medium flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-primary" />
-                  Mobile Number
-                </Label>
-                <Input
-                  id="mobile"
-                  placeholder="Enter mobile number"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="h-12 text-base border-2 focus:border-primary"
-                  type="tel"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  Select Your Class
-                </Label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="h-12 text-base border-2 focus:border-primary bg-background">
-                    <SelectValue placeholder="Choose your class" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border-2 z-50">
-                    {classOptions.map((option) => (
-                      <SelectItem 
-                        key={option.value} 
-                        value={option.value}
-                        className="cursor-pointer hover:bg-muted"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{option.label}</span>
-                          <span className="text-muted-foreground text-xs">({option.description})</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-primary" />
+                Select Your Class
+              </Label>
+              <Select value={selectedClass} onValueChange={setSelectedClass}>
+                <SelectTrigger className="h-12 text-base border-2 focus:border-primary bg-background">
+                  <SelectValue placeholder="Choose your class" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-2 z-50">
+                  {classOptions.map((option) => (
+                    <SelectItem 
+                      key={option.value} 
+                      value={option.value}
+                      className="cursor-pointer hover:bg-muted"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{option.label}</span>
+                        <span className="text-muted-foreground text-xs">({option.description})</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <Button
             onClick={handleRegistration}
-            disabled={!name.trim() || !mobile.trim() || !selectedClass}
             className="w-full h-14 gap-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] hover:bg-right transition-all duration-500 text-lg font-bold shadow-xl"
           >
             <Rocket className="h-5 w-5" />

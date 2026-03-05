@@ -180,7 +180,12 @@ export default function Schools() {
                       id="contact_phone"
                       type="tel"
                       value={formData.contact_phone}
-                      onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setFormData({ ...formData, contact_phone: val });
+                      }}
+                      pattern="[0-9]{10}"
+                      title="Please enter a valid 10-digit phone number"
                       required
                     />
                   </div>

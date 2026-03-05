@@ -81,7 +81,7 @@ export default function StudentCourse() {
     if (student && id && courseProgress === null && !courseLoading) {
       startCourse.mutate();
     }
-  }, [student, id, courseProgress, courseLoading]);
+  }, [student, id, courseProgress, courseLoading, startCourse]);
 
   // Handlers for content viewer
   const handleVideoClick = (video: any) => {
@@ -256,7 +256,7 @@ export default function StudentCourse() {
                     </p>
                   </div>
                 </div>
-                <Button size="sm" className="bg-gradient-to-r from-sunny to-coral text-foreground h-8 sm:h-9 text-xs sm:text-sm">
+                <Button size="sm" className="bg-gradient-to-r from-sunny to-coral text-foreground h-8 sm:h-9 text-xs sm:text-sm" onClick={() => navigate("/pricing")}>
                   Upgrade
                 </Button>
               </div>

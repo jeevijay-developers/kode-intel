@@ -149,7 +149,11 @@ export default function InstitutionCourses() {
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                       {course.description || "AI & Computational Thinking"}
                     </p>
-                    <Button className="w-full gap-2" variant="outline">
+                    <Button
+                      className="w-full gap-2"
+                      variant="outline"
+                      onClick={() => window.open(`mailto:sales@kodeintel.com?subject=Course Access Request - ${course.title}&body=Hello KodeIntel Team,%0D%0A%0D%0AWe are interested in getting access to the course: ${course.title}.%0D%0A%0D%0AInstitution: ${institution.institution_name}%0D%0AContact: ${institution.contact_person}%0D%0A%0D%0APlease get in touch to proceed.%0D%0A%0D%0AThank you.`, "_blank")}
+                    >
                       <Plus className="h-4 w-4" />
                       Request Access
                     </Button>
@@ -168,7 +172,10 @@ export default function InstitutionCourses() {
           <p className="text-muted-foreground mb-4">
             Contact us to discuss custom course packages for your institution
           </p>
-          <Button className="gap-2">
+          <Button
+            className="gap-2"
+            onClick={() => window.open(`mailto:sales@kodeintel.com?subject=Custom Course Package Inquiry - ${institution.institution_name}&body=Hello KodeIntel Sales Team,%0D%0A%0D%0AWe are interested in custom course packages for our institution.%0D%0A%0D%0AInstitution: ${institution.institution_name}%0D%0AContact: ${institution.contact_person}%0D%0A%0D%0APlease reach out to discuss options.%0D%0A%0D%0AThank you.`, "_blank")}
+          >
             Contact Sales
             <ArrowRight className="h-4 w-4" />
           </Button>

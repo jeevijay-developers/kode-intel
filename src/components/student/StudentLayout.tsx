@@ -6,7 +6,7 @@ import { StudentBottomNav } from "./StudentBottomNav";
 import { useStudentAuth } from "@/hooks/useStudentAuth";
 import { useGamification } from "@/hooks/useGamification";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, Code } from "lucide-react";
+import { LogOut, Menu, Code, ArrowLeft } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import brainLogo from "@/assets/brain-logo.png";
 
@@ -21,6 +21,13 @@ export default function StudentLayout() {
       navigate("/student/login");
     }
   }, [student, loading, navigate]);
+
+  // Replace the current history entry for /student so users can't go further back
+  useEffect(() => {
+    if (location.pathname === "/student") {
+      navigate("/student", { replace: true });
+    }
+  }, []);
 
   const handleSignOut = () => {
     signOut();
@@ -59,11 +66,23 @@ export default function StudentLayout() {
               <SidebarTrigger className="hidden lg:flex">
                 <Menu className="h-5 w-5" />
               </SidebarTrigger>
+
+              {/* Mobile back button - only show when not on root dashboard */}
+              {location.pathname !== "/student" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(-1)}
+                  className="h-9 w-9 lg:hidden"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              )}
               
               {/* Mobile logo */}
               <div 
                 className="flex items-center gap-2 lg:hidden cursor-pointer"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/student")}
               >
                 <img src={brainLogo} alt="Logo" className="h-8 w-8" />
                 <span className="font-bold font-display">

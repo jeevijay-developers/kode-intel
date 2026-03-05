@@ -444,10 +444,15 @@ export default function InstitutionStudents() {
                   <Label>Mobile Number *</Label>
                   <Input
                     type="tel"
-                    placeholder="Parent/Guardian mobile"
+                    placeholder="10-digit mobile number"
                     value={newStudent.mobile_number}
-                    onChange={(e) => setNewStudent({ ...newStudent, mobile_number: e.target.value })}
+                    maxLength={10}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      setNewStudent({ ...newStudent, mobile_number: val });
+                    }}
                   />
+                  <p className="text-xs text-muted-foreground">{newStudent.mobile_number.length}/10 digits</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Email (Optional)</Label>
@@ -719,9 +724,15 @@ export default function InstitutionStudents() {
               <div className="space-y-2">
                 <Label>Mobile Number *</Label>
                 <Input
+                  type="tel"
                   value={selectedStudent.mobile_number}
-                  onChange={(e) => setSelectedStudent({ ...selectedStudent, mobile_number: e.target.value })}
+                  maxLength={10}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    setSelectedStudent({ ...selectedStudent, mobile_number: val });
+                  }}
                 />
+                <p className="text-xs text-muted-foreground">{selectedStudent.mobile_number.length}/10 digits</p>
               </div>
               <div className="space-y-2">
                 <Label>Email</Label>

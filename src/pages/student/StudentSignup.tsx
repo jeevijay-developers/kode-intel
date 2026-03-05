@@ -294,11 +294,16 @@ export default function StudentSignup() {
                     </Label>
                     <Input
                       type="tel"
-                      placeholder="Enter your mobile number"
+                      placeholder="Enter your 10-digit mobile number"
                       value={formData.mobile_number}
-                      onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setFormData({ ...formData, mobile_number: val });
+                      }}
                       className="h-11 rounded-xl"
                       disabled={isSubmitting}
+                      pattern="[0-9]{10}"
+                      title="Please enter a valid 10-digit phone number"
                     />
                   </div>
 

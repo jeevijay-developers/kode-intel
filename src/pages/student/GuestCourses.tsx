@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -39,8 +38,6 @@ import {
   HelpCircle,
   ArrowLeft,
   Rocket,
-  User,
-  Phone,
   Code,
   Timer,
   Eye,
@@ -121,10 +118,8 @@ export default function GuestCourses() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { isVideoWatched, isQuizCompleted, getQuizScore, isEbookViewed, markVideoWatched, markEbookViewed, getStats } = useGuestProgress();
-  const [showRegistration, setShowRegistration] = useState(false);
+  const [showClassPicker, setShowClassPicker] = useState(false);
   const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
   const [selectedClass, setSelectedClass] = useState("5");
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [activeVideo, setActiveVideo] = useState<any>(null);
@@ -136,6 +131,29 @@ export default function GuestCourses() {
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
   const [pdfWidth, setPdfWidth] = useState<number>(600);
   const [showChangeClass, setShowChangeClass] = useState(false);
+
+  // Generate a random guest name
+  const generateGuestName = () => {
+    const adjectives = ["Curious", "Bright", "Swift", "Clever", "Bold", "Sharp", "Quick", "Smart"];
+    const nouns = ["Coder", "Explorer", "Learner", "Builder", "Thinker", "Maker", "Hacker", "Wizard"];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    return `${adj} ${noun}`;
+  };
+
+  // Create an auto guest session (no form needed)
+  const autoStartGuest = (cls = "5") => {
+    const info: GuestInfo = {
+      name: generateGuestName(),
+      mobile: "",
+      selectedClass: cls,
+      registeredAt: new Date(),
+    };
+    localStorage.setItem("guestInfo", JSON.stringify(info));
+    setGuestInfo(info);
+    setSelectedClass(cls);
+    setShowClassPicker(false);
+  };
   // Removed showAllCourses toggle as per UX requirements
 
   useEffect(() => {
@@ -151,6 +169,7 @@ export default function GuestCourses() {
   }, []);
 
   // Check for existing guest session
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const stored = localStorage.getItem("guestInfo");
     if (stored) {
@@ -175,10 +194,12 @@ export default function GuestCourses() {
         }
       } else {
         localStorage.removeItem("guestInfo");
-        setShowRegistration(true);
+        // Auto-restart guest session
+        autoStartGuest();
       }
     } else {
-      setShowRegistration(true);
+      // Show class picker, then auto-start
+      setShowClassPicker(true);
     }
   }, []);
 
@@ -298,18 +319,8 @@ export default function GuestCourses() {
     setShowChangeClass(false);
   };
 
-  const handleRegistrationSimple = () => {
-    if (!name.trim() || !mobile.trim() || !selectedClass) return;
-    
-    const info: GuestInfo = {
-      name: name.trim(),
-      mobile: mobile.trim(),
-      selectedClass: selectedClass,
-      registeredAt: new Date(),
-    };
-    localStorage.setItem("guestInfo", JSON.stringify(info));
-    setGuestInfo(info);
-    setShowRegistration(false);
+  const handleRegistration = () => {
+    autoStartGuest(selectedClass);
   };
 
   const handleCourseClick = (course: any) => {
@@ -527,9 +538,17 @@ export default function GuestCourses() {
   // Main Courses Grid
   return (
     <div className="p-3 sm:p-4 lg:p-6 animate-fade-in">
-      {/* Registration Modal - Simplified, just name and mobile */}
-      <Dialog open={showRegistration} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
+      {/* Class Picker Modal — optional, dismissible */}
+      <Dialog
+        open={showClassPicker}
+        onOpenChange={(open) => {
+          if (!open) {
+            // User closed: auto-start with default class
+            autoStartGuest(selectedClass);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-2xl">
           <DialogHeader className="text-center pb-2">
             <div className="mx-auto mb-2 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-full blur-2xl scale-150" />
@@ -539,7 +558,7 @@ export default function GuestCourses() {
               Start Your Free Trial! 🎉
             </DialogTitle>
             <DialogDescription className="text-center text-base">
-              Get <span className="text-primary font-bold">24 hours</span> of unlimited access to all courses
+              Get <span className="text-primary font-bold">24 hours</span> of access — no signup needed!
             </DialogDescription>
           </DialogHeader>
 
@@ -559,60 +578,28 @@ export default function GuestCourses() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
-                  <User className="h-4 w-4 text-primary" />
-                  Your Name
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-12 text-base border-2 focus:border-primary"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="mobile" className="text-sm font-medium flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-primary" />
-                  Mobile Number
-                </Label>
-                <Input
-                  id="mobile"
-                  placeholder="Enter mobile number"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="h-12 text-base border-2 focus:border-primary"
-                  type="tel"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  Select Your Class
-                </Label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="h-12 text-base border-2 focus:border-primary">
-                    <SelectValue placeholder="Select class" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["3", "4", "5", "6", "7", "8", "9", "10"].map((cls) => (
-                      <SelectItem key={cls} value={cls}>
-                        Class {cls}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="class" className="text-sm font-medium flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-primary" />
+                Select Your Class
+              </Label>
+              <Select value={selectedClass} onValueChange={setSelectedClass}>
+                <SelectTrigger className="h-12 text-base border-2 focus:border-primary">
+                  <SelectValue placeholder="Select class" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["3", "4", "5", "6", "7", "8", "9", "10"].map((cls) => (
+                    <SelectItem key={cls} value={cls}>
+                      Class {cls}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <Button
-            onClick={handleRegistrationSimple}
-            disabled={!name.trim() || !mobile.trim()}
+            onClick={handleRegistration}
             className="w-full h-14 gap-2 bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] hover:bg-right transition-all duration-500 text-lg font-bold shadow-xl"
           >
             <Rocket className="h-5 w-5" />

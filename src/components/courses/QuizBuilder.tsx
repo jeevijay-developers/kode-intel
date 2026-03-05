@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Check, Edit, X, Save } from "lucide-react";
 import { useQuizQuestions, useQuizOptions } from "@/hooks/useCourses";
 
@@ -178,12 +179,21 @@ function QuestionItem({ question, index, onDelete }: QuestionItemProps) {
     setEditingOptionText("");
   };
 
+  const hasCorrectOption = options.some(opt => opt.is_correct);
+
   return (
-    <div className="p-4 border rounded-lg space-y-3">
+    <div className={`p-4 border rounded-lg space-y-3 ${!hasCorrectOption && options.length > 0 ? 'border-destructive/50 bg-destructive/5' : ''}`}>
       <div className="flex items-start justify-between">
         <div>
           <span className="text-sm text-muted-foreground">Question {index + 1}</span>
-          <p className="font-medium">{question.question_text}</p>
+          <div className="flex items-center gap-2">
+            <p className="font-medium">{question.question_text}</p>
+            {!hasCorrectOption && options.length > 0 && (
+              <Badge variant="destructive" className="ml-2 text-[10px] uppercase">
+                Requires Correct Option
+              </Badge>
+            )}
+          </div>
         </div>
         <Button variant="ghost" size="icon" onClick={onDelete}>
           <Trash2 className="h-4 w-4 text-destructive" />

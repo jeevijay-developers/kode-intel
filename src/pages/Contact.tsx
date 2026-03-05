@@ -234,19 +234,24 @@ export default function Contact() {
 
               {/* Contact Cards */}
               <div className="grid grid-cols-2 gap-4">
-                {contactInfo.map((info, index) => (
-                  <a
-                    key={index}
-                    href={info.href}
-                    className="p-6 glass rounded-2xl hover:shadow-md transition-shadow group"
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <info.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-1">{info.label}</p>
-                    <p className="font-semibold text-foreground">{info.value}</p>
-                  </a>
-                ))}
+                {contactInfo.map((info, index) => {
+                  const isLink = info.href && info.href !== "#";
+                  const CardWrapper = isLink ? "a" : "div";
+                  
+                  return (
+                    <CardWrapper
+                      key={index}
+                      {...(isLink ? { href: info.href } : {})}
+                      className={`p-6 glass rounded-2xl ${isLink ? 'hover:shadow-md transition-shadow group' : ''}`}
+                    >
+                      <div className={`w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 ${isLink ? 'group-hover:scale-110 transition-transform' : ''}`}>
+                        <info.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">{info.label}</p>
+                      <p className="font-semibold text-foreground">{info.value}</p>
+                    </CardWrapper>
+                  );
+                })}
               </div>
 
               {/* Quick FAQ */}

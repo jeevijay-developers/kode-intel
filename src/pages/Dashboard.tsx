@@ -2,7 +2,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useSchools } from "@/hooks/useSchools";
 import { useStudents } from "@/hooks/useStudents";
 import { useCourses } from "@/hooks/useCourses";
-import { Building2, Users, UserCheck, UserX, BookOpen, GraduationCap, TrendingUp, Activity, Clock, ArrowRight, Plus, Settings, Upload } from "lucide-react";
+import { Building2, Users, UserCheck, UserX, BookOpen, GraduationCap, TrendingUp, Activity, Clock, ArrowRight, Plus, Settings, Upload, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,48 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { useNavigate } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { data: schools, isLoading: schoolsLoading } = useSchools();
   const { data: studentsResult, isLoading: studentsLoading } = useStudents(undefined, { page: 1, pageSize: 100 });
   const { courses, isLoading: coursesLoading } = useCourses();
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  const handleUpdatePassword = async () => {
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setIsUpdatingPassword(false);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Password updated successfully");
+      setIsSettingsOpen(false);
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  };
 
   const totalSchools = schools?.length || 0;
   const activeSchools = schools?.filter((s) => s.is_active).length || 0;
@@ -68,14 +104,63 @@ export default function Dashboard() {
             <p className="text-muted-foreground">Welcome back! Here's your LMS overview.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Settings className="h-4 w-4" />
-              Settings
-            </Button>
-            <Button size="sm" className="gap-1.5 bg-gradient-to-r from-primary to-secondary">
-              <Plus className="h-4 w-4" />
-              Quick Add
-            </Button>
+            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Admin Settings</DialogTitle>
+                  <DialogDescription>
+                    Manage your admin account settings securely.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="new-password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsSettingsOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdatePassword} disabled={isUpdatingPassword}>
+                    {isUpdatingPassword ? "Updating..." : "Update Password"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 

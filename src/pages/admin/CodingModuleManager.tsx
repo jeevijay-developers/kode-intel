@@ -15,6 +15,7 @@ import {
   BookOpen
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { toast } from "sonner";
 import CodingModuleEditor from "@/components/admin/CodingModuleEditor";
 import {
@@ -155,200 +156,202 @@ export default function CodingModuleManager() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/admin/dashboard")}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Code className="h-6 w-6 text-primary" />
-                Coding Modules
-              </h1>
-              <p className="text-muted-foreground">
-                Create and manage block-based coding lessons
-              </p>
-            </div>
-          </div>
-          <Button onClick={handleCreateNew} className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Module
-          </Button>
-        </div>
-
-        {/* Filters */}
-        <Card className="border-border/50">
-          <CardContent className="p-4">
+    <AdminLayout>
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Filter by Chapter:</span>
-              </div>
-              <Select value={selectedChapter} onValueChange={setSelectedChapter}>
-                <SelectTrigger className="w-[300px]">
-                  <SelectValue placeholder="All Chapters" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Chapters</SelectItem>
-                  {chapters.map((chapter) => (
-                    <SelectItem key={chapter.id} value={chapter.id}>
-                      {chapter.courses?.title} - {chapter.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Badge variant="outline" className="ml-auto">
-                {modules.length} module{modules.length !== 1 ? "s" : ""}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Modules Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="animate-pulse">
-                <CardHeader className="h-24 bg-muted/50" />
-                <CardContent className="h-32 bg-muted/30" />
-              </Card>
-            ))}
-          </div>
-        ) : modules.length === 0 ? (
-          <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Code className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">
-                No coding modules yet
-              </h3>
-              <p className="text-muted-foreground text-center mb-4">
-                Create your first block-based coding lesson to get started.
-              </p>
-              <Button onClick={handleCreateNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Module
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/admin")}
+              >
+                <ArrowLeft className="h-5 w-5" />
               </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Code className="h-6 w-6 text-primary" />
+                  Coding Modules
+                </h1>
+                <p className="text-muted-foreground">
+                  Create and manage block-based coding lessons
+                </p>
+              </div>
+            </div>
+            <Button onClick={handleCreateNew} className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Module
+            </Button>
+          </div>
+
+          {/* Filters */}
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Filter by Chapter:</span>
+                </div>
+                <Select value={selectedChapter} onValueChange={setSelectedChapter}>
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="All Chapters" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Chapters</SelectItem>
+                    {chapters.map((chapter) => (
+                      <SelectItem key={chapter.id} value={chapter.id}>
+                        {chapter.courses?.title} - {chapter.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Badge variant="outline" className="ml-auto">
+                  {modules.length} module{modules.length !== 1 ? "s" : ""}
+                </Badge>
+              </div>
             </CardContent>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {modules.map((module) => (
-              <Card 
-                key={module.id} 
-                className="group hover:border-primary/50 transition-colors"
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg line-clamp-1">
-                        {module.title}
-                      </CardTitle>
-                      <p className="text-xs text-muted-foreground">
-                        {getCourseName(module.chapter_id)}
-                      </p>
-                      <p className="text-xs text-primary">
-                        {getChapterName(module.chapter_id)}
-                      </p>
+
+          {/* Modules Grid */}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardHeader className="h-24 bg-muted/50" />
+                  <CardContent className="h-32 bg-muted/30" />
+                </Card>
+              ))}
+            </div>
+          ) : modules.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <Code className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  No coding modules yet
+                </h3>
+                <p className="text-muted-foreground text-center mb-4">
+                  Create your first block-based coding lesson to get started.
+                </p>
+                <Button onClick={handleCreateNew}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Module
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {modules.map((module) => (
+                <Card 
+                  key={module.id} 
+                  className="group hover:border-primary/50 transition-colors"
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-lg line-clamp-1">
+                          {module.title}
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground">
+                          {getCourseName(module.chapter_id)}
+                        </p>
+                        <p className="text-xs text-primary">
+                          {getChapterName(module.chapter_id)}
+                        </p>
+                      </div>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleEdit(module)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive"
+                          onClick={() => setDeleteModuleId(module.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => handleEdit(module)}
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {module.description || "No description"}
+                    </p>
+                    
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge 
+                        variant="outline" 
+                        className={difficultyColors[module.difficulty_level] || ""}
                       >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive"
-                        onClick={() => setDeleteModuleId(module.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {module.description || "No description"}
-                  </p>
-                  
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge 
-                      variant="outline" 
-                      className={difficultyColors[module.difficulty_level] || ""}
-                    >
-                      {module.difficulty_level}
-                    </Badge>
-                    <Badge variant="secondary" className="gap-1">
-                      <Star className="h-3 w-3" />
-                      {module.xp_reward} XP
-                    </Badge>
-                    {!module.is_published && (
-                      <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
-                        Draft
+                        {module.difficulty_level}
                       </Badge>
-                    )}
-                  </div>
-
-                  {module.objective_text && (
-                    <div className="pt-2 border-t border-border/50">
-                      <p className="text-xs text-muted-foreground flex items-start gap-1">
-                        <Lightbulb className="h-3 w-3 mt-0.5 shrink-0" />
-                        <span className="line-clamp-2">{module.objective_text}</span>
-                      </p>
+                      <Badge variant="secondary" className="gap-1">
+                        <Star className="h-3 w-3" />
+                        {module.xp_reward} XP
+                      </Badge>
+                      {!module.is_published && (
+                        <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
+                          Draft
+                        </Badge>
+                      )}
                     </div>
-                  )}
 
-                  <div className="text-xs text-muted-foreground">
-                    Class Level: {module.class_level} | Order: {module.order_index}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    {module.objective_text && (
+                      <div className="pt-2 border-t border-border/50">
+                        <p className="text-xs text-muted-foreground flex items-start gap-1">
+                          <Lightbulb className="h-3 w-3 mt-0.5 shrink-0" />
+                          <span className="line-clamp-2">{module.objective_text}</span>
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="text-xs text-muted-foreground">
+                      Class Level: {module.class_level} | Order: {module.order_index}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Editor Dialog */}
+        {isEditorOpen && (
+          <CodingModuleEditor
+            module={editingModule}
+            chapters={chapters}
+            onClose={handleEditorClose}
+          />
         )}
+
+        {/* Delete Confirmation */}
+        <AlertDialog open={!!deleteModuleId} onOpenChange={() => setDeleteModuleId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Coding Module?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the 
+                coding module and any associated student progress.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground"
+                onClick={() => deleteModuleId && deleteMutation.mutate(deleteModuleId)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-
-      {/* Editor Dialog */}
-      {isEditorOpen && (
-        <CodingModuleEditor
-          module={editingModule}
-          chapters={chapters}
-          onClose={handleEditorClose}
-        />
-      )}
-
-      {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteModuleId} onOpenChange={() => setDeleteModuleId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Coding Module?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the 
-              coding module and any associated student progress.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground"
-              onClick={() => deleteModuleId && deleteMutation.mutate(deleteModuleId)}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    </AdminLayout>
   );
 }
