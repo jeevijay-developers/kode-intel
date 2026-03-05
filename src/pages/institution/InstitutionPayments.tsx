@@ -29,7 +29,6 @@ import { useToast } from "@/hooks/use-toast";
 import type { Institution } from "@/hooks/useInstitutionAuth";
 
 export default function InstitutionPayments() {
-  const navigate = useNavigate();
   const { institution } = useOutletContext<{ institution: Institution }>();
   const { toast } = useToast();
   const paymentMethodsRef = useRef<HTMLDivElement>(null);
@@ -300,6 +299,7 @@ export default function InstitutionPayments() {
           </div>
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 }
