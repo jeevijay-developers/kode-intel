@@ -130,7 +130,7 @@ export default function GuestQuiz() {
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [shake, setShake] = useState(false);
   
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTickRef = useRef<number>(TIMER_DURATION);
 
   // Fetch quiz details

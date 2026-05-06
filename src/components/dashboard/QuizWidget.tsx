@@ -357,7 +357,7 @@ export function QuizWidget({ className, onComplete, timerDuration = 15 }: QuizWi
   const [isMuted, setIsMuted] = useState(false);
   const [usedQuestions, setUsedQuestions] = useState<string[]>([]);
   
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTickRef = useRef<number>(timerDuration);
 
   // Get a random question that hasn't been used recently
