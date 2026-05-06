@@ -75,7 +75,7 @@ export default function KodeIntelPlayer({
 }: KodeIntelPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
-  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const progressInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -88,7 +88,7 @@ export default function KodeIntelPlayer({
   const [hasTriggeredComplete, setHasTriggeredComplete] = useState(false);
   const [showBigPlay, setShowBigPlay] = useState(true);
 
-  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load YouTube IFrame API
   useEffect(() => {
