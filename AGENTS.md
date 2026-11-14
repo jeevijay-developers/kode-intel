@@ -1,0 +1,1 @@
+- The site assistant's model call lives only in the kodeintel-assistant backend function and streams plain text; the browser keeps chat history in localStorage. Why: keeps AI keys server-side and needs no login.
