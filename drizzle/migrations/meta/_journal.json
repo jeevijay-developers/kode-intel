@@ -15,6 +15,13 @@
       "when": 1794635195620,
       "tag": "0001_lock_institution_accounts",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794682850921,
+      "tag": "0002_lock_book_uploads_to_admins",
+      "breakpoints": true
     }
   ]
 }
